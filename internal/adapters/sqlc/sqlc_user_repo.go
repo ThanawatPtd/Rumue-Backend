@@ -13,7 +13,7 @@ type SqlcUserRepository struct {
 	DB *pgxpool.Pool
 }
 
-func (r *SqlcUserRepository) New(db *pgxpool.Pool) repositories.UserRepository {
+func NewSqlcUserRepository(db *pgxpool.Pool) repositories.UserRepository {
 	return &SqlcUserRepository{
 		Queries: dbmodel.New(db),
 		DB: db,
