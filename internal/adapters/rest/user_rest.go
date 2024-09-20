@@ -13,7 +13,7 @@ type UserRestHandler struct {
 	userUseCase usecases.UserUseCase
 }
 
-func NewUserRestHandler(userUseCase usecases.UserUseCase) *UserRestHandler {
+func ProvideUserRestHandler(userUseCase usecases.UserUseCase) *UserRestHandler {
 	return &UserRestHandler{userUseCase: userUseCase}
 }
 
@@ -41,4 +41,3 @@ func (uh *UserRestHandler) CreateUser(c *fiber.Ctx) error {
 		"user": selectedUser,
 	})
 }
-

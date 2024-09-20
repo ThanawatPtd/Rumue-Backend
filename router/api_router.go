@@ -18,4 +18,6 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 		})
 	})
 
+	app.Post("/user/create", handler.User.CreateUser)
+
 }

@@ -45,6 +45,7 @@ require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/go-playground/validator/v10 v10.22.1
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/google/wire v0.6.0
 	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-colorable v0.1.13 // indirect
