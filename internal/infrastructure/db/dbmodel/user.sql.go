@@ -30,7 +30,7 @@ type CreateUserParams struct {
 }
 
 type CreateUserRow struct {
-	ID        pgtype.UUID        `json:"id"`
+	ID        int64              `json:"id"`
 	Fname     string             `json:"fname"`
 	Email     string             `json:"email"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
@@ -62,7 +62,7 @@ DELETE FROM "user"
 WHERE id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
+func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 	_, err := q.db.Exec(ctx, deleteUser, id)
 	return err
 }
@@ -79,12 +79,12 @@ FROM "user"
 `
 
 type GetAllUsersRow struct {
-	ID          pgtype.UUID `json:"id"`
-	Email       string      `json:"email"`
-	Fname       string      `json:"fname"`
-	Lname       string      `json:"lname"`
-	PhoneNumber string      `json:"phoneNumber"`
-	Address     string      `json:"address"`
+	ID          int64  `json:"id"`
+	Email       string `json:"email"`
+	Fname       string `json:"fname"`
+	Lname       string `json:"lname"`
+	PhoneNumber string `json:"phoneNumber"`
+	Address     string `json:"address"`
 }
 
 func (q *Queries) GetAllUsers(ctx context.Context) ([]GetAllUsersRow, error) {
@@ -127,15 +127,15 @@ WHERE id = $1
 `
 
 type GetUserByIDRow struct {
-	ID          pgtype.UUID `json:"id"`
-	Email       string      `json:"email"`
-	Fname       string      `json:"fname"`
-	Lname       string      `json:"lname"`
-	PhoneNumber string      `json:"phoneNumber"`
-	Address     string      `json:"address"`
+	ID          int64  `json:"id"`
+	Email       string `json:"email"`
+	Fname       string `json:"fname"`
+	Lname       string `json:"lname"`
+	PhoneNumber string `json:"phoneNumber"`
+	Address     string `json:"address"`
 }
 
-func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error) {
+func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error) {
 	row := q.db.QueryRow(ctx, getUserByID, id)
 	var i GetUserByIDRow
 	err := row.Scan(
@@ -164,17 +164,17 @@ RETURNING id, fname, email, created_at, updated_at
 `
 
 type UpdateUserParams struct {
-	ID          pgtype.UUID `json:"id"`
-	Email       string      `json:"email"`
-	Fname       string      `json:"fname"`
-	Lname       string      `json:"lname"`
-	Password    string      `json:"password"`
-	PhoneNumber string      `json:"phoneNumber"`
-	Address     string      `json:"address"`
+	ID          int64  `json:"id"`
+	Email       string `json:"email"`
+	Fname       string `json:"fname"`
+	Lname       string `json:"lname"`
+	Password    string `json:"password"`
+	PhoneNumber string `json:"phoneNumber"`
+	Address     string `json:"address"`
 }
 
 type UpdateUserRow struct {
-	ID        pgtype.UUID        `json:"id"`
+	ID        int64              `json:"id"`
 	Fname     string             `json:"fname"`
 	Email     string             `json:"email"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`

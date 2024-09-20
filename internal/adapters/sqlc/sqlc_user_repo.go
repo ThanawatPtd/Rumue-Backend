@@ -3,6 +3,7 @@ package sqlc
 import (
 	"context"
 	"errors"
+
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -31,6 +32,7 @@ func (r *SqlcUserRepository) Save(c *context.Context, user *dbmodel.User) (*dbmo
 	})
 
 	if err != nil {
+		print(err.Error())
 		return nil, errors.New("Creating user error.")
 	}
 
