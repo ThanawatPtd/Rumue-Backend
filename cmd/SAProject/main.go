@@ -14,7 +14,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
-	"github.com/pressly/goose/v3"
 )
 
 func main() {
@@ -52,10 +51,6 @@ func main() {
 	}
 
 	fmt.Println("🫙 Connected to Postgres")
-
-	if err := goose.Up(db, "../migrations/"); err != nil {
-		panic(err)
-	}
 
 	app := fiber.New(fiber.Config{
 		AppName: "SEProject",

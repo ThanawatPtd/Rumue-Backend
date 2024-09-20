@@ -1,6 +1,8 @@
 package rest
 
 import (
+	"log"
+
 	"github.com/ThanawatPtd/SAProject/domain/requests"
 	"github.com/ThanawatPtd/SAProject/domain/usecases"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
@@ -18,7 +20,8 @@ func NewUserRestHandler(userUseCase usecases.UserUseCase) *UserRestHandler {
 func (uh *UserRestHandler) CreateUser(c *fiber.Ctx) error {
 	var req requests.CreateUserRequest
 
-	if err := c.BodyParser(req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
+		log.Print(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid data",
 		})

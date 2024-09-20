@@ -19,11 +19,11 @@ WHERE id = $1;
 
 -- name: CreateUser :one
 INSERT INTO "user" (
-    id, email, fname, lname, password, phone_number, address, created_at, updated_at
+    id,email, fname, lname, password, phone_number, address, created_at, updated_at
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, NOW(), NOW()
+    $1, $2, $3, $4, $5, $6, $7,NOW(), NOW()
 )
-RETURNING id, fname AS name, email, created_at, updated_at;
+RETURNING id, fname,lname, email, created_at, updated_at;
 
 -- name: UpdateUser :one
 UPDATE "user"

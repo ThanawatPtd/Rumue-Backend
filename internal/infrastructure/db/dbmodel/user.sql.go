@@ -7,21 +7,21 @@ package dbmodel
 
 import (
 	"context"
+	"github.com/google/uuid"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO "user" (
-    id, email, fname, lname, password, phone_number, address, created_at, updated_at
+    id,email, fname, lname, password, phone_number, address, created_at, updated_at
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, NOW(), NOW()
+    $1, $2, $3, $4, $5, $6, $7,NOW(), NOW()
 )
-RETURNING id, fname AS name, email, created_at, updated_at
+RETURNING id, fname,lname, email, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	ID          pgtype.UUID `json:"id"`
 	Email       string      `json:"email"`
 	Fname       string      `json:"fname"`
 	Lname       string      `json:"lname"`
@@ -32,15 +32,18 @@ type CreateUserParams struct {
 
 type CreateUserRow struct {
 	ID        pgtype.UUID        `json:"id"`
-	Name      string             `json:"name"`
+	Fname     string             `json:"fname"`
+	Lname     string             `json:"lname"`
 	Email     string             `json:"email"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+	userID := uuid.New()	
+
 	row := q.db.QueryRow(ctx, createUser,
-		arg.ID,
+		userID,
 		arg.Email,
 		arg.Fname,
 		arg.Lname,
@@ -51,7 +54,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	var i CreateUserRow
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
+		&i.Fname,
+		&i.Lname,
 		&i.Email,
 		&i.CreatedAt,
 		&i.UpdatedAt,
