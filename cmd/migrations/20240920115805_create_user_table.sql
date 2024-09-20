@@ -13,4 +13,3 @@ CREATE TABLE "user" (
 
 -- +goose Down
 DROP TABLE post;
-

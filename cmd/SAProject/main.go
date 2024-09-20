@@ -7,6 +7,9 @@ import (
 	"log"
 
 	"github.com/ThanawatPtd/SAProject/config"
+	"github.com/ThanawatPtd/SAProject/domain/usecases"
+	"github.com/ThanawatPtd/SAProject/internal/adapters/repositories/psql"
+	"github.com/ThanawatPtd/SAProject/internal/adapters/rest"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -63,6 +66,14 @@ func main() {
 		AllowHeaders: "Origin, Content-Type, Accept",
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 	}))
+
+	userRepo := psql.ProvideUserRepository(pgxPool)
+	userService := usecases.NewUserService(userRepo, &ctx)
+
+	userOuterSpaceHandler := rest.NewUserRestHandler(userService)
+
+	app.Post("/user/create", userOuterSpaceHandler.CreateUser)
+
 	app.Listen(":3001")
 
 }
