@@ -7,21 +7,27 @@ import (
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
 )
 
-type UserUseCase interface{
-    CreateUser(user *dbmodel.User) (*dbmodel.User, error)
+type UserUseCase interface {
+	CreateUser(ctx context.Context, user *dbmodel.CreateUserParams) (*dbmodel.User, error)
 }
 
-type UserService struct{
-    user_repo repositories.UserRepository
-	ctx *context.Context
+type UserService struct {
+	userRepo repositories.UserRepository
 }
 
-
-func NewUserService(user_repo repositories.UserRepository, ctx *context.Context) UserUseCase{
-    return &UserService{user_repo: user_repo, ctx: ctx}
+func NewUserService(userRepo repositories.UserRepository, ctx *context.Context) UserUseCase {
+	return &UserService{
+		userRepo: userRepo,
+	}
 }
 
+func (u *UserService) CreateUser(ctx context.Context, user *dbmodel.CreateUserParams) (*dbmodel.User, error) {
 
-func (us *UserService) CreateUser(user *dbmodel.User) (*dbmodel.User, error){
-    return us.user_repo.Save(us.ctx, user)
+	newUser, err := u.userRepo.Save(ctx, user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return newUser, nil
 }

@@ -1,6 +1,9 @@
 package rest
 
 import (
+	"log"
+
+	"github.com/ThanawatPtd/SAProject/domain/requests"
 	"github.com/ThanawatPtd/SAProject/domain/usecases"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
 	"github.com/gofiber/fiber/v2"
@@ -10,33 +13,32 @@ type UserRestHandler struct {
 	userUseCase usecases.UserUseCase
 }
 
-
-func NewUserRestHandler(userUseCase usecases.UserUseCase) *UserRestHandler{
+func NewUserRestHandler(userUseCase usecases.UserUseCase) *UserRestHandler {
 	return &UserRestHandler{userUseCase: userUseCase}
 }
 
+func (uh *UserRestHandler) CreateUser(c *fiber.Ctx) error {
+	var req requests.CreateUserRequest
 
-func (uh *UserRestHandler) CreateUser(c *fiber.Ctx) error{
-	user := new(dbmodel.User)
-
-
-	if err:=c.BodyParser(user);err!=nil{
+	if err := c.BodyParser(&req); err != nil {
+		log.Print(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message":"Invalid data",
+			"message": "Invalid data",
 		})
 	}
 
-	selectedUser, err :=uh.userUseCase.CreateUser(user)
+	createPayload := dbmodel.CreateUserParams(req)
+	selectedUser, err := uh.userUseCase.CreateUser(c.Context(), &createPayload)
 
-	if err!=nil{
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"message":err,
+				"message": err,
 			})
 	}
 
-
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"user":selectedUser,
+		"user": selectedUser,
 	})
 }
+
