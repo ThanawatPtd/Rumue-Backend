@@ -8,14 +8,6 @@ import (
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
 
-const (
-	PostgresHost     = "localhost"
-	PostgresPort     = 5432
-	PostgresDB       = "mydatabase"
-	PostgresUser     = "myuser"
-	PostgresPassword = "mypassword"
-)
-
 func main() {
 
 	handler := wire.InitializeHandler()
