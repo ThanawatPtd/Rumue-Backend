@@ -11,8 +11,8 @@ CREATE TABLE "user" (
     updated_at TIMESTAMPTZ
 );
 
--- Then create employee table that inherits from user
-CREATE TABLE employee (
-    salary REAL NOT NULL,
-    position VARCHAR(10) NOT NULL
-) INHERITS ("user");
+-- -- Then create employee table that inherits from user
+-- CREATE TABLE employee (
+--     salary REAL NOT NULL,
+--     position VARCHAR(10) NOT NULL
+-- ) INHERITS (user);

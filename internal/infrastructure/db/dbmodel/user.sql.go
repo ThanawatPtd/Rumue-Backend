@@ -13,26 +13,25 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO "user" (
-    id, email, fname, lname, password, phone_number, address, created_at, updated_at
+    email, fname, lname, password, phone_number, address, created_at, updated_at
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, NOW(), NOW()
+    $1, $2, $3, $4, $5, $6, NOW(), NOW()
 )
-RETURNING id, fname AS name, email, created_at, updated_at
+RETURNING id, fname, email, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	ID          pgtype.UUID `json:"id"`
-	Email       string      `json:"email"`
-	Fname       string      `json:"fname"`
-	Lname       string      `json:"lname"`
-	Password    string      `json:"password"`
-	PhoneNumber string      `json:"phoneNumber"`
-	Address     string      `json:"address"`
+	Email       string `json:"email"`
+	Fname       string `json:"fname"`
+	Lname       string `json:"lname"`
+	Password    string `json:"password"`
+	PhoneNumber string `json:"phoneNumber"`
+	Address     string `json:"address"`
 }
 
 type CreateUserRow struct {
 	ID        pgtype.UUID        `json:"id"`
-	Name      string             `json:"name"`
+	Fname     string             `json:"fname"`
 	Email     string             `json:"email"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
@@ -40,7 +39,6 @@ type CreateUserRow struct {
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
 	row := q.db.QueryRow(ctx, createUser,
-		arg.ID,
 		arg.Email,
 		arg.Fname,
 		arg.Lname,
@@ -51,7 +49,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	var i CreateUserRow
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
+		&i.Fname,
 		&i.Email,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -72,19 +70,21 @@ func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
 const getAllUsers = `-- name: GetAllUsers :many
 SELECT
     id,
-    fname AS name,
     email,
-    created_at,
-    updated_at
+    fname,
+    lname,
+    phone_number,
+    address
 FROM "user"
 `
 
 type GetAllUsersRow struct {
-	ID        pgtype.UUID        `json:"id"`
-	Name      string             `json:"name"`
-	Email     string             `json:"email"`
-	CreatedAt pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+	ID          pgtype.UUID `json:"id"`
+	Email       string      `json:"email"`
+	Fname       string      `json:"fname"`
+	Lname       string      `json:"lname"`
+	PhoneNumber string      `json:"phoneNumber"`
+	Address     string      `json:"address"`
 }
 
 func (q *Queries) GetAllUsers(ctx context.Context) ([]GetAllUsersRow, error) {
@@ -98,10 +98,11 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]GetAllUsersRow, error) {
 		var i GetAllUsersRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.Name,
 			&i.Email,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.Fname,
+			&i.Lname,
+			&i.PhoneNumber,
+			&i.Address,
 		); err != nil {
 			return nil, err
 		}
@@ -116,20 +117,22 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]GetAllUsersRow, error) {
 const getUserByID = `-- name: GetUserByID :one
 SELECT
     id,
-    fname AS name,
     email,
-    created_at,
-    updated_at
+    fname,
+    lname,
+    phone_number,
+    address
 FROM "user"
 WHERE id = $1
 `
 
 type GetUserByIDRow struct {
-	ID        pgtype.UUID        `json:"id"`
-	Name      string             `json:"name"`
-	Email     string             `json:"email"`
-	CreatedAt pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+	ID          pgtype.UUID `json:"id"`
+	Email       string      `json:"email"`
+	Fname       string      `json:"fname"`
+	Lname       string      `json:"lname"`
+	PhoneNumber string      `json:"phoneNumber"`
+	Address     string      `json:"address"`
 }
 
 func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error) {
@@ -137,10 +140,11 @@ func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDR
 	var i GetUserByIDRow
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
 		&i.Email,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.Fname,
+		&i.Lname,
+		&i.PhoneNumber,
+		&i.Address,
 	)
 	return i, err
 }
@@ -156,7 +160,7 @@ SET
     address = $7,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, fname AS name, email, created_at, updated_at
+RETURNING id, fname, email, created_at, updated_at
 `
 
 type UpdateUserParams struct {
@@ -171,7 +175,7 @@ type UpdateUserParams struct {
 
 type UpdateUserRow struct {
 	ID        pgtype.UUID        `json:"id"`
-	Name      string             `json:"name"`
+	Fname     string             `json:"fname"`
 	Email     string             `json:"email"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
@@ -190,7 +194,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 	var i UpdateUserRow
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
+		&i.Fname,
 		&i.Email,
 		&i.CreatedAt,
 		&i.UpdatedAt,
