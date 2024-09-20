@@ -15,7 +15,7 @@ type UserService struct {
 	userRepo repositories.UserRepository
 }
 
-func NewUserService(userRepo repositories.UserRepository, ctx *context.Context) UserUseCase {
+func ProvideUserService(userRepo repositories.UserRepository) UserUseCase {
 	return &UserService{
 		userRepo: userRepo,
 	}

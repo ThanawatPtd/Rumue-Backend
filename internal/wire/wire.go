@@ -1,6 +1,10 @@
+//go:build wireinject
+// +build wireinject
+
 package wire
 
 import (
+	"github.com/ThanawatPtd/SAProject/internal/adapters/rest"
 	"github.com/google/wire"
 )
 
