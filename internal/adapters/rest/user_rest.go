@@ -1,5 +1,6 @@
 package rest
 
+<<<<<<< HEAD
 import (
 	"log"
 
@@ -11,6 +12,18 @@ import (
 
 type UserRestHandler struct {
 	userUseCase usecases.UserUseCase
+=======
+import "github.com/ThanawatPtd/SAProject/domain/usecases"
+
+type UserRestHandler struct {
+	userService usecases.UserUseCase
+}
+
+func ProvideUserRestHandler(userService usecases.UserUseCase) *UserRestHandler {
+	return &UserRestHandler{
+		userService: userService,
+	}
+>>>>>>> 6a08fd7 (Got stuck here need to wait for other complete)
 }
 
 func NewUserRestHandler(userUseCase usecases.UserUseCase) *UserRestHandler {
