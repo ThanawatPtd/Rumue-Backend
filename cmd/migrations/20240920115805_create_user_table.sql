@@ -1,4 +1,6 @@
 -- +goose Up
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE "user" (
     id UUID PRIMARY KEY,
     email VARCHAR(100) NOT NULL,
@@ -10,6 +12,8 @@ CREATE TABLE "user" (
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ
 );
+
+ALTER TABLE "user" ALTER COLUMN id SET DEFAULT uuid_generate_v4();
 
 -- +goose Down
 DROP TABLE post;

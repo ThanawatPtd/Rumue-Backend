@@ -30,7 +30,6 @@ func (u *UserRepository) Save(c context.Context, user *dbmodel.CreateUserParams)
 	}
 
 	return &dbmodel.User{
-			ID:        newUser.ID,
 			Email:     newUser.Email,
 			Fname:     newUser.Fname,
 			Lname:     newUser.Lname,
