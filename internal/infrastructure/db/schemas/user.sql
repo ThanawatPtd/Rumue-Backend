@@ -1,4 +1,3 @@
--- Create user table first
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "user" (
@@ -15,8 +14,37 @@ CREATE TABLE "user" (
 
 ALTER TABLE "user" ALTER COLUMN id SET DEFAULT uuid_generate_v4();
 
--- Then create employee table that inherits from user
-CREATE TABLE employee (
-    salary REAL NOT NULL,
-    position VARCHAR(10) NOT NULL
-) INHERITS ("user");
+-- EMPLOYEE Table (Inherits from USER)
+CREATE TABLE "employee" (
+    employee_id UUID PRIMARY KEY,
+    salary REAL,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ,
+    FOREIGN KEY (employee_id) REFERENCES "user"(id) ON DELETE CASCADE
+);
+
+ALTER TABLE "employee" ALTER COLUMN employee_id SET DEFAULT uuid_generate_v4();
+
+-- ADMIN Table (Inherits from USER)
+CREATE TABLE "admin" (
+    admin_id UUID PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ,
+    FOREIGN KEY (admin_id) REFERENCES "user"(id) ON DELETE CASCADE
+);
+
+ALTER TABLE "admin" ALTER COLUMN admin_id SET DEFAULT uuid_generate_v4();
+
+-- EMPLOYEE_MANAGEMENT Table
+CREATE TABLE "employee_management" (
+    employee_id UUID,
+    admin_id UUID,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ,
+    PRIMARY KEY (employee_id, admin_id),
+    FOREIGN KEY (employee_id) REFERENCES "employee"(employee_id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES "admin"(admin_id) ON DELETE CASCADE
+);
+
+ALTER TABLE "employee_management" ALTER COLUMN employee_id SET DEFAULT uuid_generate_v4();
+ALTER TABLE "employee_management" ALTER COLUMN admin_id SET DEFAULT uuid_generate_v4();
