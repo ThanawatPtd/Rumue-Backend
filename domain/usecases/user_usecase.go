@@ -8,7 +8,7 @@ import (
 )
 
 type UserUseCase interface {
-	CreateUser(ctx context.Context, user *dbmodel.CreateUserParams) (*dbmodel.User, error)
+	CreateUser(ctx context.Context, user *dbmodel.CreateUserParams) (*dbmodel.CreateUserRow, error)
 }
 
 type UserService struct {
@@ -21,7 +21,7 @@ func ProvideUserService(userRepo repositories.UserRepository) UserUseCase {
 	}
 }
 
-func (u *UserService) CreateUser(ctx context.Context, user *dbmodel.CreateUserParams) (*dbmodel.User, error) {
+func (u *UserService) CreateUser(ctx context.Context, user *dbmodel.CreateUserParams) (*dbmodel.CreateUserRow, error) {
 
 	newUser, err := u.userRepo.Save(ctx, user)
 
