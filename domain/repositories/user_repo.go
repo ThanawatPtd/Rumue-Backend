@@ -7,6 +7,6 @@ import (
 )
 
 type UserRepository interface {
-	// ListAll(c *context.Context) ([]responses.UserResponse, error)
-	Save(c context.Context, user *dbmodel.CreateUserParams) (*dbmodel.User, error)
+	// ListAll(c *context.Context) (*[]dbmodel.GetAllUsersRow, error)
+	Save(c context.Context, user *dbmodel.CreateUserParams) (*dbmodel.CreateUserRow, error)
 }

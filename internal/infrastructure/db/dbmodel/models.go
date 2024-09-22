@@ -8,18 +8,24 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Admin struct {
+	ID        pgtype.UUID        `json:"id"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+}
+
 type Employee struct {
-	ID          pgtype.UUID        `json:"id"`
-	Email       string             `json:"email"`
-	Fname       string             `json:"fname"`
-	Lname       string             `json:"lname"`
-	Password    string             `json:"password"`
-	PhoneNumber string             `json:"phoneNumber"`
-	Address     string             `json:"address"`
-	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
-	Salary      float32            `json:"salary"`
-	Position    string             `json:"position"`
+	ID        pgtype.UUID        `json:"id"`
+	Salary    pgtype.Float4      `json:"salary"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+}
+
+type EmployeeManagement struct {
+	EmployeeID pgtype.UUID        `json:"employeeId"`
+	AdminID    pgtype.UUID        `json:"adminId"`
+	CreatedAt  pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt  pgtype.Timestamptz `json:"updatedAt"`
 }
 
 type User struct {

@@ -21,7 +21,7 @@ func ProvideUserRepository(db *pgxpool.Pool) repositories.UserRepository {
 	}
 }
 
-func (u *UserRepository) Save(c context.Context, user *dbmodel.CreateUserParams) (*dbmodel.User, error) {
+func (u *UserRepository) Save(c context.Context, user *dbmodel.CreateUserParams) (*dbmodel.CreateUserRow, error) {
 	newUser, err := u.Queries.CreateUser(c, *user)
 
 	if err != nil {
@@ -29,12 +29,13 @@ func (u *UserRepository) Save(c context.Context, user *dbmodel.CreateUserParams)
 		return nil, errors.New("Creating user error.")
 	}
 
-	return &dbmodel.User{
-			Email:     newUser.Email,
-			Fname:     newUser.Fname,
-			Lname:     newUser.Lname,
-			CreatedAt: newUser.CreatedAt,
-			UpdatedAt: newUser.UpdatedAt,
-		},
-		nil
+	return &newUser,nil
 }
+
+// func (u *UserRepository) ListAll(c context.Context) (*[]dbmodel.GetAllUsersRow) {
+// 	users, err := u.Queries.GetAllEmployees(c)
+
+// 	if err != nil {
+
+// 	}
+// }
