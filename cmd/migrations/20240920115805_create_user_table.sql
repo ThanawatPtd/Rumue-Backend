@@ -18,24 +18,24 @@ ALTER TABLE "user" ALTER COLUMN id SET DEFAULT uuid_generate_v4();
 
 -- EMPLOYEE Table (Inherits from USER)
 CREATE TABLE "employee" (
-    employee_id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY,
     salary REAL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ,
-    FOREIGN KEY (employee_id) REFERENCES "user"(id) ON DELETE CASCADE
+    FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE
 );
 
-ALTER TABLE "employee" ALTER COLUMN employee_id SET DEFAULT uuid_generate_v4();
+ALTER TABLE "employee" ALTER COLUMN id SET DEFAULT uuid_generate_v4();
 
 -- ADMIN Table (Inherits from USER)
 CREATE TABLE "admin" (
-    admin_id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ,
-    FOREIGN KEY (admin_id) REFERENCES "user"(id) ON DELETE CASCADE
+    FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE
 );
 
-ALTER TABLE "admin" ALTER COLUMN admin_id SET DEFAULT uuid_generate_v4();
+ALTER TABLE "admin" ALTER COLUMN id SET DEFAULT uuid_generate_v4();
 
 -- EMPLOYEE_MANAGEMENT Table
 CREATE TABLE "employee_management" (
@@ -44,8 +44,8 @@ CREATE TABLE "employee_management" (
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ,
     PRIMARY KEY (employee_id, admin_id),
-    FOREIGN KEY (employee_id) REFERENCES "employee"(employee_id) ON DELETE CASCADE,
-    FOREIGN KEY (admin_id) REFERENCES "admin"(admin_id) ON DELETE CASCADE
+    FOREIGN KEY (employee_id) REFERENCES "employee"(id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES "admin"(id) ON DELETE CASCADE
 );
 
 ALTER TABLE "employee_management" ALTER COLUMN employee_id SET DEFAULT uuid_generate_v4();
