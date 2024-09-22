@@ -23,7 +23,7 @@ var ServiceSet = wire.NewSet(
 )
 
 var RepositorySet = wire.NewSet(
-	psql.ProvideUserRepository,
+	psql.ProvidePostgresUserRepository,
 )
 
 var HandlerSet = wire.NewSet(

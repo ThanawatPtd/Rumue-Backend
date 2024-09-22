@@ -23,7 +23,7 @@ func ProvideUserService(userRepo repositories.UserRepository) UserUseCase {
 
 func (u *UserService) CreateUser(ctx context.Context, user *dbmodel.CreateUserParams) (*dbmodel.CreateUserRow, error) {
 
-	newUser, err := u.userRepo.Save(ctx, user)
+	newUser, err := u.userRepo.Save(&ctx, user)
 
 	if err != nil {
 		return nil, err
