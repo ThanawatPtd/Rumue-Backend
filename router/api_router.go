@@ -10,6 +10,8 @@ import (
 func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 	api := app.Group("/")
 
+	user := api.Group("/user")
+
 	fmt.Print(api)
 	// Health check
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -18,6 +20,9 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 		})
 	})
 
-	app.Post("/user/create", handler.User.CreateUser)
+	user.Get("/:id",handler.User.GetUserByID)
+
+	user.Post("/create", handler.User.CreateUser)
+	// user.Update("/update/:id", )
 
 }
