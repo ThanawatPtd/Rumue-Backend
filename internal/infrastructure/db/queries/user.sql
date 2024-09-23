@@ -5,7 +5,10 @@ SELECT
     fname,
     lname,
     phone_number,
-    address
+    password,
+    address,
+    created_at,
+    updated_at
 FROM "user";
 
 -- name: GetUserByID :one
@@ -15,7 +18,10 @@ SELECT
     fname,
     lname,
     phone_number,
-    address
+    password,
+    address,
+    created_at,
+    updated_at
 FROM "user"
 WHERE id = $1;
 
@@ -26,7 +32,10 @@ SELECT
     fname,
     lname,
     phone_number,
-    address
+    password,
+    address,
+    created_at,
+    updated_at
 FROM "user"
 WHERE email = $1;
 
@@ -36,7 +45,7 @@ INSERT INTO "user" (
 ) VALUES (
     $1, $2, $3, $4, $5, $6, NOW(), NOW()
 )
-RETURNING id, fname, lname, email, created_at, updated_at;
+RETURNING id, email, fname, lname, phone_number, address, created_at;
 
 -- name: UpdateUser :one
 UPDATE "user"
@@ -44,12 +53,12 @@ SET
     email = $2,
     fname = $3,
     lname = $4,
-    password = $5,
-    phone_number = $6,
+    phone_number = $5,
+    password = $6,
     address = $7,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, fname, email, created_at, updated_at;
+RETURNING id, email, fname, lname, phone_number, password, address, updated_at;
 
 -- name: DeleteUser :exec
 DELETE FROM "user"

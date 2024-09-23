@@ -17,7 +17,7 @@ INSERT INTO "employee" (
 ) VALUES (
     $1, $2, NOW(), NOW()
 )
-RETURNING id, salary, created_at, updated_at
+RETURNING id, salary, created_at
 `
 
 type CreateEmployeeParams struct {
@@ -25,15 +25,16 @@ type CreateEmployeeParams struct {
 	Salary pgtype.Float4 `json:"salary"`
 }
 
-func (q *Queries) CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (Employee, error) {
+type CreateEmployeeRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Salary    pgtype.Float4      `json:"salary"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+}
+
+func (q *Queries) CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (CreateEmployeeRow, error) {
 	row := q.db.QueryRow(ctx, createEmployee, arg.ID, arg.Salary)
-	var i Employee
-	err := row.Scan(
-		&i.ID,
-		&i.Salary,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
+	var i CreateEmployeeRow
+	err := row.Scan(&i.ID, &i.Salary, &i.CreatedAt)
 	return i, err
 }
 
@@ -49,7 +50,10 @@ func (q *Queries) DeleteEmployee(ctx context.Context, id pgtype.UUID) error {
 
 const getAllEmployees = `-- name: GetAllEmployees :many
 SELECT
-    id, salary, created_at, updated_at
+   id,
+   salary,
+   created_at,
+   updated_at 
 FROM "employee"
 `
 
@@ -80,7 +84,10 @@ func (q *Queries) GetAllEmployees(ctx context.Context) ([]Employee, error) {
 
 const getEmployeeByID = `-- name: GetEmployeeByID :one
 SELECT
-    id, salary, created_at, updated_at
+    id,
+    salary,
+    created_at,
+    updated_at 
 FROM "employee"
 WHERE id = $1
 `
@@ -103,7 +110,7 @@ SET
     salary = $2,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, salary, created_at, updated_at
+RETURNING id, salary, updated_at
 `
 
 type UpdateEmployeeParams struct {
@@ -111,14 +118,15 @@ type UpdateEmployeeParams struct {
 	Salary pgtype.Float4 `json:"salary"`
 }
 
-func (q *Queries) UpdateEmployee(ctx context.Context, arg UpdateEmployeeParams) (Employee, error) {
+type UpdateEmployeeRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Salary    pgtype.Float4      `json:"salary"`
+	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+}
+
+func (q *Queries) UpdateEmployee(ctx context.Context, arg UpdateEmployeeParams) (UpdateEmployeeRow, error) {
 	row := q.db.QueryRow(ctx, updateEmployee, arg.ID, arg.Salary)
-	var i Employee
-	err := row.Scan(
-		&i.ID,
-		&i.Salary,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
+	var i UpdateEmployeeRow
+	err := row.Scan(&i.ID, &i.Salary, &i.UpdatedAt)
 	return i, err
 }

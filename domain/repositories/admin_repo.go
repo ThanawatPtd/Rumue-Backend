@@ -9,8 +9,8 @@ import (
 
 type AdminRepository interface {
 	ListAll(c *context.Context) (*[]dbmodel.Admin, error)
-	Save(c *context.Context, id *pgtype.UUID) (*dbmodel.Admin, error)
+	Save(c *context.Context, id *pgtype.UUID) (*dbmodel.CreateAdminRow, error)
 	GetByID(c *context.Context, id *pgtype.UUID) (*dbmodel.Admin, error)
-	Update(c *context.Context, id *pgtype.UUID) (*dbmodel.Admin, error)
+	Update(c *context.Context, id *pgtype.UUID) (*dbmodel.UpdateAdminRow, error)
 	Delete(c *context.Context, id *pgtype.UUID) (error)
 }

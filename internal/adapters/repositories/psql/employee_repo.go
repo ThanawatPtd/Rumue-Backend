@@ -22,7 +22,7 @@ func ProvidePostgresEmployeeRepository(db *pgxpool.Pool) repositories.EmployeeRe
 	}
 }
 
-func (e *PostgresEmployeeRepository) Save(c *context.Context, employee *dbmodel.CreateEmployeeParams) (*dbmodel.Employee, error) {
+func (e *PostgresEmployeeRepository) Save(c *context.Context, employee *dbmodel.CreateEmployeeParams) (*dbmodel.CreateEmployeeRow, error) {
 	selectedEmployee, err := e.Queries.CreateEmployee(*c, *employee)
 
 	if err != nil {
@@ -49,7 +49,7 @@ func (e *PostgresEmployeeRepository) GetByID(c *context.Context, id *pgtype.UUID
 	return &selectedEmployee, nil
 }
 
-func (e *PostgresEmployeeRepository) Update(c *context.Context, employee *dbmodel.UpdateEmployeeParams) (*dbmodel.Employee, error) {
+func (e *PostgresEmployeeRepository) Update(c *context.Context, employee *dbmodel.UpdateEmployeeParams) (*dbmodel.UpdateEmployeeRow, error) {
 	selectedEmployee, err := e.Queries.UpdateEmployee(*c, *employee)
 
 	if err != nil {

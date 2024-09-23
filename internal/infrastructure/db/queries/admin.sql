@@ -1,11 +1,15 @@
 -- name: GetAllAdmins :many
 SELECT
-    *
+    id,
+    created_at,
+    updated_at
 FROM "admin";
 
 -- name: GetAdminByID :one
 SELECT
-    *
+    id,
+    created_at,
+    updated_at
 FROM "admin"
 WHERE id = $1;
 
@@ -15,14 +19,14 @@ INSERT INTO "admin" (
 ) VALUES (
     $1, NOW(), NOW()
 )
-RETURNING *;
+RETURNING id, created_at;
 
 -- name: UpdateAdmin :one
 UPDATE "admin"
 SET
     updated_at = NOW()
 WHERE id = $1
-RETURNING *;
+RETURNING id, updated_at;
 
 -- name: DeleteAdmin :exec
 DELETE FROM "admin"

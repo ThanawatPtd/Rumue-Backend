@@ -31,7 +31,7 @@ func (a *PostgresAdminRepository) ListAll(c *context.Context) (*[]dbmodel.Admin,
 	return &selectedAdmins, nil
 }
 
-func (a *PostgresAdminRepository) Save(c *context.Context, id *pgtype.UUID) (*dbmodel.Admin, error) {
+func (a *PostgresAdminRepository) Save(c *context.Context, id *pgtype.UUID) (*dbmodel.CreateAdminRow, error) {
 	selectedAdmin, err := a.Queries.CreateAdmin(*c, *id)
 
 	if err != nil {
@@ -49,7 +49,7 @@ func (a *PostgresAdminRepository) GetByID(c *context.Context, id *pgtype.UUID) (
 	return &selectedAdmin, nil
 }
 
-func (a *PostgresAdminRepository) Update(c *context.Context, id *pgtype.UUID) (*dbmodel.Admin, error) {
+func (a *PostgresAdminRepository) Update(c *context.Context, id *pgtype.UUID) (*dbmodel.UpdateAdminRow, error) {
 	selectedAdmin, err := a.Queries.UpdateAdmin(*c, *id)
 
 	if err != nil {

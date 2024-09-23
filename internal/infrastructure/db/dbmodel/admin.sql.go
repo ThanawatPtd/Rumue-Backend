@@ -17,13 +17,18 @@ INSERT INTO "admin" (
 ) VALUES (
     $1, NOW(), NOW()
 )
-RETURNING id, created_at, updated_at
+RETURNING id, created_at
 `
 
-func (q *Queries) CreateAdmin(ctx context.Context, id pgtype.UUID) (Admin, error) {
+type CreateAdminRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+}
+
+func (q *Queries) CreateAdmin(ctx context.Context, id pgtype.UUID) (CreateAdminRow, error) {
 	row := q.db.QueryRow(ctx, createAdmin, id)
-	var i Admin
-	err := row.Scan(&i.ID, &i.CreatedAt, &i.UpdatedAt)
+	var i CreateAdminRow
+	err := row.Scan(&i.ID, &i.CreatedAt)
 	return i, err
 }
 
@@ -39,7 +44,9 @@ func (q *Queries) DeleteAdmin(ctx context.Context, id pgtype.UUID) error {
 
 const getAdminByID = `-- name: GetAdminByID :one
 SELECT
-    id, created_at, updated_at
+    id,
+    created_at,
+    updated_at
 FROM "admin"
 WHERE id = $1
 `
@@ -53,7 +60,9 @@ func (q *Queries) GetAdminByID(ctx context.Context, id pgtype.UUID) (Admin, erro
 
 const getAllAdmins = `-- name: GetAllAdmins :many
 SELECT
-    id, created_at, updated_at
+    id,
+    created_at,
+    updated_at
 FROM "admin"
 `
 
@@ -82,12 +91,17 @@ UPDATE "admin"
 SET
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, created_at, updated_at
+RETURNING id, updated_at
 `
 
-func (q *Queries) UpdateAdmin(ctx context.Context, id pgtype.UUID) (Admin, error) {
+type UpdateAdminRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+}
+
+func (q *Queries) UpdateAdmin(ctx context.Context, id pgtype.UUID) (UpdateAdminRow, error) {
 	row := q.db.QueryRow(ctx, updateAdmin, id)
-	var i Admin
-	err := row.Scan(&i.ID, &i.CreatedAt, &i.UpdatedAt)
+	var i UpdateAdminRow
+	err := row.Scan(&i.ID, &i.UpdatedAt)
 	return i, err
 }
