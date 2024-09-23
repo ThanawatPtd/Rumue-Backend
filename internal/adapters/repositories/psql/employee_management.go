@@ -26,7 +26,7 @@ func (a *PostgresEmployeeManagementRepository) ListAll(c *context.Context) (*[]d
 	selectedManagement, err := a.Queries.GetAllEmployeeManagement(*c)
 
 	if err != nil {
-		return nil, errors.New("Listing all employee management error!")
+		return nil, errors.New("listing all employee management error")
 	}
 	return &selectedManagement, nil
 }
@@ -35,7 +35,7 @@ func (a *PostgresEmployeeManagementRepository) Save(c *context.Context, manageme
 	selectedManagement, err := a.Queries.CreateEmployeeManagement(*c, *management)
 
 	if err != nil {
-		return nil, errors.New("Creating employee management error!")
+		return nil, errors.New("creating employee management error")
 	}
 	return &selectedManagement, nil
 }
@@ -44,7 +44,7 @@ func (a *PostgresEmployeeManagementRepository) GetByEmployeeID(c *context.Contex
 	selectedManagement, err := a.Queries.GetEmployeeManagementsByEmployeeID(*c, *id)
 
 	if err != nil {
-		return nil, errors.New("Getting employee management error!")
+		return nil, errors.New("getting employee management error")
 	}
 	return &selectedManagement, nil
 }
@@ -53,7 +53,7 @@ func (a *PostgresEmployeeManagementRepository) GetByAdminID(c *context.Context, 
 	selectedManagement, err := a.Queries.GetAllEmployeeManagementsByAdminID(*c, *id)
 
 	if err != nil {
-		return nil, errors.New("Getting employee management error!")
+		return nil, errors.New("getting employee management error")
 	}
 	return &selectedManagement, nil
 }
@@ -62,14 +62,14 @@ func (a *PostgresEmployeeManagementRepository) Update(c *context.Context, manage
 	selectedManagement, err := a.Queries.UpdateEmployeeManagement(*c, * management)
 
 	if err != nil {
-		return nil, errors.New("Updating employee management error!")
+		return nil, errors.New("updating employee management error")
 	}
 	return &selectedManagement, nil
 }
 
 func (a *PostgresEmployeeManagementRepository) Delete(c *context.Context, management *dbmodel.DeleteEmployeeManagementParams) (error) {
 	if err := a.Queries.DeleteEmployeeManagement(*c, *management); err != nil {
-		return errors.New("Deleting admin error!")
+		return errors.New("deleting admin error")
 	}
 	return nil
 }

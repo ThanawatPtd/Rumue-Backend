@@ -26,7 +26,7 @@ func (e *PostgresEmployeeRepository) Save(c *context.Context, employee *dbmodel.
 	selectedEmployee, err := e.Queries.CreateEmployee(*c, *employee)
 
 	if err != nil {
-		return nil, errors.New("Creating employee error!")
+		return nil, errors.New("creating employee error")
 	}
 	return &selectedEmployee, nil
 }
@@ -35,7 +35,7 @@ func (e *PostgresEmployeeRepository) ListAll(c *context.Context) (*[]dbmodel.Emp
 	selectedEmployees, err := e.Queries.GetAllEmployees(*c)
 
 	if  err != nil {
-		return nil, errors.New("Listing All employees error!")	
+		return nil, errors.New("listing All employees error")	
 	}
 	return &selectedEmployees, nil
 }
@@ -44,7 +44,7 @@ func (e *PostgresEmployeeRepository) GetByID(c *context.Context, id *pgtype.UUID
 	selectedEmployee, err := e.Queries.GetEmployeeByID(*c, *id)
 
 	if err != nil {
-		return nil, errors.New("Getting employee by id error!")
+		return nil, errors.New("getting employee by id error")
 	}
 	return &selectedEmployee, nil
 }
@@ -53,14 +53,14 @@ func (e *PostgresEmployeeRepository) Update(c *context.Context, employee *dbmode
 	selectedEmployee, err := e.Queries.UpdateEmployee(*c, *employee)
 
 	if err != nil {
-		return nil, errors.New("Updating employee error!")
+		return nil, errors.New("updating employee error")
 	}
 	return &selectedEmployee, nil
 }
 
 func (e *PostgresEmployeeRepository) Delete(c *context.Context, id *pgtype.UUID) (error) {
 	if err := e.Queries.DeleteEmployee(*c, *id); err != nil {
-		return errors.New("Deleting employee error!")
+		return errors.New("deleting employee error")
 	}
 	return nil
 }

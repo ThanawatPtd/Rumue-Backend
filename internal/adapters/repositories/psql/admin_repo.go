@@ -26,7 +26,7 @@ func (a *PostgresAdminRepository) ListAll(c *context.Context) (*[]dbmodel.Admin,
 	selectedAdmins, err := a.Queries.GetAllAdmins(*c)
 
 	if err != nil {
-		return nil, errors.New("Listing all admins error!")
+		return nil, errors.New("listing all admins error")
 	}
 	return &selectedAdmins, nil
 }
@@ -35,7 +35,7 @@ func (a *PostgresAdminRepository) Save(c *context.Context, id *pgtype.UUID) (*db
 	selectedAdmin, err := a.Queries.CreateAdmin(*c, *id)
 
 	if err != nil {
-		return nil, errors.New("Creating admin error!")
+		return nil, errors.New("creating admin error")
 	}
 	return &selectedAdmin, nil
 }
@@ -44,7 +44,7 @@ func (a *PostgresAdminRepository) GetByID(c *context.Context, id *pgtype.UUID) (
 	selectedAdmin, err := a.Queries.GetAdminByID(*c, *id)
 
 	if err != nil {
-		return nil, errors.New("Getting admin error!")
+		return nil, errors.New("getting admin error")
 	}
 	return &selectedAdmin, nil
 }
@@ -53,14 +53,14 @@ func (a *PostgresAdminRepository) Update(c *context.Context, id *pgtype.UUID) (*
 	selectedAdmin, err := a.Queries.UpdateAdmin(*c, *id)
 
 	if err != nil {
-		return nil, errors.New("Updating admin error!")
+		return nil, errors.New("updating admin error")
 	}
 	return &selectedAdmin, nil
 }
 
 func (a *PostgresAdminRepository) Delete(c *context.Context, id *pgtype.UUID) (error) {
 	if err := a.Queries.DeleteAdmin(*c, *id); err != nil {
-		return errors.New("Deleting admin error!")
+		return errors.New("deleting admin error")
 	}
 	return nil
 }

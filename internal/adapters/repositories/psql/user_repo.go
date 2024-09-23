@@ -26,7 +26,7 @@ func (u *PostgresUserRepository) Save(c *context.Context, user *dbmodel.CreateUs
 	selectedUser, err := u.Queries.CreateUser(*c, *user)
 
 	if err != nil {
-		return nil, errors.New("Creating user error!")
+		return nil, errors.New("creating user error")
 	}
 
 	return &selectedUser, nil
@@ -36,7 +36,7 @@ func (u *PostgresUserRepository) ListAll(c *context.Context) (*[]dbmodel.GetAllU
 	selectedUsers, err := u.Queries.GetAllUsers(*c)
 
 	if err != nil {
-		return nil, errors.New("Listing All users error!")
+		return nil, errors.New("listing All users error")
 	}
 
 	return &selectedUsers, nil
@@ -46,7 +46,7 @@ func (u *PostgresUserRepository) GetByEmail(c *context.Context, email *string) (
 	selectedUser, err := u.Queries.GetUserByEmail(*c, *email)
 
 	if err != nil {
-		return nil, errors.New("Getting user by email error!")
+		return nil, errors.New("getting user by email error")
 	}
 
 	return &selectedUser, nil 
@@ -56,7 +56,7 @@ func (u *PostgresUserRepository) GetByID(c *context.Context, id *pgtype.UUID) (*
 	selectedUser, err := u.Queries.GetUserByID(*c, *id)
 	
 	if err != nil {
-		return nil, errors.New("Getting user by id error!")
+		return nil, errors.New("getting user by id error")
 	}
 
 	return &selectedUser, nil
@@ -66,14 +66,14 @@ func (u *PostgresUserRepository) Update(c *context.Context, user *dbmodel.Update
 	selectedUser, err := u.Queries.UpdateUser(*c, *user)
 
 	if err != nil {
-		return nil, errors.New("Updating user error!")
+		return nil, errors.New("updating user error")
 	}
 	return &selectedUser, nil
 }
 
 func (u *PostgresUserRepository) Delete(c *context.Context, id *pgtype.UUID) (error) {
 	if err := u.Queries.DeleteUser(*c, *id); err != nil {
-	return errors.New("Deleting user error!")
+	return errors.New("deleting user error")
 	}
 	return nil
 }
