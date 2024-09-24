@@ -19,6 +19,24 @@ func ProvideUserRestHandler(userUseCase usecases.UserUseCase) *UserRestHandler {
 	return &UserRestHandler{userUseCase: userUseCase}
 }
 
+func (uh *UserRestHandler) GetUsers(c *fiber.Ctx) error{
+	list, err := uh.userUseCase.GetUsers(c.Context())
+
+	if err != nil{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message":"User not found",
+			"log": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message":"Successful get user",
+		"payload": fiber.Map{
+			"user": list,
+		},
+	})
+}
+
 func (uh *UserRestHandler) GetUserByID(c *fiber.Ctx) error{
 	id := convert.StringToUUID(c.Params("id"))
 
@@ -35,6 +53,33 @@ func (uh *UserRestHandler) GetUserByID(c *fiber.Ctx) error{
 		"message":"Successful get user",
 		"payload": fiber.Map{
 			"user": user,
+		},
+	})
+}
+
+func (uh *UserRestHandler) GetUserByEmail(c *fiber.Ctx) error{
+	email := c.Params("email")
+
+	if email == ""{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message":"Bad request",
+			"log":"empty email in subpath",
+		})
+	}
+
+	response, err := uh.userUseCase.GetByEmail(c.Context(), &email)
+
+	if err != nil{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message":"Internal server error",
+			"log":err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message":"Successful get user",
+		"payload": fiber.Map{
+			"user": response,
 		},
 	})
 }
@@ -62,6 +107,21 @@ func (uh *UserRestHandler) CreateUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"user": selectedUser,
 	})
+}
+
+func (uh *UserRestHandler) DeleteByID(c *fiber.Ctx) error{
+	id := convert.StringToUUID(c.Params("id"))
+
+	if err := uh.userUseCase.DeleteByID(c.Context(),&id); err!=nil{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message":"Internal server error",
+			"log":err.Error(),
+		})
+	}
+
+
+	return c.SendStatus(fiber.StatusNoContent)
+
 }
 
 
