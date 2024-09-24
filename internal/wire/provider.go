@@ -4,7 +4,7 @@ import (
 	"github.com/ThanawatPtd/SAProject/config"
 	_ "github.com/ThanawatPtd/SAProject/config"
 	"github.com/ThanawatPtd/SAProject/domain/usecases"
-	"github.com/ThanawatPtd/SAProject/internal/adapters/repositories/psql"
+	"github.com/ThanawatPtd/SAProject/internal/adapters/psql"
 	"github.com/ThanawatPtd/SAProject/internal/adapters/rest"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db"
 	"github.com/google/wire"

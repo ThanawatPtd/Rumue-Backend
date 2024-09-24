@@ -9,7 +9,7 @@ package wire
 import (
 	"github.com/ThanawatPtd/SAProject/config"
 	"github.com/ThanawatPtd/SAProject/domain/usecases"
-	"github.com/ThanawatPtd/SAProject/internal/adapters/repositories/psql"
+	"github.com/ThanawatPtd/SAProject/internal/adapters/psql"
 	"github.com/ThanawatPtd/SAProject/internal/adapters/rest"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db"
 )

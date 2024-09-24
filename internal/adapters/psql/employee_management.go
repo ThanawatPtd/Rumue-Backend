@@ -2,8 +2,6 @@ package psql
 
 import (
 	"context"
-	"errors"
-
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -12,13 +10,11 @@ import (
 
 type PostgresEmployeeManagementRepository struct {
 	Queries *dbmodel.Queries
-	DB *pgxpool.Pool
 }
 
 func ProvidePostgresEmployeeManagementRepository(db *pgxpool.Pool) repositories.EmployeeManagementRepository {
 	return &PostgresEmployeeManagementRepository{
 		Queries: dbmodel.New(db),
-		DB: db,
 	}
 }
 
@@ -26,7 +22,7 @@ func (a *PostgresEmployeeManagementRepository) ListAll(c *context.Context) (*[]d
 	selectedManagement, err := a.Queries.GetAllEmployeeManagement(*c)
 
 	if err != nil {
-		return nil, errors.New("listing all employee management error")
+		return nil, err
 	}
 	return &selectedManagement, nil
 }
@@ -35,7 +31,7 @@ func (a *PostgresEmployeeManagementRepository) Save(c *context.Context, manageme
 	selectedManagement, err := a.Queries.CreateEmployeeManagement(*c, *management)
 
 	if err != nil {
-		return nil, errors.New("creating employee management error")
+		return nil, err
 	}
 	return &selectedManagement, nil
 }
@@ -44,7 +40,7 @@ func (a *PostgresEmployeeManagementRepository) GetByEmployeeID(c *context.Contex
 	selectedManagement, err := a.Queries.GetEmployeeManagementsByEmployeeID(*c, *id)
 
 	if err != nil {
-		return nil, errors.New("getting employee management error")
+		return nil, err
 	}
 	return &selectedManagement, nil
 }
@@ -53,7 +49,7 @@ func (a *PostgresEmployeeManagementRepository) GetByAdminID(c *context.Context, 
 	selectedManagement, err := a.Queries.GetAllEmployeeManagementsByAdminID(*c, *id)
 
 	if err != nil {
-		return nil, errors.New("getting employee management error")
+		return nil, err
 	}
 	return &selectedManagement, nil
 }
@@ -62,14 +58,14 @@ func (a *PostgresEmployeeManagementRepository) Update(c *context.Context, manage
 	selectedManagement, err := a.Queries.UpdateEmployeeManagement(*c, * management)
 
 	if err != nil {
-		return nil, errors.New("updating employee management error")
+		return nil, err
 	}
 	return &selectedManagement, nil
 }
 
 func (a *PostgresEmployeeManagementRepository) Delete(c *context.Context, management *dbmodel.DeleteEmployeeManagementParams) (error) {
 	if err := a.Queries.DeleteEmployeeManagement(*c, *management); err != nil {
-		return errors.New("deleting admin error")
+		return err
 	}
 	return nil
 }
