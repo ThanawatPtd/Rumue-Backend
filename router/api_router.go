@@ -28,7 +28,12 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 
 	employee := app.Group("/employee")
 
+	employee.Get("/id=:id", handler.Employee.GetEmployeeByID)
+	employee.Get("",handler.Employee.GetEmployees)
+
 	employee.Post("/create",handler.Employee.CreateEmployee)
+
+	employee.Delete("/delete/id=:id",handler.Employee.DeleteByID)
 	// user.Update("/update/:id", )
 
 }
