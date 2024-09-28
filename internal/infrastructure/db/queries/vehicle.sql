@@ -1,0 +1,27 @@
+-- name: GetAllVehicle :many
+SELECT 
+    vehicle_id,
+    registration_date,
+    registration_number,
+    province VARCHAR(100),
+    vehicle_type VARCHAR(100),
+    vehicle_category VARCHAR(100),
+    characteristics VARCHAR(100),
+    brand VARCHAR(100),
+    model VARCHAR(100),
+    model_year VARCHAR(100),
+    vehicle_color VARCHAR(50),
+    engine_number VARCHAR(100),
+    chasis_number VARCHAR(100),
+    fuel_type VARCHAR(100),
+    horse_power INT,
+    seating_capacity INT,
+    weight_unlanden FLOAT,
+    weight_laden FLOAT,
+    tire_count INT,
+    compulsory_insurance_policy_number VARCHAR(50),
+    voluntary_insurance_policy_number VARCHAR(50),
+    insurance_type VARCHAR(50),
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+from "vehicle";
