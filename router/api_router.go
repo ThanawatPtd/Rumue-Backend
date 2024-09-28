@@ -1,7 +1,6 @@
 package router
 
 import (
-
 	"github.com/ThanawatPtd/SAProject/internal/adapters/rest"
 	"github.com/gofiber/fiber/v2"
 )
@@ -31,4 +30,7 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 	employee.Post("/create",handler.Employee.CreateEmployee)
 	// user.Update("/update/:id", )
 
+	vehicle := app.Group("/vehicle")
+
+	vehicle.Post("/create", handler.Vehicle.CreateVehicle)
 }

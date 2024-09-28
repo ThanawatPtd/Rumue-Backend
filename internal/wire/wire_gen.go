@@ -27,11 +27,12 @@ func InitializeHandler() *rest.Handler {
 	userRepository := psql.ProvidePostgresUserRepository(pool)
 	userUseCase := usecases.ProvideUserService(userRepository)
 	userRestHandler := rest.ProvideUserRestHandler(userUseCase)
-
 	employeeRepository := psql.ProvidePostgresEmployeeRepository(pool)
 	employeeUseCase := usecases.ProvideEmployeeService(employeeRepository)
 	employeeHandler := rest.ProvideEmployeeRestHandler(employeeUseCase)
-
-	handler := rest.ProvideHandler(userRestHandler, employeeHandler)
+	vehicleRepository := psql.ProvidePostgresVehicleRepository(pool)
+	vehicleUseCase := usecases.ProvideVehicleService(vehicleRepository)
+	vehicleRestHandler := rest.ProvideVehicleHandler(vehicleUseCase)
+	handler := rest.ProvideHandler(userRestHandler, employeeHandler, vehicleRestHandler)
 	return handler
 }

@@ -68,6 +68,6 @@ type Vehicle struct {
 }
 
 type VehicleOwner struct {
-	ID        pgtype.UUID `json:"id"`
+	UserID    pgtype.UUID `json:"userId"`
 	VehicleID pgtype.UUID `json:"vehicleId"`
 }

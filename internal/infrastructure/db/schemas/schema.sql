@@ -82,9 +82,9 @@ ALTER TABLE "vehicle" ALTER COLUMN vehicle_id SET DEFAULT uuid_generate_v4();
 
 -- Vehicle Owner Table
 CREATE TABLE "vehicle_owner"(
-    id UUID,
+    user_id UUID,
     vehicle_id UUID,
-    PRIMARY KEY (id, vehicle_id),
-    FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, vehicle_id),
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(vehicle_id) ON DELETE CASCADE
 );
