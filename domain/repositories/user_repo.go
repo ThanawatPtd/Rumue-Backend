@@ -3,15 +3,14 @@ package repositories
 import (
 	"context"
 
-	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/ThanawatPtd/SAProject/domain/entities"
 )
 
 type UserRepository interface {
-	ListAll(c *context.Context) (*[]dbmodel.GetAllUsersRow, error)
-	Save(c *context.Context, user *dbmodel.CreateUserParams) (*dbmodel.CreateUserRow, error)
-	GetByEmail(c *context.Context, email *string) (*dbmodel.GetUserByEmailRow, error)
-	GetByID(c *context.Context, id *pgtype.UUID) (*dbmodel.GetUserByIDRow, error)
-	Update(c *context.Context, user *dbmodel.UpdateUserParams) (*dbmodel.UpdateUserRow, error)
-	Delete(c *context.Context, id *pgtype.UUID) (error)
+	ListAll(c context.Context) (*[]entities.User, error)
+	Save(c context.Context, user *entities.User) (*entities.User, error)
+	GetByEmail(c context.Context, email *string) (*entities.User, error)
+	GetByID(c context.Context, id string) (*entities.User, error)
+	Update(c context.Context, user *entities.User) (*entities.User, error)
+	Delete(c context.Context, id string) error
 }
