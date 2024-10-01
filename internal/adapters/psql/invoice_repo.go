@@ -25,7 +25,7 @@ func ProvidePostgresInvoiceRepository(db *pgxpool.Pool) repositories.InvoiceRepo
 func (p *PostgresInvoiceRepository) Save(c *context.Context, invoice *entities.Invoice) (*entities.Invoice, error) {
 	var createInvoiceParams dbmodel.CreateInvoiceParams
 	createInvoiceParams = dbmodel.CreateInvoiceParams{
-		TransactionID:     convert.StringToUUID(invoice.TrasactionID),
+		TransactionID:     convert.StringToUUID(invoice.TransactionID),
 		Price:             invoice.Price,
 		Invoice_image_url: invoice.Invoice_image_url,
 	}
@@ -37,7 +37,7 @@ func (p *PostgresInvoiceRepository) Save(c *context.Context, invoice *entities.I
 
 	var invoiceRes entities.Invoice
 	invoiceRes = entities.Invoice{
-		TrasactionID:      convert.UUIDToString(createdInvoiceRow.TransactionID),
+		TransactionID:      convert.UUIDToString(createdInvoiceRow.TransactionID),
 		Price:             createdInvoiceRow.Price,
 		Invoice_image_url: createdInvoiceRow.Invoice_image_url,
 	}
