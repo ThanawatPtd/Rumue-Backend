@@ -8,25 +8,33 @@ import (
 )
 
 type VehicleUseCase interface {
-	CreateVehicle(ctx context.Context, vehicle *entities.Vehicle) (*entities.Vehicle, error)
+	CreateVehicle(ctx context.Context, userId string, vehicle *entities.Vehicle) (*entities.Vehicle, error)
 }
 
 type VehicleService struct {
-	vehicleRepo repositories.VehicleRepository
+	vehicleRepo  repositories.VehicleRepository
+	vehicleOwner repositories.VehicleOwnerRepository
 }
 
-
-func ProvideVehicleService(vehicleRepo repositories.VehicleRepository) VehicleUseCase {
+func ProvideVehicleService(vehicleRepo repositories.VehicleRepository, vehicleOwnerRepo repositories.VehicleOwnerRepository) VehicleUseCase {
 	return &VehicleService{
-		vehicleRepo: vehicleRepo,
+		vehicleRepo:  vehicleRepo,
+		vehicleOwner: vehicleOwnerRepo,
 	}
 }
+
 // CreateVehicle implements VehicleUseCase.
-func (v *VehicleService) CreateVehicle(ctx context.Context, vehicle *entities.Vehicle) (*entities.Vehicle, error) {
+func (v *VehicleService) CreateVehicle(ctx context.Context, userId string, vehicle *entities.Vehicle) (*entities.Vehicle, error) {
 	//find first later
 
 	createVehicle, err := v.vehicleRepo.CreateVehicle(ctx, vehicle)
-	if err != nil{
+	if err != nil {
+		return nil, err
+	}
+	// Map User and Vehicle
+	err = v.vehicleOwner.MapUserAndVehicle(ctx, userId, createVehicle.VehicleId)
+	// If map fail return error
+	if err != nil {
 		return nil, err
 	}
 

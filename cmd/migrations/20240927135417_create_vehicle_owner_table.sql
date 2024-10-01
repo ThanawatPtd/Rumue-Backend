@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 -- Vehicle Owner Table
 CREATE TABLE "vehicle_owner"(
-    id UUID,
+    user_id UUID,
     vehicle_id UUID,
     PRIMARY KEY (id, vehicle_id),
     FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE,

@@ -4,7 +4,7 @@
 CREATE TABLE "vehicle"(
     vehicle_id UUID PRIMARY KEY,
     registration_date TIMESTAMPTZ NOT NULL,
-    registration_number TIMESTAMPTZ NOT NULL,
+    registration_number VARCHAR(100) NOT NULL,
     province VARCHAR(100) NOT NULL,
     vehicle_type VARCHAR(100) NOT NULL,
     vehicle_category VARCHAR(100) NOT NULL,

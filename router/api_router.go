@@ -32,6 +32,6 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 	// user.Update("/update/:id", )
 
 	vehicle := app.Group("/vehicle")
-
+	vehicle.Use(middlewares.JwtMiddleware(config.ProvideConfig().JWTSecret))
 	vehicle.Post("/", handler.Vehicle.CreateVehicle)
 }

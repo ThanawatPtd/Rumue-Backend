@@ -22,7 +22,7 @@ RETURNING vehicle_id,registration_date, registration_number, province, vehicle_t
 
 type CreateVehicleParams struct {
 	RegistrationDate                pgtype.Timestamptz `json:"registrationDate"`
-	RegistrationNumber              pgtype.Timestamptz `json:"registrationNumber"`
+	RegistrationNumber              string             `json:"registrationNumber"`
 	Province                        string             `json:"province"`
 	VehicleType                     string             `json:"vehicleType"`
 	VehicleCategory                 string             `json:"vehicleCategory"`
@@ -47,7 +47,7 @@ type CreateVehicleParams struct {
 type CreateVehicleRow struct {
 	VehicleID                       pgtype.UUID        `json:"vehicleId"`
 	RegistrationDate                pgtype.Timestamptz `json:"registrationDate"`
-	RegistrationNumber              pgtype.Timestamptz `json:"registrationNumber"`
+	RegistrationNumber              string             `json:"registrationNumber"`
 	Province                        string             `json:"province"`
 	VehicleType                     string             `json:"vehicleType"`
 	VehicleCategory                 string             `json:"vehicleCategory"`

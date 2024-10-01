@@ -32,7 +32,7 @@ func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) (*
 		Lname:       user.Lname,
 		Password:    user.Password,
 		PhoneNumber: user.PhoneNumber,
-		Address:     user.PhoneNumber,
+		Address:     user.Address,
 	}
 
 	selectedUser, err := u.Queries.CreateUser(c, createUser)
@@ -54,7 +54,7 @@ func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) (*
 	return &createdUser, nil
 }
 
-func (u *PostgresUserRepository) ListAll(c context.Context) (*[]entities.User, error) {
+func (u *PostgresUserRepository) ListAll(c context.Context) ([]entities.User, error) {
 	selectedUsers, err := u.Queries.GetAllUsers(c)
 
 	if err != nil {
@@ -62,7 +62,7 @@ func (u *PostgresUserRepository) ListAll(c context.Context) (*[]entities.User, e
 	}
 
 	if selectedUsers == nil {
-		return &[]entities.User{}, nil
+		return []entities.User{}, nil
 	}
 
 	var users []entities.User
@@ -80,7 +80,7 @@ func (u *PostgresUserRepository) ListAll(c context.Context) (*[]entities.User, e
 
 	}
 
-	return &users, nil
+	return users, nil
 }
 
 // Delete implements repositories.UserRepository.

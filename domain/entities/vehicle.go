@@ -5,7 +5,7 @@ import "time"
 type Vehicle struct {
 	VehicleId                       string
 	RegistrationDate                time.Time
-	RegistrationNumber              time.Time
+	RegistrationNumber              string
 	Province                        string
 	VehicleType                     string
 	VehicleCategory                 string

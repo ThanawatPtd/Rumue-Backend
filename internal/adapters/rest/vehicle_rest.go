@@ -4,6 +4,7 @@ import (
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/requests"
 	"github.com/ThanawatPtd/SAProject/domain/usecases"
+	"github.com/ThanawatPtd/SAProject/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -29,8 +30,8 @@ func (v *VehicleRestHandler) CreateVehicle(c *fiber.Ctx) error {
 	}
 
 	createPayload := entities.Vehicle(req)
-
-	newVehicle, err := v.vehicleService.CreateVehicle(c.Context(), &createPayload)
+	userId := utils.GetUserIDFromJWT(c)
+	newVehicle, err := v.vehicleService.CreateVehicle(c.Context(), userId, &createPayload)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{

@@ -28,6 +28,7 @@ var RepositorySet = wire.NewSet(
 	psql.ProvidePostgresUserRepository,
 	psql.ProvidePostgresEmployeeRepository,
 	psql.ProvidePostgresVehicleRepository,
+	psql.ProvidePostgresVehicleOwnerRepository,
 )
 
 var HandlerSet = wire.NewSet(

@@ -27,7 +27,7 @@ func (p *PostgresVehicleRepository) CreateVehicle(ctx context.Context, vehicle *
 	var createVehicleParam dbmodel.CreateVehicleParams
 	createVehicleParam = dbmodel.CreateVehicleParams{
 		RegistrationDate:                convert.TimeToTimestamptz(vehicle.RegistrationDate),
-		RegistrationNumber:              convert.TimeToTimestamptz(vehicle.RegistrationNumber),
+		RegistrationNumber:              vehicle.RegistrationNumber,
 		Province:                        vehicle.Province,
 		VehicleType:                     vehicle.VehicleType,
 		VehicleCategory:                 vehicle.VehicleCategory,
@@ -55,8 +55,9 @@ func (p *PostgresVehicleRepository) CreateVehicle(ctx context.Context, vehicle *
 	}
 	var vehicleRes entities.Vehicle
 	vehicleRes = entities.Vehicle{
+		VehicleId:                       convert.UUIDToString(createVehicle.VehicleID),
 		RegistrationDate:                createVehicle.RegistrationDate.Time,
-		RegistrationNumber:              createVehicle.RegistrationNumber.Time,
+		RegistrationNumber:              createVehicle.RegistrationNumber,
 		Province:                        createVehicle.Province,
 		VehicleType:                     createVehicle.VehicleType,
 		VehicleCategory:                 createVehicle.VehicleCategory,
