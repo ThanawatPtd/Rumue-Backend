@@ -13,6 +13,7 @@ type Config struct {
 	PostgresPassword string `mapstructure:"POSTGRES_PASSWORD"`
 	PostgresDB       string `mapstructure:"POSTGRES_DB"`
 	PostgresPort     string `mapstructure:"POSTGRES_PORT"`
+	JWTSecret        string `mapstructure:"JWT_SECRET"`
 }
 
 func ProvideConfig() *Config {

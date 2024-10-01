@@ -1,11 +1,15 @@
 package rest
 
 type Handler struct {
-	User *UserRestHandler
+	User     *UserRestHandler
+	Employee *EmployeeHandler
+	Vehicle  *VehicleRestHandler
 }
 
-func ProvideHandler(user *UserRestHandler) *Handler {
+func ProvideHandler(user *UserRestHandler, employee *EmployeeHandler, vehicle *VehicleRestHandler) *Handler {
 	return &Handler{
-		User: user,
+		User:     user,
+		Employee: employee,
+		Vehicle:  vehicle,
 	}
 }
