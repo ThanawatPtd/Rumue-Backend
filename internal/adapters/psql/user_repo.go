@@ -2,9 +2,13 @@ package psql
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+
+	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/emicklei/pgtalk/convert"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,61 +20,150 @@ type PostgresUserRepository struct {
 func ProvidePostgresUserRepository(db *pgxpool.Pool) repositories.UserRepository {
 	return &PostgresUserRepository{
 		Queries: dbmodel.New(db),
+		DB:      db,
 	}
 }
 
-func (u *PostgresUserRepository) Save(c *context.Context, user *dbmodel.CreateUserParams) (*dbmodel.CreateUserRow, error) {
-	selectedUser, err := u.Queries.CreateUser(*c, *user)
-
-	if err != nil {
-		return nil, err 
+func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) (*entities.User, error) {
+	var createUser dbmodel.CreateUserParams
+	createUser = dbmodel.CreateUserParams{
+		Email:       user.Email,
+		Fname:       user.Fname,
+		Lname:       user.Lname,
+		Password:    user.Password,
+		PhoneNumber: user.PhoneNumber,
+		Address:     user.Address,
 	}
 
-	return &selectedUser, nil
-}
-
-func (u *PostgresUserRepository) ListAll(c *context.Context) (*[]dbmodel.GetAllUsersRow, error) {
-	selectedUsers, err := u.Queries.GetAllUsers(*c)
-
-	if err != nil {
-		return nil, err 
-	}
-
-	return &selectedUsers, nil
-}
-
-func (u *PostgresUserRepository) GetByEmail(c *context.Context, email *string) (*dbmodel.GetUserByEmailRow, error) {
-	selectedUser, err := u.Queries.GetUserByEmail(*c, *email)
-
-	if err != nil {
-		return nil, err 
-	}
-
-	return &selectedUser, nil 
-}
-
-func (u *PostgresUserRepository) GetByID(c *context.Context, id *pgtype.UUID) (*dbmodel.GetUserByIDRow, error) {
-	selectedUser, err := u.Queries.GetUserByID(*c, *id)
-	
-	if err != nil {
-		return nil, err 
-	}
-
-	return &selectedUser, nil
-}
-
-func (u *PostgresUserRepository) Update(c *context.Context, user *dbmodel.UpdateUserParams) (*dbmodel.UpdateUserRow, error) {
-	selectedUser, err := u.Queries.UpdateUser(*c, *user)
+	selectedUser, err := u.Queries.CreateUser(c, createUser)
 
 	if err != nil {
 		return nil, err
 	}
-	return &selectedUser, nil
+
+	var createdUser entities.User
+	createdUser = entities.User{
+		UserId:      convert.UUIDToString(selectedUser.ID),
+		Email:       selectedUser.Email,
+		Fname:       selectedUser.Fname,
+		Lname:       selectedUser.Lname,
+		PhoneNumber: selectedUser.PhoneNumber,
+		Address:     selectedUser.Address,
+	}
+
+	return &createdUser, nil
 }
 
-func (u *PostgresUserRepository) Delete(c *context.Context, id *pgtype.UUID) (error) {
-	if err := u.Queries.DeleteUser(*c, *id); err != nil {
-	return err
+func (u *PostgresUserRepository) ListAll(c context.Context) ([]entities.User, error) {
+	selectedUsers, err := u.Queries.GetAllUsers(c)
+
+	if err != nil {
+		return nil, err
 	}
+
+	if selectedUsers == nil {
+		return []entities.User{}, nil
+	}
+
+	var users []entities.User
+	for _, user := range selectedUsers {
+		mapUser := entities.User{
+			UserId:      convert.UUIDToString(user.ID),
+			Email:       user.Email,
+			Fname:       user.Fname,
+			Lname:       user.Lname,
+			Password:    user.Password,
+			PhoneNumber: user.PhoneNumber,
+			Address:     user.Address,
+		}
+		users = append(users, mapUser)
+
+	}
+
+	return users, nil
+}
+
+// Delete implements repositories.UserRepository.
+func (u *PostgresUserRepository) Delete(c context.Context, id string) error {
+	userId := convert.StringToUUID(id)
+	err := u.Queries.DeleteUser(c, userId)
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+// GetByEmail implements repositories.UserRepository.
+func (u *PostgresUserRepository) GetByEmail(c context.Context, email *string) (*entities.User, error) {
+	getUser, err := u.Queries.GetUserByEmail(c, *email)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	var user entities.User
+	user = entities.User{
+		UserId:      convert.UUIDToString(getUser.ID),
+		Email:       getUser.Email,
+		Fname:       getUser.Fname,
+		Lname:       getUser.Lname,
+		Password:    getUser.Password,
+		PhoneNumber: getUser.PhoneNumber,
+		Address:     getUser.Address,
+	}
+	return &user, nil
+}
+
+// GetByID implements repositories.UserRepository.
+func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entities.User, error) {
+	userId := convert.StringToUUID(id)
+	getUser, err := u.Queries.GetUserByID(c, userId)
+
+	if err != nil {
+		return nil, err
+	}
+	var user entities.User
+	user = entities.User{
+		UserId:      id,
+		Email:       getUser.Email,
+		Fname:       getUser.Fname,
+		Lname:       getUser.Lname,
+		Password:    getUser.Password,
+		PhoneNumber: getUser.PhoneNumber,
+		Address:     getUser.Address,
+	}
+	return &user, nil
+}
+
+// Update implements repositories.UserRepository.
+func (u *PostgresUserRepository) Update(c context.Context, user *entities.User) (*entities.User, error) {
+	var updateUserParams dbmodel.UpdateUserParams
+	updateUserParams = dbmodel.UpdateUserParams{
+		ID:          convert.StringToUUID(user.UserId),
+		Email:       user.Email,
+		Fname:       user.Fname,
+		Lname:       user.Lname,
+		PhoneNumber: user.PhoneNumber,
+		Password:    user.Password,
+		Address:     user.Address,
+	}
+	getUser, err := u.Queries.UpdateUser(c, updateUserParams)
+	if err != nil {
+		return nil, err
+	}
+	var mapUser entities.User
+	mapUser = entities.User{
+		UserId:      convert.UUIDToString(getUser.ID),
+		Email:       getUser.Email,
+		Fname:       getUser.Fname,
+		Lname:       getUser.Lname,
+		Password:    getUser.Password,
+		PhoneNumber: getUser.PhoneNumber,
+		Address:     getUser.Address,
+	}
+	return &mapUser, nil
 }

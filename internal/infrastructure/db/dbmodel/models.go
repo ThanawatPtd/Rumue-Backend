@@ -43,7 +43,7 @@ type User struct {
 type Vehicle struct {
 	VehicleID                       pgtype.UUID        `json:"vehicleId"`
 	RegistrationDate                pgtype.Timestamptz `json:"registrationDate"`
-	RegistrationNumber              pgtype.Timestamptz `json:"registrationNumber"`
+	RegistrationNumber              string             `json:"registrationNumber"`
 	Province                        string             `json:"province"`
 	VehicleType                     string             `json:"vehicleType"`
 	VehicleCategory                 string             `json:"vehicleCategory"`
@@ -68,6 +68,6 @@ type Vehicle struct {
 }
 
 type VehicleOwner struct {
-	ID        pgtype.UUID `json:"id"`
+	UserID    pgtype.UUID `json:"userId"`
 	VehicleID pgtype.UUID `json:"vehicleId"`
 }

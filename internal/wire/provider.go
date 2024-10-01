@@ -20,12 +20,19 @@ var ConfigSet = wire.NewSet(
 
 var ServiceSet = wire.NewSet(
 	usecases.ProvideUserService,
+	usecases.ProvideVehicleService,
+	usecases.ProvideEmployeeService,
 )
 
 var RepositorySet = wire.NewSet(
 	psql.ProvidePostgresUserRepository,
+	psql.ProvidePostgresEmployeeRepository,
+	psql.ProvidePostgresVehicleRepository,
+	psql.ProvidePostgresVehicleOwnerRepository,
 )
 
 var HandlerSet = wire.NewSet(
 	rest.ProvideUserRestHandler,
+	rest.ProvideVehicleHandler,
+	rest.ProvideEmployeeRestHandler,
 )

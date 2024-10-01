@@ -6,7 +6,7 @@ CREATE TABLE "user" (
     fname VARCHAR(100) NOT NULL,
     lname VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(10) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
     address VARCHAR(100) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ
@@ -54,7 +54,7 @@ ALTER TABLE "employee_management" ALTER COLUMN admin_id SET DEFAULT uuid_generat
 CREATE TABLE "vehicle"(
     vehicle_id UUID PRIMARY KEY,
     registration_date TIMESTAMPTZ NOT NULL,
-    registration_number TIMESTAMPTZ NOT NULL,
+    registration_number VARCHAR(100) NOT NULL,
     province VARCHAR(100) NOT NULL,
     vehicle_type VARCHAR(100) NOT NULL,
     vehicle_category VARCHAR(100) NOT NULL,
@@ -82,9 +82,9 @@ ALTER TABLE "vehicle" ALTER COLUMN vehicle_id SET DEFAULT uuid_generate_v4();
 
 -- Vehicle Owner Table
 CREATE TABLE "vehicle_owner"(
-    id UUID,
+    user_id UUID,
     vehicle_id UUID,
-    PRIMARY KEY (id, vehicle_id),
-    FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, vehicle_id),
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(vehicle_id) ON DELETE CASCADE
 );
