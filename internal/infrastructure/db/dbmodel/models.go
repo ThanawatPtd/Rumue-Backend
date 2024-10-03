@@ -8,12 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Admin struct {
-	ID        pgtype.UUID        `json:"id"`
-	CreatedAt pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
-}
-
 type Employee struct {
 	ID        pgtype.UUID        `json:"id"`
 	Salary    pgtype.Float4      `json:"salary"`
@@ -21,11 +15,21 @@ type Employee struct {
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
 }
 
-type EmployeeManagement struct {
-	EmployeeID pgtype.UUID        `json:"employeeId"`
-	AdminID    pgtype.UUID        `json:"adminId"`
-	CreatedAt  pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt  pgtype.Timestamptz `json:"updatedAt"`
+type Invoice struct {
+	ID              pgtype.UUID `json:"id"`
+	TransactionID   pgtype.UUID `json:"transactionId"`
+	Price           float64     `json:"price"`
+	InvoiceImageUrl string      `json:"invoiceImageUrl"`
+}
+
+type Transaction struct {
+	ID                pgtype.UUID        `json:"id"`
+	VehicleOwnerID    pgtype.UUID        `json:"vehicleOwnerId"`
+	TransactionType   string             `json:"transactionType"`
+	TransactionStatus string             `json:"transactionStatus"`
+	RequestDate       pgtype.Timestamptz `json:"requestDate"`
+	ResponseDate      pgtype.Timestamptz `json:"responseDate"`
+	ESlipImageUrl     pgtype.Text        `json:"eSlipImageUrl"`
 }
 
 type User struct {
@@ -41,7 +45,7 @@ type User struct {
 }
 
 type Vehicle struct {
-	VehicleID                       pgtype.UUID        `json:"vehicleId"`
+	ID                              pgtype.UUID        `json:"id"`
 	RegistrationDate                pgtype.Timestamptz `json:"registrationDate"`
 	RegistrationNumber              string             `json:"registrationNumber"`
 	Province                        string             `json:"province"`
@@ -68,6 +72,7 @@ type Vehicle struct {
 }
 
 type VehicleOwner struct {
+	ID        pgtype.UUID `json:"id"`
 	UserID    pgtype.UUID `json:"userId"`
 	VehicleID pgtype.UUID `json:"vehicleId"`
 }

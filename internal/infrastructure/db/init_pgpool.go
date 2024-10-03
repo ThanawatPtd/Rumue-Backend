@@ -12,6 +12,7 @@ import (
 func ProvidePgxPool(ctx context.Context, config *config.Config) *pgxpool.Pool {
 	postgresURI := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s",
 		config.PostgresHost, config.PostgresPort, config.PostgresUser, config.PostgresPassword, config.PostgresDB)
+	fmt.Println(postgresURI)
 
 	connConfig, err := pgxpool.ParseConfig(postgresURI)
 	if err != nil {

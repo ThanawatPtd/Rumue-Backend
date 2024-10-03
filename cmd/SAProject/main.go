@@ -24,6 +24,6 @@ func main() {
 
 	router.RegisterApiRouter(app, handler)
 
-	app.Listen(":3001")
+	app.Listen(":3002")
 
 }

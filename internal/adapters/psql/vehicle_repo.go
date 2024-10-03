@@ -55,7 +55,7 @@ func (p *PostgresVehicleRepository) CreateVehicle(ctx context.Context, vehicle *
 	}
 	var vehicleRes entities.Vehicle
 	vehicleRes = entities.Vehicle{
-		VehicleId:                       convert.UUIDToString(createVehicle.VehicleID),
+		VehicleId:                       convert.UUIDToString(createVehicle.ID),
 		RegistrationDate:                createVehicle.RegistrationDate.Time,
 		RegistrationNumber:              createVehicle.RegistrationNumber,
 		Province:                        createVehicle.Province,

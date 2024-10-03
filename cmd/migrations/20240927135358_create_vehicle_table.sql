@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 -- Vehicle Table
 CREATE TABLE "vehicle"(
-    vehicle_id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     registration_date TIMESTAMPTZ NOT NULL,
     registration_number VARCHAR(100) NOT NULL,
     province VARCHAR(100) NOT NULL,
@@ -28,7 +28,6 @@ CREATE TABLE "vehicle"(
     updated_at TIMESTAMPTZ
 );
 
-ALTER TABLE "vehicle" ALTER COLUMN vehicle_id SET DEFAULT uuid_generate_v4();
 -- +goose StatementEnd
 
 -- +goose Down

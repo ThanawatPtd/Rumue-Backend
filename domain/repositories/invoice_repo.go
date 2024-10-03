@@ -9,7 +9,7 @@ import (
 )
 
 type InvoiceRepository interface {
-	ListAll(c *context.Context) (*[]dbmodel.GetAllInvoicesRow, error)
+	ListAll(c *context.Context) (*[]dbmodel.Invoice, error)
 	Save(c *context.Context, invoice *entities.Invoice) (*entities.Invoice, error)
 	// GetByID(c *context.Context, id *pgtype.UUID) (*dbmodel.GetInvoiceByIDRow, error)
 	// Update(c *context.Context, user *dbmodel.UpdateInvoiceParams) (*dbmodel.UpdateInvoiceRow, error)

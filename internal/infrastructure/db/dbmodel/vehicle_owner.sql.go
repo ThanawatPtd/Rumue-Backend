@@ -16,7 +16,7 @@ INSERT INTO "vehicle_owner"(
     user_id,vehicle_id
 ) VALUES(
     $1, $2
-)RETURNING user_id, vehicle_id
+)RETURNING id, user_id, vehicle_id
 `
 
 type CreateVehicleOwnerParams struct {
@@ -27,12 +27,13 @@ type CreateVehicleOwnerParams struct {
 func (q *Queries) CreateVehicleOwner(ctx context.Context, arg CreateVehicleOwnerParams) (VehicleOwner, error) {
 	row := q.db.QueryRow(ctx, createVehicleOwner, arg.UserID, arg.VehicleID)
 	var i VehicleOwner
-	err := row.Scan(&i.UserID, &i.VehicleID)
+	err := row.Scan(&i.ID, &i.UserID, &i.VehicleID)
 	return i, err
 }
 
 const getAllVehicleOwner = `-- name: GetAllVehicleOwner :many
 SELECT
+    id,
     user_id,
     vehicle_id
 from "vehicle_owner"
@@ -47,7 +48,7 @@ func (q *Queries) GetAllVehicleOwner(ctx context.Context) ([]VehicleOwner, error
 	var items []VehicleOwner
 	for rows.Next() {
 		var i VehicleOwner
-		if err := rows.Scan(&i.UserID, &i.VehicleID); err != nil {
+		if err := rows.Scan(&i.ID, &i.UserID, &i.VehicleID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -60,24 +61,26 @@ func (q *Queries) GetAllVehicleOwner(ctx context.Context) ([]VehicleOwner, error
 
 const getAllVehicleOwnerByUserId = `-- name: GetAllVehicleOwnerByUserId :many
 SELECT
+    id,
+    user_id,
     vehicle_id
 from "vehicle_owner"
 WHERE user_id = $1
 `
 
-func (q *Queries) GetAllVehicleOwnerByUserId(ctx context.Context, userID pgtype.UUID) ([]pgtype.UUID, error) {
+func (q *Queries) GetAllVehicleOwnerByUserId(ctx context.Context, userID pgtype.UUID) ([]VehicleOwner, error) {
 	rows, err := q.db.Query(ctx, getAllVehicleOwnerByUserId, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []pgtype.UUID
+	var items []VehicleOwner
 	for rows.Next() {
-		var vehicle_id pgtype.UUID
-		if err := rows.Scan(&vehicle_id); err != nil {
+		var i VehicleOwner
+		if err := rows.Scan(&i.ID, &i.UserID, &i.VehicleID); err != nil {
 			return nil, err
 		}
-		items = append(items, vehicle_id)
+		items = append(items, i)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

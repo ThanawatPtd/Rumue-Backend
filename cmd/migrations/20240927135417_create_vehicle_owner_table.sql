@@ -2,11 +2,12 @@
 -- +goose StatementBegin
 -- Vehicle Owner Table
 CREATE TABLE "vehicle_owner"(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID,
     vehicle_id UUID,
-    PRIMARY KEY (id, vehicle_id),
-    FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE,
-    FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(vehicle_id) ON DELETE CASCADE
+    UNIQUE (user_id, vehicle_id),
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
+    FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(id) ON DELETE CASCADE
 );
 -- +goose StatementEnd
 
