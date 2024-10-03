@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "user" (
-    id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email VARCHAR(100) NOT NULL UNIQUE,
     fname VARCHAR(100) NOT NULL,
     lname VARCHAR(100) NOT NULL,
@@ -12,47 +12,18 @@ CREATE TABLE "user" (
     updated_at TIMESTAMPTZ
 );
 
-ALTER TABLE "user" ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-
 -- EMPLOYEE Table (Inherits from USER)
 CREATE TABLE "employee" (
-    id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     salary REAL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ,
     FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE
 );
 
-ALTER TABLE "employee" ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-
--- ADMIN Table (Inherits from USER)
-CREATE TABLE "admin" (
-    id UUID PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ,
-    FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE
-);
-
-ALTER TABLE "admin" ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-
--- EMPLOYEE_MANAGEMENT Table
-CREATE TABLE "employee_management" (
-    employee_id UUID,
-    admin_id UUID,
-    created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ,
-    PRIMARY KEY (employee_id, admin_id),
-    FOREIGN KEY (employee_id) REFERENCES "employee"(id) ON DELETE CASCADE,
-    FOREIGN KEY (admin_id) REFERENCES "admin"(id) ON DELETE CASCADE
-);
-
-ALTER TABLE "employee_management" ALTER COLUMN employee_id SET DEFAULT uuid_generate_v4();
-ALTER TABLE "employee_management" ALTER COLUMN admin_id SET DEFAULT uuid_generate_v4();
-
-
 -- Vehicle Table
 CREATE TABLE "vehicle"(
-    vehicle_id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     registration_date TIMESTAMPTZ NOT NULL,
     registration_number VARCHAR(100) NOT NULL,
     province VARCHAR(100) NOT NULL,
@@ -78,13 +49,34 @@ CREATE TABLE "vehicle"(
     updated_at TIMESTAMPTZ
 );
 
-ALTER TABLE "vehicle" ALTER COLUMN vehicle_id SET DEFAULT uuid_generate_v4();
-
 -- Vehicle Owner Table
 CREATE TABLE "vehicle_owner"(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID,
     vehicle_id UUID,
-    PRIMARY KEY (user_id, vehicle_id),
+    UNIQUE (user_id, vehicle_id),
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
-    FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(vehicle_id) ON DELETE CASCADE
+    FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(id) ON DELETE CASCADE
+);
+
+-- Transaction Table
+CREATE TABLE "transaction" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    vehicle_owner_id UUID NOT NULL,
+    transaction_type VARCHAR(30) NOT NULL,
+    transaction_status VARCHAR(100) NOT NULL,
+    request_date TIMESTAMPTZ NOT NULL,
+    response_date TIMESTAMPTZ,
+    e_slip_image_url VARCHAR(100),
+    FOREIGN KEY (vehicle_owner_id) REFERENCES "vehicle_owner"(id) ON DELETE CASCADE
+);
+
+
+-- Invoice Table
+CREATE TABLE "invoice" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    transaction_id UUID NOT NULL,
+    price FLOAT NOT NULL,
+    invoice_image_url VARCHAR(100) NOT NULL,
+    FOREIGN KEY (transaction_id) REFERENCES "transaction"(id) ON DELETE CASCADE
 );

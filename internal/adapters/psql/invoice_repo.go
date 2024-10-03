@@ -27,7 +27,7 @@ func (p *PostgresInvoiceRepository) Save(c *context.Context, invoice *entities.I
 	createInvoiceParams = dbmodel.CreateInvoiceParams{
 		TransactionID:     convert.StringToUUID(invoice.TransactionID),
 		Price:             invoice.Price,
-		Invoice_image_url: invoice.Invoice_image_url,
+		InvoiceImageUrl: invoice.Invoice_image_url,
 	}
 	createdInvoiceRow, err := p.Queries.CreateInvoice(*c, createInvoiceParams)
 
@@ -39,13 +39,13 @@ func (p *PostgresInvoiceRepository) Save(c *context.Context, invoice *entities.I
 	invoiceRes = entities.Invoice{
 		TransactionID:      convert.UUIDToString(createdInvoiceRow.TransactionID),
 		Price:             createdInvoiceRow.Price,
-		Invoice_image_url: createdInvoiceRow.Invoice_image_url,
+		Invoice_image_url: createdInvoiceRow.InvoiceImageUrl,
 	}
 
 	return &invoiceRes, nil
 }
 
-func (i *PostgresInvoiceRepository) ListAll(c *context.Context) (*[]dbmodel.GetAllInvoicesRow, error) {
+func (i *PostgresInvoiceRepository) ListAll(c *context.Context) (*[]dbmodel.Invoice, error) {
 	selectedInvoices, err := i.Queries.GetAllInvoices(*c)
 
 	if err != nil {
