@@ -2,14 +2,16 @@ package responses
 
 type UserLoginResponse struct {
 	ID    string `json:"id"`
-	Name  string `json:"name"`
+	Fname  string `json:"fname"`
+	Lname	string `json:"lname"`
 	Email string `json:"email"`
 	Token string `json:"token"`
 }
 
 type UserRegisterResponse struct {
 	ID          string `json:"id"`
-	Name        string `json:"name"`
+	Fname  string `json:"fname"`
+	Lname	string `json:"lname"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phoneNumber"`
 	Address     string `json:"address"`
@@ -17,7 +19,8 @@ type UserRegisterResponse struct {
 
 type UserDefaultResponse struct {
 	ID          string `json:"id"`
-	Name        string `json:"name"`
+	Fname  string `json:"fname"`
+	Lname	string `json:"lname"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phoneNumber"`
 	Address     string `json:"address"`

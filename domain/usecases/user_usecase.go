@@ -84,7 +84,7 @@ func (u *UserService) Login(ctx context.Context, user *entities.User) (*entities
 	expireAt := time.Now().Add(time.Hour * 1)
 
 	claims := jwt.MapClaims{
-		"id":    getUser.UserId,
+		"id":    getUser.ID,
 		"name":  getUser.Fname + " " + getUser.Lname,
 		"email": getUser.Email,
 		"exp":   expireAt.Unix(),
@@ -178,7 +178,7 @@ func (u *UserService) UpdateUser(c context.Context, id string, user *entities.Us
 
 	var updateUser entities.User
 	updateUser = entities.User{
-		UserId:      id,
+		ID:      id,
 		Email:       user.Email,
 		Fname:       user.Fname,
 		Lname:       user.Lname,
