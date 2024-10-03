@@ -1,28 +1,35 @@
 services:
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+  api:
+    build:
+      context: ./docker/
+      dockerfile: go-air.Dockerfile
+    restart: on-failure
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - .:/app
+    working_dir: /app
     ports:
-      - "5432:5432"
-    restart: unless-stopped
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
+      - ${PORT}:${PORT}
     depends_on:
       - postgres
-    restart: unless-stopped
-
+    networks:
+      - sa-se-backend-network
+  postgres:
+    image: postgres:16-alpine
+    restart: on-failure
+    volumes:
+      - sa-se-web-backend-vol-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: Asia/Bangkok
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - sa-se-backend-network
 volumes:
-  postgres_data:
+  sa-se-web-backend-vol-db:
+    driver: local
+networks:
+  sa-se-backend-network:
+    driver: bridge
