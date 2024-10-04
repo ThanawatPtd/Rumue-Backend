@@ -3,10 +3,10 @@ package requests
 
 type CreateUserRequest struct {
 	Email       string `json:"email"`
-	Fname       string `json:"first_name"`
-	Lname       string `json:"last_name"`
+	Fname       string `json:"fname"`
+	Lname       string `json:"lname"`
 	Password    string `json:"password"`
-	PhoneNumber string `json:"phone_number"`
+	PhoneNumber string `json:"phoneNumber"`
 	Address     string `json:"address"`
 }
 

@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	ListAll(c context.Context) ([]entities.User, error)
+	ListAll(c context.Context) (*[]entities.User, error)
 	Save(c context.Context, user *entities.User) (*entities.User, error)
 	GetByEmail(c context.Context, email *string) (*entities.User, error)
 	GetByID(c context.Context, id string) (*entities.User, error)

@@ -21,13 +21,13 @@ RETURNING id, salary, created_at
 `
 
 type CreateEmployeeParams struct {
-	ID     pgtype.UUID   `json:"id"`
-	Salary pgtype.Float4 `json:"salary"`
+	ID     pgtype.UUID `json:"id"`
+	Salary float64     `json:"salary"`
 }
 
 type CreateEmployeeRow struct {
 	ID        pgtype.UUID        `json:"id"`
-	Salary    pgtype.Float4      `json:"salary"`
+	Salary    float64            `json:"salary"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 }
 
@@ -114,13 +114,13 @@ RETURNING id, salary, updated_at
 `
 
 type UpdateEmployeeParams struct {
-	ID     pgtype.UUID   `json:"id"`
-	Salary pgtype.Float4 `json:"salary"`
+	ID     pgtype.UUID `json:"id"`
+	Salary float64     `json:"salary"`
 }
 
 type UpdateEmployeeRow struct {
 	ID        pgtype.UUID        `json:"id"`
-	Salary    pgtype.Float4      `json:"salary"`
+	Salary    float64            `json:"salary"`
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
 }
 

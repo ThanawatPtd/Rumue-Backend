@@ -19,7 +19,7 @@ type UserUseCase interface {
 	GetUserByID(ctx context.Context, id string) (*entities.User, error)
 	DeleteByID(ctx context.Context, id string) error
 	GetByEmail(ctx context.Context, email string) (*entities.User, error)
-	GetUsers(ctx context.Context) ([]entities.User, error)
+	GetUsers(ctx context.Context) (*[]entities.User, error)
 	UpdateUser(c context.Context, id string, user *entities.User) (*entities.User, error)
 }
 
@@ -149,7 +149,7 @@ func (u *UserService) GetUserByID(ctx context.Context, id string) (*entities.Use
 }
 
 // GetUsers implements UserUseCase.
-func (u *UserService) GetUsers(ctx context.Context) ([]entities.User, error) {
+func (u *UserService) GetUsers(ctx context.Context) (*[]entities.User, error) {
 	users, err := u.userRepo.ListAll(ctx)
 	if err != nil {
 		return nil, err
@@ -176,16 +176,7 @@ func (u *UserService) UpdateUser(c context.Context, id string, user *entities.Us
 
 	user.Password = string(hashedPassword)
 
-	var updateUser entities.User
-	updateUser = entities.User{
-		ID:      id,
-		Email:       user.Email,
-		Fname:       user.Fname,
-		Lname:       user.Lname,
-		Password:    user.Password,
-		PhoneNumber: user.PhoneNumber,
-		Address:     user.Address,
-	}
+	user.ID = id
 
-	return u.userRepo.Update(c, &updateUser)
+	return u.userRepo.Update(c, user)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
+	"github.com/ThanawatPtd/SAProject/utils"
 	"github.com/emicklei/pgtalk/convert"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -25,36 +26,24 @@ func ProvidePostgresUserRepository(db *pgxpool.Pool) repositories.UserRepository
 }
 
 func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) (*entities.User, error) {
-	var createUser dbmodel.CreateUserParams
-	createUser = dbmodel.CreateUserParams{
-		Email:       user.Email,
-		Fname:       user.Fname,
-		Lname:       user.Lname,
-		Password:    user.Password,
-		PhoneNumber: user.PhoneNumber,
-		Address:     user.Address,
+	paramsUser := dbmodel.CreateUserParams{}
+	if err := utils.MappingParser(user, &paramsUser); err != nil {
+		return nil, err
 	}
 
-	selectedUser, err := u.Queries.CreateUser(c, createUser)
-
+	selectedUser, err := u.Queries.CreateUser(c, paramsUser)
 	if err != nil {
 		return nil, err
 	}
 
-	var createdUser entities.User
-	createdUser = entities.User{
-		ID:      convert.UUIDToString(selectedUser.ID),
-		Email:       selectedUser.Email,
-		Fname:       selectedUser.Fname,
-		Lname:       selectedUser.Lname,
-		PhoneNumber: selectedUser.PhoneNumber,
-		Address:     selectedUser.Address,
+	user = &entities.User{}
+	if err := utils.MappingParser(&selectedUser, user); err != nil {
+		return nil, err
 	}
-
-	return &createdUser, nil
+	return user, nil
 }
 
-func (u *PostgresUserRepository) ListAll(c context.Context) ([]entities.User, error) {
+func (u *PostgresUserRepository) ListAll(c context.Context) (*[]entities.User, error) {
 	selectedUsers, err := u.Queries.GetAllUsers(c)
 
 	if err != nil {
@@ -62,25 +51,20 @@ func (u *PostgresUserRepository) ListAll(c context.Context) ([]entities.User, er
 	}
 
 	if selectedUsers == nil {
-		return []entities.User{}, nil
+		return &[]entities.User{}, nil
 	}
 
 	var users []entities.User
-	for _, user := range selectedUsers {
-		mapUser := entities.User{
-			ID:      convert.UUIDToString(user.ID),
-			Email:       user.Email,
-			Fname:       user.Fname,
-			Lname:       user.Lname,
-			Password:    user.Password,
-			PhoneNumber: user.PhoneNumber,
-			Address:     user.Address,
+	for _, value := range selectedUsers {
+		user := entities.User{}
+		if err := utils.MappingParser(&value, &user); err != nil {
+			return nil, err
 		}
-		users = append(users, mapUser)
+		users = append(users, user)
 
 	}
 
-	return users, nil
+	return &users, nil
 }
 
 // Delete implements repositories.UserRepository.
@@ -105,15 +89,9 @@ func (u *PostgresUserRepository) GetByEmail(c context.Context, email *string) (*
 		return nil, err
 	}
 
-	var user entities.User
-	user = entities.User{
-		ID:      convert.UUIDToString(getUser.ID),
-		Email:       getUser.Email,
-		Fname:       getUser.Fname,
-		Lname:       getUser.Lname,
-		Password:    getUser.Password,
-		PhoneNumber: getUser.PhoneNumber,
-		Address:     getUser.Address,
+	user := entities.User{}
+	if err := utils.MappingParser(&getUser, &user); err != nil {
+		return nil, err
 	}
 	return &user, nil
 }
@@ -126,44 +104,31 @@ func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entitie
 	if err != nil {
 		return nil, err
 	}
-	var user entities.User
-	user = entities.User{
-		ID:      id,
-		Email:       getUser.Email,
-		Fname:       getUser.Fname,
-		Lname:       getUser.Lname,
-		Password:    getUser.Password,
-		PhoneNumber: getUser.PhoneNumber,
-		Address:     getUser.Address,
+
+	user := entities.User{}
+	if err := utils.MappingParser(&getUser, &user); err != nil {
+		return nil, err
 	}
+
 	return &user, nil
 }
 
 // Update implements repositories.UserRepository.
 func (u *PostgresUserRepository) Update(c context.Context, user *entities.User) (*entities.User, error) {
-	var updateUserParams dbmodel.UpdateUserParams
-	updateUserParams = dbmodel.UpdateUserParams{
-		ID:          convert.StringToUUID(user.ID),
-		Email:       user.Email,
-		Fname:       user.Fname,
-		Lname:       user.Lname,
-		PhoneNumber: user.PhoneNumber,
-		Password:    user.Password,
-		Address:     user.Address,
+	paramsUser := dbmodel.UpdateUserParams{}
+	if err := utils.MappingParser(user, &paramsUser); err != nil {
+		return nil, err
 	}
-	getUser, err := u.Queries.UpdateUser(c, updateUserParams)
+
+	getUser, err := u.Queries.UpdateUser(c, paramsUser)
 	if err != nil {
 		return nil, err
 	}
-	var mapUser entities.User
-	mapUser = entities.User{
-		ID:      convert.UUIDToString(getUser.ID),
-		Email:       getUser.Email,
-		Fname:       getUser.Fname,
-		Lname:       getUser.Lname,
-		Password:    getUser.Password,
-		PhoneNumber: getUser.PhoneNumber,
-		Address:     getUser.Address,
+
+	user = &entities.User{}
+	if err := utils.MappingParser(&getUser, user); err != nil {
+		return nil, err
 	}
-	return &mapUser, nil
+
+	return user, nil
 }
