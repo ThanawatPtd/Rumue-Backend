@@ -1,9 +1,10 @@
 package rest
 
 import (
+	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/requests"
 	"github.com/ThanawatPtd/SAProject/domain/usecases"
-	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
+	"github.com/ThanawatPtd/SAProject/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -29,7 +30,10 @@ func (eh *EmployeeHandler) CreateEmployee(c *fiber.Ctx) error{
 	}
 
 
-	payload := dbmodel.CreateEmployeeParams(*rq)
+	payload := entities.Employee{} 
+	if err := utils.MappingParser(rq, &payload); err != nil {
+		return err
+	}
 
 	response, err := eh.employee.Save(c.Context(), &payload)
 

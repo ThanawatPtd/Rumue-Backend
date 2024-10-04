@@ -10,7 +10,7 @@ import (
 
 type Employee struct {
 	ID        pgtype.UUID        `json:"id"`
-	Salary    pgtype.Float4      `json:"salary"`
+	Salary    float64            `json:"salary"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
 }

@@ -32,7 +32,7 @@ func (uh *UserRestHandler) GetUsers(c *fiber.Ctx) error {
 
 	var responsedUsers []responses.UserDefaultResponse
 
-	for _, user:= range list {
+	for _, user:= range *list {
 		responsedUser := responses.UserDefaultResponse{}
 		if err := utils.MappingParser(&user, &responsedUser); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
