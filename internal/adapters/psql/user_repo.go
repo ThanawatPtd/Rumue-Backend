@@ -43,7 +43,7 @@ func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) (*
 
 	var createdUser entities.User
 	createdUser = entities.User{
-		UserId:      convert.UUIDToString(selectedUser.ID),
+		ID:      convert.UUIDToString(selectedUser.ID),
 		Email:       selectedUser.Email,
 		Fname:       selectedUser.Fname,
 		Lname:       selectedUser.Lname,
@@ -68,7 +68,7 @@ func (u *PostgresUserRepository) ListAll(c context.Context) ([]entities.User, er
 	var users []entities.User
 	for _, user := range selectedUsers {
 		mapUser := entities.User{
-			UserId:      convert.UUIDToString(user.ID),
+			ID:      convert.UUIDToString(user.ID),
 			Email:       user.Email,
 			Fname:       user.Fname,
 			Lname:       user.Lname,
@@ -85,8 +85,8 @@ func (u *PostgresUserRepository) ListAll(c context.Context) ([]entities.User, er
 
 // Delete implements repositories.UserRepository.
 func (u *PostgresUserRepository) Delete(c context.Context, id string) error {
-	userId := convert.StringToUUID(id)
-	err := u.Queries.DeleteUser(c, userId)
+	ID := convert.StringToUUID(id)
+	err := u.Queries.DeleteUser(c, ID)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (u *PostgresUserRepository) GetByEmail(c context.Context, email *string) (*
 
 	var user entities.User
 	user = entities.User{
-		UserId:      convert.UUIDToString(getUser.ID),
+		ID:      convert.UUIDToString(getUser.ID),
 		Email:       getUser.Email,
 		Fname:       getUser.Fname,
 		Lname:       getUser.Lname,
@@ -120,15 +120,15 @@ func (u *PostgresUserRepository) GetByEmail(c context.Context, email *string) (*
 
 // GetByID implements repositories.UserRepository.
 func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entities.User, error) {
-	userId := convert.StringToUUID(id)
-	getUser, err := u.Queries.GetUserByID(c, userId)
+	ID := convert.StringToUUID(id)
+	getUser, err := u.Queries.GetUserByID(c, ID)
 
 	if err != nil {
 		return nil, err
 	}
 	var user entities.User
 	user = entities.User{
-		UserId:      id,
+		ID:      id,
 		Email:       getUser.Email,
 		Fname:       getUser.Fname,
 		Lname:       getUser.Lname,
@@ -143,7 +143,7 @@ func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entitie
 func (u *PostgresUserRepository) Update(c context.Context, user *entities.User) (*entities.User, error) {
 	var updateUserParams dbmodel.UpdateUserParams
 	updateUserParams = dbmodel.UpdateUserParams{
-		ID:          convert.StringToUUID(user.UserId),
+		ID:          convert.StringToUUID(user.ID),
 		Email:       user.Email,
 		Fname:       user.Fname,
 		Lname:       user.Lname,
@@ -157,7 +157,7 @@ func (u *PostgresUserRepository) Update(c context.Context, user *entities.User) 
 	}
 	var mapUser entities.User
 	mapUser = entities.User{
-		UserId:      convert.UUIDToString(getUser.ID),
+		ID:      convert.UUIDToString(getUser.ID),
 		Email:       getUser.Email,
 		Fname:       getUser.Fname,
 		Lname:       getUser.Lname,

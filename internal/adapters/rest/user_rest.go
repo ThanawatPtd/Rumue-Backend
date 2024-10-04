@@ -30,10 +30,23 @@ func (uh *UserRestHandler) GetUsers(c *fiber.Ctx) error {
 		})
 	}
 
+	var responsedUsers []responses.UserDefaultResponse
+
+	for _, user:= range list {
+		responsedUser := responses.UserDefaultResponse{}
+		if err := utils.MappingParser(&user, &responsedUser); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "Can't Map response",
+				"log": err.Error(),
+			})
+		}
+		responsedUsers = append(responsedUsers, responsedUser)
+	}
+
 	return c.JSON(fiber.Map{
-		"message": "Successful get user",
+		"message": "Successful get all users",
 		"payload": fiber.Map{
-			"user": list,
+			"user": responsedUsers,
 		},
 	})
 }
@@ -50,16 +63,18 @@ func (uh *UserRestHandler) GetUserByID(c *fiber.Ctx) error {
 		})
 	}
 
+	responsedUser := responses.UserDefaultResponse{}
+	if err := utils.MappingParser(user, &responsedUser); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Can't Map response",
+			"log": err.Error(),
+		})
+	}	
+
 	return c.JSON(fiber.Map{
 		"message": "Successful get user",
 		"payload": fiber.Map{
-			"user": responses.UserDefaultResponse{
-				ID:          user.UserId,
-				Name:        user.Fname + " " + user.Lname,
-				Email:       user.Email,
-				PhoneNumber: user.PhoneNumber,
-				Address:     user.Address,
-			},
+			"user":  responsedUser,
 		},
 	})
 }
@@ -73,16 +88,15 @@ func (uh *UserRestHandler) Register(c *fiber.Ctx) error {
 			"message": "Invalid data",
 		})
 	}
+	
+	createPayload := entities.User{} 
+	if err := utils.MappingParser(&req, &createPayload); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Can't map payload",
+			"log": err.Error(),
+		})
+	}	
 
-	createPayload := entities.User{
-		UserId:      "",
-		Email:       req.Email,
-		Fname:       req.Fname,
-		Lname:       req.Lname,
-		Password:    req.Password,
-		PhoneNumber: req.PhoneNumber,
-		Address:     req.Address,
-	}
 	selectedUser, err := uh.service.Register(c.Context(), &createPayload)
 
 	if err != nil {
@@ -92,30 +106,35 @@ func (uh *UserRestHandler) Register(c *fiber.Ctx) error {
 			})
 	}
 
+	responsedUser := responses.UserRegisterResponse{}
+	if err := utils.MappingParser(selectedUser, &responsedUser); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Can't Map response",
+			"log": err.Error(),
+		})
+	}
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"user": responses.UserRegisterResponse{
-			ID:          selectedUser.UserId,
-			Name:        selectedUser.Fname + selectedUser.Lname,
-			Email:       selectedUser.Email,
-			PhoneNumber: selectedUser.PhoneNumber,
-			Address:     selectedUser.Address,
-		},
+		"user": responsedUser, 
 	})
 }
 
 func (uh *UserRestHandler) Login(c *fiber.Ctx) error {
 
 	// Parse request
-	var req *requests.UserLoginRequest
+	var req requests.UserLoginRequest
 	if err := c.BodyParser(&req); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
-
-	createPayload := entities.User{
-		Email:    req.Email,
-		Password: req.Password,
+	
+	createPayload := entities.User{} 
+	if err := utils.MappingParser(&req, &createPayload); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Can't map payload",
+			"log": err.Error(),
+		})
 	}
 
 	// Login user
@@ -133,12 +152,16 @@ func (uh *UserRestHandler) Login(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.Status(fiber.StatusOK).JSON(responses.UserLoginResponse{
-		ID:    user.UserId,
-		Name:  user.Fname + " " + user.Lname,
-		Email: user.Email,
-		Token: token,
-	})
+	responsedUser := responses.UserLoginResponse{}
+	if err := utils.MappingParser(user, &responsedUser); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Can't Map response",
+			"log": err.Error(),
+		})
+	}
+	responsedUser.Token = token
+
+	return c.Status(fiber.StatusOK).JSON(responsedUser)
 }
 
 func (uh *UserRestHandler) DeleteByID(c *fiber.Ctx) error {
@@ -156,7 +179,7 @@ func (uh *UserRestHandler) DeleteByID(c *fiber.Ctx) error {
 }
 
 func (uh *UserRestHandler) UpdateUser(c *fiber.Ctx) error {
-	req := new(requests.UpdateUserRequest)
+	var req requests.UpdateUserRequest
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -166,14 +189,14 @@ func (uh *UserRestHandler) UpdateUser(c *fiber.Ctx) error {
 	}
 
 	userId := utils.GetUserIDFromJWT(c)
-	payload := entities.User{
-		Email:       req.Email,
-		Fname:       req.Fname,
-		Lname:       req.Lname,
-		Password:    req.Password,
-		PhoneNumber: req.PhoneNumber,
-		Address:     req.Address,
-	}
+
+	payload := entities.User{} 
+	if err := utils.MappingParser(&req, &payload); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Can't map payload",
+			"log": err.Error(),
+		})
+	}	
 
 	user, err := uh.service.UpdateUser(c.Context(), userId, &payload)
 
@@ -184,16 +207,18 @@ func (uh *UserRestHandler) UpdateUser(c *fiber.Ctx) error {
 		})
 	}
 
+	responsedUser := responses.UserDefaultResponse{}
+	if err := utils.MappingParser(user, &responsedUser); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Can't Map response",
+			"log": err.Error(),
+		})
+	}
+
 	return c.JSON(fiber.Map{
 		"message": "Successful update user",
 		"payload": fiber.Map{
-			"user": responses.UserDefaultResponse{
-				ID:          user.UserId,
-				Name:        user.Fname + " " + user.Lname,
-				Email:       user.Email,
-				PhoneNumber: user.PhoneNumber,
-				Address:     user.Address,
-			},
+			"user": responsedUser,
 		},
 	})
 }
