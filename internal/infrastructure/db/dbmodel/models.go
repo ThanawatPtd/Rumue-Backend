@@ -16,10 +16,12 @@ type Employee struct {
 }
 
 type Invoice struct {
-	ID              pgtype.UUID `json:"id"`
-	TransactionID   pgtype.UUID `json:"transactionId"`
-	Price           float64     `json:"price"`
-	InvoiceImageUrl string      `json:"invoiceImageUrl"`
+	ID              pgtype.UUID        `json:"id"`
+	TransactionID   pgtype.UUID        `json:"transactionId"`
+	Price           float64            `json:"price"`
+	InvoiceImageUrl string             `json:"invoiceImageUrl"`
+	CreatedAt       pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt       pgtype.Timestamptz `json:"updatedAt"`
 }
 
 type Transaction struct {
@@ -30,6 +32,8 @@ type Transaction struct {
 	RequestDate       pgtype.Timestamptz `json:"requestDate"`
 	ResponseDate      pgtype.Timestamptz `json:"responseDate"`
 	ESlipImageUrl     pgtype.Text        `json:"eSlipImageUrl"`
+	CreatedAt         pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt         pgtype.Timestamptz `json:"updatedAt"`
 }
 
 type User struct {
@@ -72,7 +76,9 @@ type Vehicle struct {
 }
 
 type VehicleOwner struct {
-	ID        pgtype.UUID `json:"id"`
-	UserID    pgtype.UUID `json:"userId"`
-	VehicleID pgtype.UUID `json:"vehicleId"`
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"userId"`
+	VehicleID pgtype.UUID        `json:"vehicleId"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
 }

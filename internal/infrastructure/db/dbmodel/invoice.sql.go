@@ -13,9 +13,9 @@ import (
 
 const createInvoice = `-- name: CreateInvoice :one
 INSERT INTO "invoice" (
-    transaction_id, price, invoice_image_url
+    transaction_id, price, invoice_image_url, created_at, updated_at
 ) VALUES (
-    $1, $2, $3
+    $1, $2, $3, NOW(), NOW()
 )
 RETURNING id, transaction_id, price, invoice_image_url
 `
@@ -26,9 +26,16 @@ type CreateInvoiceParams struct {
 	InvoiceImageUrl string      `json:"invoiceImageUrl"`
 }
 
-func (q *Queries) CreateInvoice(ctx context.Context, arg CreateInvoiceParams) (Invoice, error) {
+type CreateInvoiceRow struct {
+	ID              pgtype.UUID `json:"id"`
+	TransactionID   pgtype.UUID `json:"transactionId"`
+	Price           float64     `json:"price"`
+	InvoiceImageUrl string      `json:"invoiceImageUrl"`
+}
+
+func (q *Queries) CreateInvoice(ctx context.Context, arg CreateInvoiceParams) (CreateInvoiceRow, error) {
 	row := q.db.QueryRow(ctx, createInvoice, arg.TransactionID, arg.Price, arg.InvoiceImageUrl)
-	var i Invoice
+	var i CreateInvoiceRow
 	err := row.Scan(
 		&i.ID,
 		&i.TransactionID,
@@ -47,15 +54,22 @@ SELECT
 from "invoice"
 `
 
-func (q *Queries) GetAllInvoices(ctx context.Context) ([]Invoice, error) {
+type GetAllInvoicesRow struct {
+	ID              pgtype.UUID `json:"id"`
+	TransactionID   pgtype.UUID `json:"transactionId"`
+	Price           float64     `json:"price"`
+	InvoiceImageUrl string      `json:"invoiceImageUrl"`
+}
+
+func (q *Queries) GetAllInvoices(ctx context.Context) ([]GetAllInvoicesRow, error) {
 	rows, err := q.db.Query(ctx, getAllInvoices)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Invoice
+	var items []GetAllInvoicesRow
 	for rows.Next() {
-		var i Invoice
+		var i GetAllInvoicesRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.TransactionID,
@@ -82,9 +96,16 @@ from "invoice"
 WHERE id = $1
 `
 
-func (q *Queries) GetInvoiceByID(ctx context.Context, id pgtype.UUID) (Invoice, error) {
+type GetInvoiceByIDRow struct {
+	ID              pgtype.UUID `json:"id"`
+	TransactionID   pgtype.UUID `json:"transactionId"`
+	Price           float64     `json:"price"`
+	InvoiceImageUrl string      `json:"invoiceImageUrl"`
+}
+
+func (q *Queries) GetInvoiceByID(ctx context.Context, id pgtype.UUID) (GetInvoiceByIDRow, error) {
 	row := q.db.QueryRow(ctx, getInvoiceByID, id)
-	var i Invoice
+	var i GetInvoiceByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.TransactionID,

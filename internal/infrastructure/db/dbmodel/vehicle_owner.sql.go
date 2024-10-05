@@ -13,9 +13,9 @@ import (
 
 const createVehicleOwner = `-- name: CreateVehicleOwner :one
 INSERT INTO "vehicle_owner"(
-    user_id,vehicle_id
+    user_id, vehicle_id, created_at, updated_at
 ) VALUES(
-    $1, $2
+    $1, $2, NOW(), NOW()
 )RETURNING id, user_id, vehicle_id
 `
 
@@ -24,9 +24,15 @@ type CreateVehicleOwnerParams struct {
 	VehicleID pgtype.UUID `json:"vehicleId"`
 }
 
-func (q *Queries) CreateVehicleOwner(ctx context.Context, arg CreateVehicleOwnerParams) (VehicleOwner, error) {
+type CreateVehicleOwnerRow struct {
+	ID        pgtype.UUID `json:"id"`
+	UserID    pgtype.UUID `json:"userId"`
+	VehicleID pgtype.UUID `json:"vehicleId"`
+}
+
+func (q *Queries) CreateVehicleOwner(ctx context.Context, arg CreateVehicleOwnerParams) (CreateVehicleOwnerRow, error) {
 	row := q.db.QueryRow(ctx, createVehicleOwner, arg.UserID, arg.VehicleID)
-	var i VehicleOwner
+	var i CreateVehicleOwnerRow
 	err := row.Scan(&i.ID, &i.UserID, &i.VehicleID)
 	return i, err
 }
@@ -39,15 +45,21 @@ SELECT
 from "vehicle_owner"
 `
 
-func (q *Queries) GetAllVehicleOwner(ctx context.Context) ([]VehicleOwner, error) {
+type GetAllVehicleOwnerRow struct {
+	ID        pgtype.UUID `json:"id"`
+	UserID    pgtype.UUID `json:"userId"`
+	VehicleID pgtype.UUID `json:"vehicleId"`
+}
+
+func (q *Queries) GetAllVehicleOwner(ctx context.Context) ([]GetAllVehicleOwnerRow, error) {
 	rows, err := q.db.Query(ctx, getAllVehicleOwner)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []VehicleOwner
+	var items []GetAllVehicleOwnerRow
 	for rows.Next() {
-		var i VehicleOwner
+		var i GetAllVehicleOwnerRow
 		if err := rows.Scan(&i.ID, &i.UserID, &i.VehicleID); err != nil {
 			return nil, err
 		}
@@ -68,15 +80,21 @@ from "vehicle_owner"
 WHERE user_id = $1
 `
 
-func (q *Queries) GetAllVehicleOwnerByUserId(ctx context.Context, userID pgtype.UUID) ([]VehicleOwner, error) {
+type GetAllVehicleOwnerByUserIdRow struct {
+	ID        pgtype.UUID `json:"id"`
+	UserID    pgtype.UUID `json:"userId"`
+	VehicleID pgtype.UUID `json:"vehicleId"`
+}
+
+func (q *Queries) GetAllVehicleOwnerByUserId(ctx context.Context, userID pgtype.UUID) ([]GetAllVehicleOwnerByUserIdRow, error) {
 	rows, err := q.db.Query(ctx, getAllVehicleOwnerByUserId, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []VehicleOwner
+	var items []GetAllVehicleOwnerByUserIdRow
 	for rows.Next() {
-		var i VehicleOwner
+		var i GetAllVehicleOwnerByUserIdRow
 		if err := rows.Scan(&i.ID, &i.UserID, &i.VehicleID); err != nil {
 			return nil, err
 		}
@@ -86,4 +104,31 @@ func (q *Queries) GetAllVehicleOwnerByUserId(ctx context.Context, userID pgtype.
 		return nil, err
 	}
 	return items, nil
+}
+
+const getVehicleOwnerByBothId = `-- name: GetVehicleOwnerByBothId :one
+SELECT
+    id,
+    user_id,
+    vehicle_id
+from "vehicle_owner"
+WHERE user_id = $1 and vehicle_id = $2
+`
+
+type GetVehicleOwnerByBothIdParams struct {
+	UserID    pgtype.UUID `json:"userId"`
+	VehicleID pgtype.UUID `json:"vehicleId"`
+}
+
+type GetVehicleOwnerByBothIdRow struct {
+	ID        pgtype.UUID `json:"id"`
+	UserID    pgtype.UUID `json:"userId"`
+	VehicleID pgtype.UUID `json:"vehicleId"`
+}
+
+func (q *Queries) GetVehicleOwnerByBothId(ctx context.Context, arg GetVehicleOwnerByBothIdParams) (GetVehicleOwnerByBothIdRow, error) {
+	row := q.db.QueryRow(ctx, getVehicleOwnerByBothId, arg.UserID, arg.VehicleID)
+	var i GetVehicleOwnerByBothIdRow
+	err := row.Scan(&i.ID, &i.UserID, &i.VehicleID)
+	return i, err
 }

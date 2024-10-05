@@ -32,7 +32,7 @@ func (v *VehicleService) CreateVehicle(ctx context.Context, userId string, vehic
 		return nil, err
 	}
 	// Map User and Vehicle
-	err = v.vehicleOwner.MapUserAndVehicle(ctx, userId, createVehicle.VehicleId)
+	err = v.vehicleOwner.MapUserAndVehicle(ctx, userId, createVehicle.ID)
 	// If map fail return error
 	if err != nil {
 		return nil, err

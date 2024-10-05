@@ -6,6 +6,8 @@ CREATE TABLE "invoice" (
     transaction_id UUID NOT NULL,
     price FLOAT NOT NULL,
     invoice_image_url VARCHAR(100) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (transaction_id) REFERENCES "transaction"(id) ON DELETE CASCADE
 );
 -- +goose StatementEnd

@@ -17,8 +17,8 @@ WHERE id = $1;
 
 -- name: CreateInvoice :one
 INSERT INTO "invoice" (
-    transaction_id, price, invoice_image_url
+    transaction_id, price, invoice_image_url, created_at, updated_at
 ) VALUES (
-    $1, $2, $3
+    $1, $2, $3, NOW(), NOW()
 )
 RETURNING id, transaction_id, price, invoice_image_url;
