@@ -23,6 +23,7 @@ var ServiceSet = wire.NewSet(
 	usecases.ProvideVehicleService,
 	usecases.ProvideEmployeeService,
 	usecases.ProvideInvoiceService,
+	usecases.ProvideTransactionService,
 )
 
 var RepositorySet = wire.NewSet(
@@ -31,6 +32,7 @@ var RepositorySet = wire.NewSet(
 	psql.ProvidePostgresVehicleRepository,
 	psql.ProvidePostgresVehicleOwnerRepository,
 	psql.ProvidePostgresInvoiceRepository,
+	psql.ProvidePostgresTransactionRepository,
 )
 
 var HandlerSet = wire.NewSet(
@@ -38,4 +40,5 @@ var HandlerSet = wire.NewSet(
 	rest.ProvideVehicleHandler,
 	rest.ProvideEmployeeRestHandler,
 	rest.ProvideInvoiceRestHandler,
+	rest.ProvideTransactionRestHandler,
 )

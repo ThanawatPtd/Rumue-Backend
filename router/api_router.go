@@ -34,4 +34,8 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 	vehicle := app.Group("/vehicle")
 	vehicle.Use(middlewares.JwtMiddleware(config.ProvideConfig().JWTSecret))
 	vehicle.Post("/", handler.Vehicle.CreateVehicle)
+
+	transaction := app.Group("/transaction")
+	transaction.Use(middlewares.JwtMiddleware(config.ProvideConfig().JWTSecret))
+	transaction.Post("/create/id=:id", handler.Transection.CreateTransaction)
 }
