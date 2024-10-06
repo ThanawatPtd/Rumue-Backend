@@ -20,20 +20,15 @@ gen-wire:
 docker-gen-wire:
 	docker compose exec api make gen-wire
 
-migrate-schema:
-	go run cmd/migration/main.go --migrate:schema
-
-migrate-up:
-	go run cmd/migration/main.go --migrate:up
-
-migrate-down:
-	go run cmd/migration/main.go --migrate:down --step=$(step)
-
-migrate-reset:
-	go run cmd/migration/main.go --migrate:reset
-
-migrate-make:
-	go run cmd/migration/main.go --migrate:make --name=$(name)
-
 docker-migrate-up:
-	docker compose exec api goose -dir ./cmd/migrations postgres "host=postgres user=myuser dbname=mydatabase password=mypassword port=5432 sslmode=disable" up
+	docker compose exec api go run cmd/migrations/main.go -direction up
+
+docker-migrate-down:
+	docker compose exec api go run cmd/migrations/main.go -direction down
+
+docker-migrate-reset:
+	docker compose exec api go run cmd/migrations/main.go -direction reset
+
+docker-migrate-reset-up:
+	docker compose exec api go run cmd/migrations/main.go -direction reset
+	docker compose exec api go run cmd/migrations/main.go -direction up

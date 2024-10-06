@@ -13,5 +13,5 @@ CREATE TABLE "employee" (
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS "employee";
 -- +goose StatementEnd
