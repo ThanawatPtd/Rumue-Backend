@@ -9,7 +9,7 @@ CREATE TABLE "user" (
     phone_number VARCHAR(15) NOT NULL,
     address VARCHAR(100) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ
+    updated_at TIMESTAMPTZ NOT NULL
 );
 
 -- EMPLOYEE Table (Inherits from USER)
@@ -17,7 +17,7 @@ CREATE TABLE "employee" (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     salary FLOAT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE "vehicle"(
     voluntary_insurance_policy_number VARCHAR(50),
     insurance_type VARCHAR(50),
     created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ
+    updated_at TIMESTAMPTZ NOT NULL
 );
 
 -- Vehicle Owner Table
@@ -54,6 +54,8 @@ CREATE TABLE "vehicle_owner"(
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID,
     vehicle_id UUID,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
     UNIQUE (user_id, vehicle_id),
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(id) ON DELETE CASCADE
@@ -68,6 +70,8 @@ CREATE TABLE "transaction" (
     request_date TIMESTAMPTZ NOT NULL,
     response_date TIMESTAMPTZ,
     e_slip_image_url VARCHAR(100),
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (vehicle_owner_id) REFERENCES "vehicle_owner"(id) ON DELETE CASCADE
 );
 
@@ -78,5 +82,7 @@ CREATE TABLE "invoice" (
     transaction_id UUID NOT NULL,
     price FLOAT NOT NULL,
     invoice_image_url VARCHAR(100) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (transaction_id) REFERENCES "transaction"(id) ON DELETE CASCADE
 );
