@@ -6,6 +6,7 @@ import (
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
+	"github.com/ThanawatPtd/SAProject/utils"
 	"github.com/emicklei/pgtalk/convert"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -45,12 +46,20 @@ func (p *PostgresInvoiceRepository) Save(c *context.Context, invoice *entities.I
 	return &invoiceRes, nil
 }
 
-func (i *PostgresInvoiceRepository) ListAll(c *context.Context) (*[]dbmodel.Invoice, error) {
+func (i *PostgresInvoiceRepository) ListAll(c *context.Context) (*[]entities.Invoice, error) {
 	selectedInvoices, err := i.Queries.GetAllInvoices(*c)
-
 	if err != nil {
 		return nil, err
 	}
 
-	return &selectedInvoices, nil
+	invoices := []entities.Invoice{}
+	for _, value := range selectedInvoices {
+		invoice := entities.Invoice{}
+		if err := utils.MappingParser(&value, &invoice); err != nil {
+			return nil, err
+		}
+		invoices = append(invoices, invoice)
+	}
+
+	return &invoices, nil
 }

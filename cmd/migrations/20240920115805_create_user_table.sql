@@ -11,7 +11,7 @@ CREATE TABLE "user" (
     phone_number VARCHAR(15) NOT NULL,
     address VARCHAR(100) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ
+    updated_at TIMESTAMPTZ NOT NULL
 );
 
 -- +goose Down

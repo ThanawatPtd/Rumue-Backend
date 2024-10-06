@@ -3,8 +3,10 @@ package psql
 import (
 	"context"
 
+	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
+	"github.com/ThanawatPtd/SAProject/utils"
 	"github.com/emicklei/pgtalk/convert"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -37,4 +39,26 @@ func (p *PostgresVehicleOwnerRepository) MapUserAndVehicle(ctx context.Context, 
 		return err
 	}
 	return nil
+}
+
+func (p *PostgresVehicleOwnerRepository) GetByID(ctx *context.Context, userID string, vehicleID string) (*entities.VehicleOwner, error) {
+	uuidUserId := convert.StringToUUID(userID)
+	uuidVechicleId := convert.StringToUUID(vehicleID)
+
+	paramsVehicleOwner := dbmodel.GetVehicleOwnerByBothIdParams{
+		UserID: uuidUserId,
+		VehicleID: uuidVechicleId,
+	}
+	
+	selectVehicleOwnerByBothID, err := p.Queries.GetVehicleOwnerByBothId(*ctx, paramsVehicleOwner)
+	if err != nil {
+		return nil, err
+	}
+
+	vehicleOwner := entities.VehicleOwner{}
+	if err := utils.MappingParser(&selectVehicleOwnerByBothID, &vehicleOwner); err != nil {
+		return nil, err
+	}
+	
+	return &vehicleOwner, nil
 }

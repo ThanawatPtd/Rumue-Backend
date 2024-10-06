@@ -25,7 +25,7 @@ CREATE TABLE "vehicle"(
     voluntary_insurance_policy_number VARCHAR(50),
     insurance_type VARCHAR(50),
     created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ
+    updated_at TIMESTAMPTZ NOT NULL
 );
 
 -- +goose StatementEnd
