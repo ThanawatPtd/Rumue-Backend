@@ -15,5 +15,5 @@ CREATE TABLE "vehicle_owner"(
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS "vehicle_owner";
 -- +goose StatementEnd
