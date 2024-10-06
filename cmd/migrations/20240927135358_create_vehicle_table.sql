@@ -32,5 +32,5 @@ CREATE TABLE "vehicle"(
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS "vehicle";
 -- +goose StatementEnd

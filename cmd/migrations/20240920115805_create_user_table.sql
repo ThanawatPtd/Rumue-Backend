@@ -15,4 +15,6 @@ CREATE TABLE "user" (
 );
 
 -- +goose Down
-DROP TABLE post;
+-- +goose StatementBegin
+DROP TABLE IF EXISTS "user";
+-- +goose StatementEnd

@@ -13,5 +13,5 @@ CREATE TABLE "invoice" (
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS "invoice";
 -- +goose StatementEnd
