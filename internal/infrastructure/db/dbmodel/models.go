@@ -25,15 +25,19 @@ type Invoice struct {
 }
 
 type Transaction struct {
-	ID                pgtype.UUID        `json:"id"`
-	VehicleOwnerID    pgtype.UUID        `json:"vehicleOwnerId"`
-	TransactionType   string             `json:"transactionType"`
-	TransactionStatus string             `json:"transactionStatus"`
-	RequestDate       pgtype.Timestamptz `json:"requestDate"`
-	ResponseDate      pgtype.Timestamptz `json:"responseDate"`
-	ESlipImageUrl     pgtype.Text        `json:"eSlipImageUrl"`
-	CreatedAt         pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt         pgtype.Timestamptz `json:"updatedAt"`
+	ID                              pgtype.UUID        `json:"id"`
+	UserID                          pgtype.UUID        `json:"userId"`
+	VehicleID                       pgtype.UUID        `json:"vehicleId"`
+	InsuranceType                   string             `json:"insuranceType"`
+	TransactionStatus               string             `json:"transactionStatus"`
+	RequestDate                     pgtype.Timestamptz `json:"requestDate"`
+	ResponseDate                    pgtype.Timestamptz `json:"responseDate"`
+	ESlipImageUrl                   string             `json:"eSlipImageUrl"`
+	CarRegistrationImageUrl         string             `json:"carRegistrationImageUrl"`
+	CompulsoryInsurancePolicyNumber pgtype.Text        `json:"compulsoryInsurancePolicyNumber"`
+	VoluntaryInsurancePolicyNumber  pgtype.Text        `json:"voluntaryInsurancePolicyNumber"`
+	CreatedAt                       pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt                       pgtype.Timestamptz `json:"updatedAt"`
 }
 
 type User struct {
@@ -49,34 +53,37 @@ type User struct {
 }
 
 type Vehicle struct {
-	ID                              pgtype.UUID        `json:"id"`
-	RegistrationDate                pgtype.Timestamptz `json:"registrationDate"`
-	RegistrationNumber              string             `json:"registrationNumber"`
-	Province                        string             `json:"province"`
-	VehicleType                     string             `json:"vehicleType"`
-	VehicleCategory                 string             `json:"vehicleCategory"`
-	Characteristics                 string             `json:"characteristics"`
-	Brand                           string             `json:"brand"`
-	Model                           string             `json:"model"`
-	ModelYear                       string             `json:"modelYear"`
-	VehicleColor                    string             `json:"vehicleColor"`
-	EngineNumber                    string             `json:"engineNumber"`
-	ChasisNumber                    string             `json:"chasisNumber"`
-	FuelType                        string             `json:"fuelType"`
-	HorsePower                      int32              `json:"horsePower"`
-	SeatingCapacity                 int32              `json:"seatingCapacity"`
-	WeightUnlanden                  float64            `json:"weightUnlanden"`
-	WeightLaden                     float64            `json:"weightLaden"`
-	TireCount                       int32              `json:"tireCount"`
-	CompulsoryInsurancePolicyNumber string             `json:"compulsoryInsurancePolicyNumber"`
-	VoluntaryInsurancePolicyNumber  pgtype.Text        `json:"voluntaryInsurancePolicyNumber"`
-	InsuranceType                   pgtype.Text        `json:"insuranceType"`
-	CreatedAt                       pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt                       pgtype.Timestamptz `json:"updatedAt"`
+	ID                    pgtype.UUID        `json:"id"`
+	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
+	RegistrationNumber    string             `json:"registrationNumber"`
+	Province              string             `json:"province"`
+	VehicleType           string             `json:"vehicleType"`
+	VehicleCategory       string             `json:"vehicleCategory"`
+	Characteristics       string             `json:"characteristics"`
+	Brand                 string             `json:"brand"`
+	Model                 string             `json:"model"`
+	ModelYear             string             `json:"modelYear"`
+	VehicleColor          string             `json:"vehicleColor"`
+	VehicleNumber         string             `json:"vehicleNumber"`
+	VehicleNumberLocation string             `json:"vehicleNumberLocation"`
+	EngineBrand           string             `json:"engineBrand"`
+	EngineNumber          string             `json:"engineNumber"`
+	EngineNumberLocation  string             `json:"engineNumberLocation"`
+	ChasisNumber          string             `json:"chasisNumber"`
+	FuelType              string             `json:"fuelType"`
+	WheelType             string             `json:"wheelType"`
+	TotalPiston           int32              `json:"totalPiston"`
+	Cc                    int32              `json:"cc"`
+	HorsePower            int32              `json:"horsePower"`
+	SeatingCapacity       int32              `json:"seatingCapacity"`
+	WeightUnlanden        float64            `json:"weightUnlanden"`
+	WeightLaden           float64            `json:"weightLaden"`
+	Miles                 float64            `json:"miles"`
+	CreatedAt             pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt             pgtype.Timestamptz `json:"updatedAt"`
 }
 
 type VehicleOwner struct {
-	ID        pgtype.UUID        `json:"id"`
 	UserID    pgtype.UUID        `json:"userId"`
 	VehicleID pgtype.UUID        `json:"vehicleId"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`

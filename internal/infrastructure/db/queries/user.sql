@@ -19,9 +19,7 @@ SELECT
     lname,
     phone_number,
     password,
-    address,
-    created_at,
-    updated_at
+    address
 FROM "user"
 WHERE id = $1;
 
@@ -33,9 +31,7 @@ SELECT
     lname,
     phone_number,
     password,
-    address,
-    created_at,
-    updated_at
+    address
 FROM "user"
 WHERE email = $1;
 

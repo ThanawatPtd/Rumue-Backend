@@ -13,50 +13,59 @@ import (
 
 const createTransaction = `-- name: CreateTransaction :one
 INSERT INTO "transaction" (
-    vehicle_owner_id, transaction_type, transaction_status, request_date, response_date, e_slip_image_url, created_at, updated_at
+    user_id, vehicle_id, insurance_type, transaction_status, request_date, e_slip_image_url, car_registration_image_url, created_at, updated_at
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, NOW(), NOW()
+    $1, $2, $3, $4, NOW(), $5, $6, NOW(), NOW()
 )
-RETURNING id, vehicle_owner_id, transaction_type, transaction_status, request_date, response_date, e_slip_image_url
+RETURNING id, user_id, vehicle_id, insurance_type, transaction_status, request_date, response_date, e_slip_image_url, car_registration_image_url, compulsory_insurance_policy_number,
+voluntary_insurance_policy_number
 `
 
 type CreateTransactionParams struct {
-	VehicleOwnerID    pgtype.UUID        `json:"vehicleOwnerId"`
-	TransactionType   string             `json:"transactionType"`
-	TransactionStatus string             `json:"transactionStatus"`
-	RequestDate       pgtype.Timestamptz `json:"requestDate"`
-	ResponseDate      pgtype.Timestamptz `json:"responseDate"`
-	ESlipImageUrl     pgtype.Text        `json:"eSlipImageUrl"`
+	UserID                  pgtype.UUID `json:"userId"`
+	VehicleID               pgtype.UUID `json:"vehicleId"`
+	InsuranceType           string      `json:"insuranceType"`
+	TransactionStatus       string      `json:"transactionStatus"`
+	ESlipImageUrl           string      `json:"eSlipImageUrl"`
+	CarRegistrationImageUrl string      `json:"carRegistrationImageUrl"`
 }
 
 type CreateTransactionRow struct {
-	ID                pgtype.UUID        `json:"id"`
-	VehicleOwnerID    pgtype.UUID        `json:"vehicleOwnerId"`
-	TransactionType   string             `json:"transactionType"`
-	TransactionStatus string             `json:"transactionStatus"`
-	RequestDate       pgtype.Timestamptz `json:"requestDate"`
-	ResponseDate      pgtype.Timestamptz `json:"responseDate"`
-	ESlipImageUrl     pgtype.Text        `json:"eSlipImageUrl"`
+	ID                              pgtype.UUID        `json:"id"`
+	UserID                          pgtype.UUID        `json:"userId"`
+	VehicleID                       pgtype.UUID        `json:"vehicleId"`
+	InsuranceType                   string             `json:"insuranceType"`
+	TransactionStatus               string             `json:"transactionStatus"`
+	RequestDate                     pgtype.Timestamptz `json:"requestDate"`
+	ResponseDate                    pgtype.Timestamptz `json:"responseDate"`
+	ESlipImageUrl                   string             `json:"eSlipImageUrl"`
+	CarRegistrationImageUrl         string             `json:"carRegistrationImageUrl"`
+	CompulsoryInsurancePolicyNumber pgtype.Text        `json:"compulsoryInsurancePolicyNumber"`
+	VoluntaryInsurancePolicyNumber  pgtype.Text        `json:"voluntaryInsurancePolicyNumber"`
 }
 
 func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) (CreateTransactionRow, error) {
 	row := q.db.QueryRow(ctx, createTransaction,
-		arg.VehicleOwnerID,
-		arg.TransactionType,
+		arg.UserID,
+		arg.VehicleID,
+		arg.InsuranceType,
 		arg.TransactionStatus,
-		arg.RequestDate,
-		arg.ResponseDate,
 		arg.ESlipImageUrl,
+		arg.CarRegistrationImageUrl,
 	)
 	var i CreateTransactionRow
 	err := row.Scan(
 		&i.ID,
-		&i.VehicleOwnerID,
-		&i.TransactionType,
+		&i.UserID,
+		&i.VehicleID,
+		&i.InsuranceType,
 		&i.TransactionStatus,
 		&i.RequestDate,
 		&i.ResponseDate,
 		&i.ESlipImageUrl,
+		&i.CarRegistrationImageUrl,
+		&i.CompulsoryInsurancePolicyNumber,
+		&i.VoluntaryInsurancePolicyNumber,
 	)
 	return i, err
 }
@@ -64,23 +73,31 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 const getAllTransactions = `-- name: GetAllTransactions :many
 SELECT
     id,
-    vehicle_owner_id,
-    transaction_type,
+    user_id,
+    vehicle_id,
+    insurance_type,
     transaction_status,
     request_date,
     response_date,
-    e_slip_image_url
+    e_slip_image_url,
+    car_registration_image_url,
+    compulsory_insurance_policy_number,
+    voluntary_insurance_policy_number 
 FROM "transaction"
 `
 
 type GetAllTransactionsRow struct {
-	ID                pgtype.UUID        `json:"id"`
-	VehicleOwnerID    pgtype.UUID        `json:"vehicleOwnerId"`
-	TransactionType   string             `json:"transactionType"`
-	TransactionStatus string             `json:"transactionStatus"`
-	RequestDate       pgtype.Timestamptz `json:"requestDate"`
-	ResponseDate      pgtype.Timestamptz `json:"responseDate"`
-	ESlipImageUrl     pgtype.Text        `json:"eSlipImageUrl"`
+	ID                              pgtype.UUID        `json:"id"`
+	UserID                          pgtype.UUID        `json:"userId"`
+	VehicleID                       pgtype.UUID        `json:"vehicleId"`
+	InsuranceType                   string             `json:"insuranceType"`
+	TransactionStatus               string             `json:"transactionStatus"`
+	RequestDate                     pgtype.Timestamptz `json:"requestDate"`
+	ResponseDate                    pgtype.Timestamptz `json:"responseDate"`
+	ESlipImageUrl                   string             `json:"eSlipImageUrl"`
+	CarRegistrationImageUrl         string             `json:"carRegistrationImageUrl"`
+	CompulsoryInsurancePolicyNumber pgtype.Text        `json:"compulsoryInsurancePolicyNumber"`
+	VoluntaryInsurancePolicyNumber  pgtype.Text        `json:"voluntaryInsurancePolicyNumber"`
 }
 
 func (q *Queries) GetAllTransactions(ctx context.Context) ([]GetAllTransactionsRow, error) {
@@ -94,12 +111,16 @@ func (q *Queries) GetAllTransactions(ctx context.Context) ([]GetAllTransactionsR
 		var i GetAllTransactionsRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.VehicleOwnerID,
-			&i.TransactionType,
+			&i.UserID,
+			&i.VehicleID,
+			&i.InsuranceType,
 			&i.TransactionStatus,
 			&i.RequestDate,
 			&i.ResponseDate,
 			&i.ESlipImageUrl,
+			&i.CarRegistrationImageUrl,
+			&i.CompulsoryInsurancePolicyNumber,
+			&i.VoluntaryInsurancePolicyNumber,
 		); err != nil {
 			return nil, err
 		}
