@@ -11,13 +11,12 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Email       string `json:"email"`
 	Fname       string `json:"fname"`
 	Lname       string `json:"lname"`
-	Password    string `json:"password"`
 	PhoneNumber string `json:"phoneNumber"`
 	Address     string `json:"address"`
 }
+
 
 type UserLoginRequest struct {
 	Email    string `json:"email"`

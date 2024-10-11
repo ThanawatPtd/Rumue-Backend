@@ -9,6 +9,7 @@ import (
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/exceptions"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
+	"github.com/ThanawatPtd/SAProject/utils"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -18,9 +19,8 @@ type UserUseCase interface {
 	Register(ctx context.Context, user *entities.User) (*entities.User, error)
 	GetUserByID(ctx context.Context, id string) (*entities.User, error)
 	DeleteByID(ctx context.Context, id string) error
-	GetByEmail(ctx context.Context, email string) (*entities.User, error)
 	GetUsers(ctx context.Context) (*[]entities.User, error)
-	UpdateUser(c context.Context, id string, user *entities.User) (*entities.User, error)
+	UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error)
 }
 
 type UserService struct {
@@ -38,7 +38,7 @@ func ProvideUserService(userRepo repositories.UserRepository, config *config.Con
 // Register implements UserUseCase.
 func (u *UserService) Register(ctx context.Context, user *entities.User) (*entities.User, error) {
 	// Find user by email
-	getUser, err := u.userRepo.GetByEmail(ctx, &user.Email)
+	getUser, err := u.userRepo.GetByEmail(ctx, user.Email)
 
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (u *UserService) Register(ctx context.Context, user *entities.User) (*entit
 // Login implements UserUseCase.
 func (u *UserService) Login(ctx context.Context, user *entities.User) (*entities.User, string, error) {
 	// Find user by email
-	getUser, err := u.userRepo.GetByEmail(ctx, &user.Email)
+	getUser, err := u.userRepo.GetByEmail(ctx, user.Email)
 
 	if err != nil {
 		return nil, "", err
@@ -120,23 +120,10 @@ func (u *UserService) DeleteByID(ctx context.Context, id string) error {
 	return nil
 }
 
-// GetByEmail implements UserUseCase.
-func (u *UserService) GetByEmail(ctx context.Context, email string) (*entities.User, error) {
-	getUser, err := u.userRepo.GetByEmail(ctx, &email)
-	if getUser == nil {
-		return nil, exceptions.ErrUserNotFound
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	return getUser, nil
-}
 
 // GetUserByID implements UserUseCase.
 func (u *UserService) GetUserByID(ctx context.Context, id string) (*entities.User, error) {
-	getUser, err := u.userRepo.GetByID(ctx, id)
+	getUser, err := u.userRepo.GetByID(&ctx, id)
 	if getUser == nil {
 		return nil, exceptions.ErrUserNotFound
 	}
@@ -159,24 +146,13 @@ func (u *UserService) GetUsers(ctx context.Context) (*[]entities.User, error) {
 }
 
 // UpdateUser implements UserUseCase.
-func (u *UserService) UpdateUser(c context.Context, id string, user *entities.User) (*entities.User, error) {
-	getUser, err := u.userRepo.GetByID(c, id)
-	if getUser == nil {
-		return nil, exceptions.ErrUserNotFound
-	}
+func (u *UserService) UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error) {
+	selectUser, err := u.userRepo.GetByID(&ctx, id)
 	if err != nil {
 		return nil, err
 	}
-
-	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
+	if err := utils.MappingParser(user, selectUser); err != nil {
 		return nil, err
 	}
-
-	user.Password = string(hashedPassword)
-
-	user.ID = id
-
-	return u.userRepo.Update(c, user)
+	return u.userRepo.Update(&ctx, selectUser)
 }

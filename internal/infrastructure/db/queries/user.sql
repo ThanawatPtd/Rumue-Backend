@@ -41,7 +41,7 @@ INSERT INTO "user" (
 ) VALUES (
     $1, $2, $3, $4, $5, $6, NOW(), NOW()
 )
-RETURNING id, email, fname, lname, phone_number, address, created_at;
+RETURNING id, email, fname, lname, phone_number, address;
 
 -- name: UpdateUser :one
 UPDATE "user"
@@ -50,11 +50,10 @@ SET
     fname = $3,
     lname = $4,
     phone_number = $5,
-    password = $6,
-    address = $7,
+    address = $6,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, email, fname, lname, phone_number, password, address, updated_at;
+RETURNING id, email, fname, lname, phone_number, address;
 
 -- name: DeleteUser :exec
 DELETE FROM "user"
