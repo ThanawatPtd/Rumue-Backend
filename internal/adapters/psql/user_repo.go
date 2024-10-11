@@ -79,8 +79,8 @@ func (u *PostgresUserRepository) Delete(c context.Context, id string) error {
 }
 
 // GetByEmail implements repositories.UserRepository.
-func (u *PostgresUserRepository) GetByEmail(c context.Context, email *string) (*entities.User, error) {
-	getUser, err := u.Queries.GetUserByEmail(c, *email)
+func (u *PostgresUserRepository) GetByEmail(c context.Context, email string) (*entities.User, error) {
+	getUser, err := u.Queries.GetUserByEmail(c, email)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
@@ -97,36 +97,36 @@ func (u *PostgresUserRepository) GetByEmail(c context.Context, email *string) (*
 }
 
 // GetByID implements repositories.UserRepository.
-func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entities.User, error) {
+func (u *PostgresUserRepository) GetByID(c *context.Context, id string) (*entities.User, error) {
 	ID := convert.StringToUUID(id)
-	getUser, err := u.Queries.GetUserByID(c, ID)
+	getUser, err := u.Queries.GetUserByID(*c, ID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	user := entities.User{}
-	if err := utils.MappingParser(&getUser, &user); err != nil {
+	user := &entities.User{}
+	if err := utils.MappingParser(&getUser, user); err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 // Update implements repositories.UserRepository.
-func (u *PostgresUserRepository) Update(c context.Context, user *entities.User) (*entities.User, error) {
-	paramsUser := dbmodel.UpdateUserParams{}
-	if err := utils.MappingParser(user, &paramsUser); err != nil {
+func (u *PostgresUserRepository) Update(c *context.Context, user *entities.User) (*entities.User, error) {
+	paramsUser := &dbmodel.UpdateUserParams{}
+	if err := utils.MappingParser(user, paramsUser); err != nil {
 		return nil, err
 	}
 
-	getUser, err := u.Queries.UpdateUser(c, paramsUser)
+	updateUser, err := u.Queries.UpdateUser(*c, *paramsUser)
 	if err != nil {
 		return nil, err
 	}
 
 	user = &entities.User{}
-	if err := utils.MappingParser(&getUser, user); err != nil {
+	if err := utils.MappingParser(&updateUser, user); err != nil {
 		return nil, err
 	}
 
