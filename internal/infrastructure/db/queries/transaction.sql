@@ -1,18 +1,23 @@
 -- name: GetAllTransactions :many
 SELECT
     id,
-    vehicle_owner_id,
-    transaction_type,
+    user_id,
+    vehicle_id,
+    insurance_type,
     transaction_status,
     request_date,
     response_date,
-    e_slip_image_url
+    e_slip_image_url,
+    car_registration_image_url,
+    compulsory_insurance_policy_number,
+    voluntary_insurance_policy_number 
 FROM "transaction";
 
 -- name: CreateTransaction :one
 INSERT INTO "transaction" (
-    vehicle_owner_id, transaction_type, transaction_status, request_date, response_date, e_slip_image_url, created_at, updated_at
+    user_id, vehicle_id, insurance_type, transaction_status, request_date, e_slip_image_url, car_registration_image_url, created_at, updated_at
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, NOW(), NOW()
+    $1, $2, $3, $4, NOW(), $5, $6, NOW(), NOW()
 )
-RETURNING id, vehicle_owner_id, transaction_type, transaction_status, request_date, response_date, e_slip_image_url; 
+RETURNING id, user_id, vehicle_id, insurance_type, transaction_status, request_date, response_date, e_slip_image_url, car_registration_image_url, compulsory_insurance_policy_number,
+voluntary_insurance_policy_number;

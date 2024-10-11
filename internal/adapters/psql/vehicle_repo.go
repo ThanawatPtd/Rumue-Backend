@@ -43,10 +43,6 @@ func (p *PostgresVehicleRepository) CreateVehicle(ctx context.Context, vehicle *
 		SeatingCapacity:                 vehicle.SeatingCapacity,
 		WeightUnlanden:                  vehicle.WeightLaden,
 		WeightLaden:                     vehicle.WeightLaden,
-		TireCount:                       vehicle.TireCount,
-		CompulsoryInsurancePolicyNumber: vehicle.CompulsoryInsurancePolicyNumber,
-		VoluntaryInsurancePolicyNumber:  convert.StringToText(vehicle.VoluntaryInsurancePolicyNumber),
-		InsuranceType:                   convert.StringToText(vehicle.InsuranceType),
 	}
 
 	createVehicle, err := p.Queries.CreateVehicle(ctx, createVehicleParam)
@@ -73,10 +69,6 @@ func (p *PostgresVehicleRepository) CreateVehicle(ctx context.Context, vehicle *
 		SeatingCapacity:                 createVehicle.SeatingCapacity,
 		WeightUnlanden:                  createVehicle.WeightUnlanden,
 		WeightLaden:                     createVehicle.WeightUnlanden,
-		TireCount:                       createVehicle.TireCount,
-		CompulsoryInsurancePolicyNumber: createVehicle.CompulsoryInsurancePolicyNumber,
-		VoluntaryInsurancePolicyNumber:  createVehicle.VoluntaryInsurancePolicyNumber.String,
-		InsuranceType:                   createVehicle.InsuranceType.String,
 	}
 
 	return &vehicleRes, nil

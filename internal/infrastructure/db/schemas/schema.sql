@@ -34,29 +34,32 @@ CREATE TABLE "vehicle"(
     model VARCHAR(100) NOT NULL,
     model_year VARCHAR(100) NOT NULL,
     vehicle_color VARCHAR(50) NOT NULL,
+    vehicle_number VARCHAR(50) NOT NULL,
+    vehicle_number_location VARCHAR(100) NOT NULL,
+    engine_brand VARCHAR(100) NOT NULL,
     engine_number VARCHAR(100) NOT NULL,
+    engine_number_location VARCHAR(100) NOT NULL,
     chasis_number VARCHAR(100) NOT NULL,
     fuel_type VARCHAR(100) NOT NULL,
+    wheel_type VARCHAR(100) NOT NULL,
+    total_piston INT NOT NULL,
+    cc INT NOT NULL,
     horse_power INT NOT NULL,
     seating_capacity INT NOT NULL,
     weight_unlanden FLOAT NOT NULL,
     weight_laden FLOAT NOT NULL,
-    tire_count INT NOT NULL,
-    compulsory_insurance_policy_number VARCHAR(50) NOT NULL,
-    voluntary_insurance_policy_number VARCHAR(50),
-    insurance_type VARCHAR(50),
+    miles FLOAT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL
 );
 
 -- Vehicle Owner Table
 CREATE TABLE "vehicle_owner"(
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID,
     vehicle_id UUID,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
-    UNIQUE (user_id, vehicle_id),
+    PRIMARY KEY (user_id, vehicle_id),
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(id) ON DELETE CASCADE
 );
@@ -64,15 +67,19 @@ CREATE TABLE "vehicle_owner"(
 -- Transaction Table
 CREATE TABLE "transaction" (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    vehicle_owner_id UUID NOT NULL,
-    transaction_type VARCHAR(30) NOT NULL,
+    user_id UUID,
+    vehicle_id UUID,
+    insurance_type VARCHAR(30) NOT NULL,
     transaction_status VARCHAR(100) NOT NULL,
     request_date TIMESTAMPTZ NOT NULL,
     response_date TIMESTAMPTZ,
-    e_slip_image_url VARCHAR(100),
+    e_slip_image_url VARCHAR(100) NOT NULL,
+    car_registration_image_url VARCHAR(100) NOT NULL,
+    compulsory_insurance_policy_number VARCHAR(30),
+    voluntary_insurance_policy_number VARCHAR(30),
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
-    FOREIGN KEY (vehicle_owner_id) REFERENCES "vehicle_owner"(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id, vehicle_id) REFERENCES "vehicle_owner"(user_id, vehicle_id) ON DELETE CASCADE
 );
 
 
