@@ -47,6 +47,10 @@ func MappingParser(sender interface{}, receiver interface{}) error {
 	for i := 0; i < sentVal.NumField(); i++ {
 		senderField := sentVal.Type().Field(i)
 		senderValue := sentVal.Field(i)
+		
+		if senderValue.Kind() == reflect.String && senderValue.String() == "" {
+			continue
+		}
 
 		// Perform a constant-time lookup in the map
 		if receiverField, ok := receiverFieldMap[strings.ToLower(senderField.Name)]; ok && receiverField.CanSet() {

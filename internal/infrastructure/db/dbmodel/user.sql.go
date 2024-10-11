@@ -17,7 +17,7 @@ INSERT INTO "user" (
 ) VALUES (
     $1, $2, $3, $4, $5, $6, NOW(), NOW()
 )
-RETURNING id, email, fname, lname, phone_number, address, created_at
+RETURNING id, email, fname, lname, phone_number, address
 `
 
 type CreateUserParams struct {
@@ -30,13 +30,12 @@ type CreateUserParams struct {
 }
 
 type CreateUserRow struct {
-	ID          pgtype.UUID        `json:"id"`
-	Email       string             `json:"email"`
-	Fname       string             `json:"fname"`
-	Lname       string             `json:"lname"`
-	PhoneNumber string             `json:"phoneNumber"`
-	Address     string             `json:"address"`
-	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	ID          pgtype.UUID `json:"id"`
+	Email       string      `json:"email"`
+	Fname       string      `json:"fname"`
+	Lname       string      `json:"lname"`
+	PhoneNumber string      `json:"phoneNumber"`
+	Address     string      `json:"address"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
@@ -56,7 +55,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 		&i.Lname,
 		&i.PhoneNumber,
 		&i.Address,
-		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -135,23 +133,19 @@ SELECT
     lname,
     phone_number,
     password,
-    address,
-    created_at,
-    updated_at
+    address
 FROM "user"
 WHERE email = $1
 `
 
 type GetUserByEmailRow struct {
-	ID          pgtype.UUID        `json:"id"`
-	Email       string             `json:"email"`
-	Fname       string             `json:"fname"`
-	Lname       string             `json:"lname"`
-	PhoneNumber string             `json:"phoneNumber"`
-	Password    string             `json:"password"`
-	Address     string             `json:"address"`
-	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+	ID          pgtype.UUID `json:"id"`
+	Email       string      `json:"email"`
+	Fname       string      `json:"fname"`
+	Lname       string      `json:"lname"`
+	PhoneNumber string      `json:"phoneNumber"`
+	Password    string      `json:"password"`
+	Address     string      `json:"address"`
 }
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
@@ -165,8 +159,6 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEm
 		&i.PhoneNumber,
 		&i.Password,
 		&i.Address,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -179,23 +171,19 @@ SELECT
     lname,
     phone_number,
     password,
-    address,
-    created_at,
-    updated_at
+    address
 FROM "user"
 WHERE id = $1
 `
 
 type GetUserByIDRow struct {
-	ID          pgtype.UUID        `json:"id"`
-	Email       string             `json:"email"`
-	Fname       string             `json:"fname"`
-	Lname       string             `json:"lname"`
-	PhoneNumber string             `json:"phoneNumber"`
-	Password    string             `json:"password"`
-	Address     string             `json:"address"`
-	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+	ID          pgtype.UUID `json:"id"`
+	Email       string      `json:"email"`
+	Fname       string      `json:"fname"`
+	Lname       string      `json:"lname"`
+	PhoneNumber string      `json:"phoneNumber"`
+	Password    string      `json:"password"`
+	Address     string      `json:"address"`
 }
 
 func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error) {
@@ -209,8 +197,6 @@ func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDR
 		&i.PhoneNumber,
 		&i.Password,
 		&i.Address,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -222,11 +208,10 @@ SET
     fname = $3,
     lname = $4,
     phone_number = $5,
-    password = $6,
-    address = $7,
+    address = $6,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, email, fname, lname, phone_number, password, address, updated_at
+RETURNING id, email, fname, lname, phone_number, address
 `
 
 type UpdateUserParams struct {
@@ -235,19 +220,16 @@ type UpdateUserParams struct {
 	Fname       string      `json:"fname"`
 	Lname       string      `json:"lname"`
 	PhoneNumber string      `json:"phoneNumber"`
-	Password    string      `json:"password"`
 	Address     string      `json:"address"`
 }
 
 type UpdateUserRow struct {
-	ID          pgtype.UUID        `json:"id"`
-	Email       string             `json:"email"`
-	Fname       string             `json:"fname"`
-	Lname       string             `json:"lname"`
-	PhoneNumber string             `json:"phoneNumber"`
-	Password    string             `json:"password"`
-	Address     string             `json:"address"`
-	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+	ID          pgtype.UUID `json:"id"`
+	Email       string      `json:"email"`
+	Fname       string      `json:"fname"`
+	Lname       string      `json:"lname"`
+	PhoneNumber string      `json:"phoneNumber"`
+	Address     string      `json:"address"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
@@ -257,7 +239,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 		arg.Fname,
 		arg.Lname,
 		arg.PhoneNumber,
-		arg.Password,
 		arg.Address,
 	)
 	var i UpdateUserRow
@@ -267,9 +248,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 		&i.Fname,
 		&i.Lname,
 		&i.PhoneNumber,
-		&i.Password,
 		&i.Address,
-		&i.UpdatedAt,
 	)
 	return i, err
 }
