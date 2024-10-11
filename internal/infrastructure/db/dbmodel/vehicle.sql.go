@@ -13,61 +13,68 @@ import (
 
 const createVehicle = `-- name: CreateVehicle :one
 INSERT INTO "vehicle" (
-    registration_date, registration_number, province, vehicle_type, vehicle_category, characteristics, brand, model, model_year,vehicle_color, engine_number, chasis_number , fuel_type, horse_power, seating_capacity, weight_unlanden, weight_laden, tire_count, compulsory_insurance_policy_number, voluntary_insurance_policy_number, insurance_type, created_at, updated_at
+    registration_date, registration_number, province, vehicle_type, vehicle_category, characteristics, brand, model, model_year, vehicle_color, vehicle_number, vehicle_number_location, engine_brand, engine_number, engine_number_location, fuel_type, chasis_number, wheel_type, total_piston, cc, horse_power, weight_unlanden, weight_laden, seating_capacity, miles, created_at, updated_at
 ) VALUES (
-   $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW(), NOW()
+   $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, NOW(), NOW()
 )
-RETURNING id,registration_date, registration_number, province, vehicle_type, vehicle_category, characteristics, brand, model, model_year,vehicle_color, engine_number, chasis_number , fuel_type, horse_power, seating_capacity, weight_unlanden, weight_laden, tire_count, compulsory_insurance_policy_number, voluntary_insurance_policy_number, insurance_type, created_at
+RETURNING id, registration_date, registration_number, province, vehicle_type, vehicle_category, characteristics, brand, model, model_year, vehicle_color, vehicle_number, vehicle_number_location, engine_brand, engine_number, engine_number_location, fuel_type, chasis_number, wheel_type, total_piston, cc, horse_power, weight_unlanden, weight_laden, seating_capacity, miles
 `
 
 type CreateVehicleParams struct {
-	RegistrationDate                pgtype.Timestamptz `json:"registrationDate"`
-	RegistrationNumber              string             `json:"registrationNumber"`
-	Province                        string             `json:"province"`
-	VehicleType                     string             `json:"vehicleType"`
-	VehicleCategory                 string             `json:"vehicleCategory"`
-	Characteristics                 string             `json:"characteristics"`
-	Brand                           string             `json:"brand"`
-	Model                           string             `json:"model"`
-	ModelYear                       string             `json:"modelYear"`
-	VehicleColor                    string             `json:"vehicleColor"`
-	EngineNumber                    string             `json:"engineNumber"`
-	ChasisNumber                    string             `json:"chasisNumber"`
-	FuelType                        string             `json:"fuelType"`
-	HorsePower                      int32              `json:"horsePower"`
-	SeatingCapacity                 int32              `json:"seatingCapacity"`
-	WeightUnlanden                  float64            `json:"weightUnlanden"`
-	WeightLaden                     float64            `json:"weightLaden"`
-	TireCount                       int32              `json:"tireCount"`
-	CompulsoryInsurancePolicyNumber string             `json:"compulsoryInsurancePolicyNumber"`
-	VoluntaryInsurancePolicyNumber  pgtype.Text        `json:"voluntaryInsurancePolicyNumber"`
-	InsuranceType                   pgtype.Text        `json:"insuranceType"`
+	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
+	RegistrationNumber    string             `json:"registrationNumber"`
+	Province              string             `json:"province"`
+	VehicleType           string             `json:"vehicleType"`
+	VehicleCategory       string             `json:"vehicleCategory"`
+	Characteristics       string             `json:"characteristics"`
+	Brand                 string             `json:"brand"`
+	Model                 string             `json:"model"`
+	ModelYear             string             `json:"modelYear"`
+	VehicleColor          string             `json:"vehicleColor"`
+	VehicleNumber         string             `json:"vehicleNumber"`
+	VehicleNumberLocation string             `json:"vehicleNumberLocation"`
+	EngineBrand           string             `json:"engineBrand"`
+	EngineNumber          string             `json:"engineNumber"`
+	EngineNumberLocation  string             `json:"engineNumberLocation"`
+	FuelType              string             `json:"fuelType"`
+	ChasisNumber          string             `json:"chasisNumber"`
+	WheelType             string             `json:"wheelType"`
+	TotalPiston           int32              `json:"totalPiston"`
+	Cc                    int32              `json:"cc"`
+	HorsePower            int32              `json:"horsePower"`
+	WeightUnlanden        float64            `json:"weightUnlanden"`
+	WeightLaden           float64            `json:"weightLaden"`
+	SeatingCapacity       int32              `json:"seatingCapacity"`
+	Miles                 float64            `json:"miles"`
 }
 
 type CreateVehicleRow struct {
-	ID                              pgtype.UUID        `json:"id"`
-	RegistrationDate                pgtype.Timestamptz `json:"registrationDate"`
-	RegistrationNumber              string             `json:"registrationNumber"`
-	Province                        string             `json:"province"`
-	VehicleType                     string             `json:"vehicleType"`
-	VehicleCategory                 string             `json:"vehicleCategory"`
-	Characteristics                 string             `json:"characteristics"`
-	Brand                           string             `json:"brand"`
-	Model                           string             `json:"model"`
-	ModelYear                       string             `json:"modelYear"`
-	VehicleColor                    string             `json:"vehicleColor"`
-	EngineNumber                    string             `json:"engineNumber"`
-	ChasisNumber                    string             `json:"chasisNumber"`
-	FuelType                        string             `json:"fuelType"`
-	HorsePower                      int32              `json:"horsePower"`
-	SeatingCapacity                 int32              `json:"seatingCapacity"`
-	WeightUnlanden                  float64            `json:"weightUnlanden"`
-	WeightLaden                     float64            `json:"weightLaden"`
-	TireCount                       int32              `json:"tireCount"`
-	CompulsoryInsurancePolicyNumber string             `json:"compulsoryInsurancePolicyNumber"`
-	VoluntaryInsurancePolicyNumber  pgtype.Text        `json:"voluntaryInsurancePolicyNumber"`
-	InsuranceType                   pgtype.Text        `json:"insuranceType"`
-	CreatedAt                       pgtype.Timestamptz `json:"createdAt"`
+	ID                    pgtype.UUID        `json:"id"`
+	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
+	RegistrationNumber    string             `json:"registrationNumber"`
+	Province              string             `json:"province"`
+	VehicleType           string             `json:"vehicleType"`
+	VehicleCategory       string             `json:"vehicleCategory"`
+	Characteristics       string             `json:"characteristics"`
+	Brand                 string             `json:"brand"`
+	Model                 string             `json:"model"`
+	ModelYear             string             `json:"modelYear"`
+	VehicleColor          string             `json:"vehicleColor"`
+	VehicleNumber         string             `json:"vehicleNumber"`
+	VehicleNumberLocation string             `json:"vehicleNumberLocation"`
+	EngineBrand           string             `json:"engineBrand"`
+	EngineNumber          string             `json:"engineNumber"`
+	EngineNumberLocation  string             `json:"engineNumberLocation"`
+	FuelType              string             `json:"fuelType"`
+	ChasisNumber          string             `json:"chasisNumber"`
+	WheelType             string             `json:"wheelType"`
+	TotalPiston           int32              `json:"totalPiston"`
+	Cc                    int32              `json:"cc"`
+	HorsePower            int32              `json:"horsePower"`
+	WeightUnlanden        float64            `json:"weightUnlanden"`
+	WeightLaden           float64            `json:"weightLaden"`
+	SeatingCapacity       int32              `json:"seatingCapacity"`
+	Miles                 float64            `json:"miles"`
 }
 
 func (q *Queries) CreateVehicle(ctx context.Context, arg CreateVehicleParams) (CreateVehicleRow, error) {
@@ -82,17 +89,21 @@ func (q *Queries) CreateVehicle(ctx context.Context, arg CreateVehicleParams) (C
 		arg.Model,
 		arg.ModelYear,
 		arg.VehicleColor,
+		arg.VehicleNumber,
+		arg.VehicleNumberLocation,
+		arg.EngineBrand,
 		arg.EngineNumber,
-		arg.ChasisNumber,
+		arg.EngineNumberLocation,
 		arg.FuelType,
+		arg.ChasisNumber,
+		arg.WheelType,
+		arg.TotalPiston,
+		arg.Cc,
 		arg.HorsePower,
-		arg.SeatingCapacity,
 		arg.WeightUnlanden,
 		arg.WeightLaden,
-		arg.TireCount,
-		arg.CompulsoryInsurancePolicyNumber,
-		arg.VoluntaryInsurancePolicyNumber,
-		arg.InsuranceType,
+		arg.SeatingCapacity,
+		arg.Miles,
 	)
 	var i CreateVehicleRow
 	err := row.Scan(
@@ -107,60 +118,70 @@ func (q *Queries) CreateVehicle(ctx context.Context, arg CreateVehicleParams) (C
 		&i.Model,
 		&i.ModelYear,
 		&i.VehicleColor,
+		&i.VehicleNumber,
+		&i.VehicleNumberLocation,
+		&i.EngineBrand,
 		&i.EngineNumber,
-		&i.ChasisNumber,
+		&i.EngineNumberLocation,
 		&i.FuelType,
+		&i.ChasisNumber,
+		&i.WheelType,
+		&i.TotalPiston,
+		&i.Cc,
 		&i.HorsePower,
-		&i.SeatingCapacity,
 		&i.WeightUnlanden,
 		&i.WeightLaden,
-		&i.TireCount,
-		&i.CompulsoryInsurancePolicyNumber,
-		&i.VoluntaryInsurancePolicyNumber,
-		&i.InsuranceType,
-		&i.CreatedAt,
+		&i.SeatingCapacity,
+		&i.Miles,
 	)
 	return i, err
 }
 
 const getAllVehicle = `-- name: GetAllVehicle :many
 SELECT
-    id,
-    registration_date,
-    registration_number,
-    province,
-    vehicle_type ,
-    vehicle_category,
-    characteristics ,
-    brand,
-    model ,
-    model_year ,
-    vehicle_color ,
-    engine_number ,
-    chasis_number ,
-    fuel_type ,
-    horse_power,
-    seating_capacity,
-    weight_unlanden ,
-    weight_laden ,
-    tire_count,
-    compulsory_insurance_policy_number ,
-    voluntary_insurance_policy_number ,
-    insurance_type ,
-    created_at,
-    updated_at
-from "vehicle"
+    id, registration_date, registration_number, province, vehicle_type, vehicle_category, characteristics, brand, model, model_year, vehicle_color, vehicle_number, vehicle_number_location, engine_brand, engine_number, engine_number_location, fuel_type, chasis_number, wheel_type, total_piston, cc, horse_power, weight_unlanden, weight_laden, seating_capacity, miles
+FROM "vehicle"
+WHERE id = $1
 `
 
-func (q *Queries) GetAllVehicle(ctx context.Context) ([]Vehicle, error) {
-	rows, err := q.db.Query(ctx, getAllVehicle)
+type GetAllVehicleRow struct {
+	ID                    pgtype.UUID        `json:"id"`
+	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
+	RegistrationNumber    string             `json:"registrationNumber"`
+	Province              string             `json:"province"`
+	VehicleType           string             `json:"vehicleType"`
+	VehicleCategory       string             `json:"vehicleCategory"`
+	Characteristics       string             `json:"characteristics"`
+	Brand                 string             `json:"brand"`
+	Model                 string             `json:"model"`
+	ModelYear             string             `json:"modelYear"`
+	VehicleColor          string             `json:"vehicleColor"`
+	VehicleNumber         string             `json:"vehicleNumber"`
+	VehicleNumberLocation string             `json:"vehicleNumberLocation"`
+	EngineBrand           string             `json:"engineBrand"`
+	EngineNumber          string             `json:"engineNumber"`
+	EngineNumberLocation  string             `json:"engineNumberLocation"`
+	FuelType              string             `json:"fuelType"`
+	ChasisNumber          string             `json:"chasisNumber"`
+	WheelType             string             `json:"wheelType"`
+	TotalPiston           int32              `json:"totalPiston"`
+	Cc                    int32              `json:"cc"`
+	HorsePower            int32              `json:"horsePower"`
+	WeightUnlanden        float64            `json:"weightUnlanden"`
+	WeightLaden           float64            `json:"weightLaden"`
+	SeatingCapacity       int32              `json:"seatingCapacity"`
+	Miles                 float64            `json:"miles"`
+}
+
+func (q *Queries) GetAllVehicle(ctx context.Context, id pgtype.UUID) ([]GetAllVehicleRow, error) {
+	rows, err := q.db.Query(ctx, getAllVehicle, id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Vehicle
+	var items []GetAllVehicleRow
 	for rows.Next() {
-		var i Vehicle
+		var i GetAllVehicleRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.RegistrationDate,
@@ -173,19 +194,21 @@ func (q *Queries) GetAllVehicle(ctx context.Context) ([]Vehicle, error) {
 			&i.Model,
 			&i.ModelYear,
 			&i.VehicleColor,
+			&i.VehicleNumber,
+			&i.VehicleNumberLocation,
+			&i.EngineBrand,
 			&i.EngineNumber,
-			&i.ChasisNumber,
+			&i.EngineNumberLocation,
 			&i.FuelType,
+			&i.ChasisNumber,
+			&i.WheelType,
+			&i.TotalPiston,
+			&i.Cc,
 			&i.HorsePower,
-			&i.SeatingCapacity,
 			&i.WeightUnlanden,
 			&i.WeightLaden,
-			&i.TireCount,
-			&i.CompulsoryInsurancePolicyNumber,
-			&i.VoluntaryInsurancePolicyNumber,
-			&i.InsuranceType,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.SeatingCapacity,
+			&i.Miles,
 		); err != nil {
 			return nil, err
 		}
