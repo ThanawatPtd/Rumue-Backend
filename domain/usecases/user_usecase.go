@@ -20,7 +20,7 @@ type UserUseCase interface {
 	Register(ctx context.Context, user *entities.User) (*entities.User, error)
 	GetUserByID(ctx context.Context, id string) (*entities.User, error)
 	DeleteByID(ctx context.Context, id string) error
-	GetUsers(ctx context.Context) (*[]entities.User, error)
+	GetUsers(ctx context.Context) ([]entities.User, error)
 	UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error)
 	UpdatePassword(c context.Context, id string, newPassword string, confirmPassword string) error
 }
@@ -125,7 +125,7 @@ func (u *UserService) DeleteByID(ctx context.Context, id string) error {
 
 // GetUserByID implements UserUseCase.
 func (u *UserService) GetUserByID(ctx context.Context, id string) (*entities.User, error) {
-	getUser, err := u.userRepo.GetByID(&ctx, id)
+	getUser, err := u.userRepo.GetByID(ctx, id)
 	if getUser == nil {
 		return nil, exceptions.ErrUserNotFound
 	}
@@ -138,7 +138,7 @@ func (u *UserService) GetUserByID(ctx context.Context, id string) (*entities.Use
 }
 
 // GetUsers implements UserUseCase.
-func (u *UserService) GetUsers(ctx context.Context) (*[]entities.User, error) {
+func (u *UserService) GetUsers(ctx context.Context) ([]entities.User, error) {
 	users, err := u.userRepo.ListAll(ctx)
 	if err != nil {
 		return nil, err
@@ -149,21 +149,21 @@ func (u *UserService) GetUsers(ctx context.Context) (*[]entities.User, error) {
 
 // UpdateUser implements UserUseCase.
 func (u *UserService) UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error) {
-	selectUser, err := u.userRepo.GetByID(&ctx, id)
+	selectUser, err := u.userRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	if err := utils.MappingParser(user, selectUser); err != nil {
 		return nil, err
 	}
-	return u.userRepo.Update(&ctx, selectUser)
+	return u.userRepo.Update(ctx, selectUser)
 }
 
 func (u *UserService) UpdatePassword(ctx context.Context, id string, newPassword string, confirmPassword string) error {
 	if newPassword != confirmPassword {
 		return errors.New("password is not matched")
 	}	
-	selectUser, err := u.userRepo.GetByID(&ctx, id)
+	selectUser, err := u.userRepo.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -176,7 +176,7 @@ func (u *UserService) UpdatePassword(ctx context.Context, id string, newPassword
 	}
 	selectUser.Password = string(hashPassword)
 
-	_ , err = u.userRepo.Update(&ctx, selectUser)
+	_ , err = u.userRepo.Update(ctx, selectUser)
 	if err != nil {
 		return err
 	}

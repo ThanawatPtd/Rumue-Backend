@@ -7,7 +7,7 @@ import (
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
 	"github.com/ThanawatPtd/SAProject/utils"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/emicklei/pgtalk/convert"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -21,13 +21,13 @@ func ProvidePostgresEmployeeRepository(db *pgxpool.Pool) repositories.EmployeeRe
 	}
 }
 
-func (e *PostgresEmployeeRepository) Save(c *context.Context, employee *entities.Employee) (*entities.Employee, error) {
+func (e *PostgresEmployeeRepository) Save(c context.Context, employee *entities.Employee) (*entities.Employee, error) {
 	paramsEmployee := &dbmodel.CreateEmployeeParams{}
 	if err := utils.MappingParser(employee, paramsEmployee); err != nil{
 		return nil, err
 	}
 
-	selectedEmployee, err := e.Queries.CreateEmployee(*c, *paramsEmployee)
+	selectedEmployee, err := e.Queries.CreateEmployee(c, *paramsEmployee)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +39,8 @@ func (e *PostgresEmployeeRepository) Save(c *context.Context, employee *entities
 	return employee, nil
 }
 
-func (e *PostgresEmployeeRepository) ListAll(c *context.Context) (*[]entities.Employee, error) {
-	selectedEmployees, err := e.Queries.GetAllEmployees(*c)
+func (e *PostgresEmployeeRepository) ListAll(c context.Context) ([]entities.Employee, error) {
+	selectedEmployees, err := e.Queries.GetAllEmployees(c)
 	if  err != nil {
 		return nil, err
 	}
@@ -53,11 +53,12 @@ func (e *PostgresEmployeeRepository) ListAll(c *context.Context) (*[]entities.Em
 		}
 		employees = append(employees, *employee) 
 	}
-	return &employees, nil
+	return employees, nil
 }
 
-func (e *PostgresEmployeeRepository) GetByID(c *context.Context, id *pgtype.UUID) (*entities.Employee, error) {
-	selectedEmployee, err := e.Queries.GetEmployeeByID(*c, *id)
+func (e *PostgresEmployeeRepository) GetByID(c context.Context, id string) (*entities.Employee, error) {
+	uuid := convert.StringToUUID(id)
+	selectedEmployee, err := e.Queries.GetEmployeeByID(c, uuid)
 	if err != nil {
 		return nil, err
 	}
@@ -69,12 +70,12 @@ func (e *PostgresEmployeeRepository) GetByID(c *context.Context, id *pgtype.UUID
 	return &employee, nil
 }
 
-func (e *PostgresEmployeeRepository) Update(c *context.Context, employee *entities.Employee) (*entities.Employee, error) {
+func (e *PostgresEmployeeRepository) Update(c context.Context, employee *entities.Employee) (*entities.Employee, error) {
 	paramsEmployee := dbmodel.UpdateEmployeeParams{}
 	if err := utils.MappingParser(employee, &paramsEmployee); err != nil {
 		return nil, err
 	}
-	selectedEmployee, err := e.Queries.UpdateEmployee(*c, paramsEmployee)
+	selectedEmployee, err := e.Queries.UpdateEmployee(c, paramsEmployee)
 	if err != nil {
 		return nil, err
 	}
@@ -86,8 +87,9 @@ func (e *PostgresEmployeeRepository) Update(c *context.Context, employee *entiti
 	return employee, nil
 }
 
-func (e *PostgresEmployeeRepository) Delete(c *context.Context, id *pgtype.UUID) (error) {
-	if err := e.Queries.DeleteEmployee(*c, *id); err != nil {
+func (e *PostgresEmployeeRepository) Delete(c context.Context, id string) (error) {
+	uuid := convert.StringToUUID(id)
+	if err := e.Queries.DeleteEmployee(c, uuid); err != nil {
 		return err
 	}
 	return nil

@@ -21,10 +21,10 @@ func ProvidePostgresTransactionRepository(db *pgxpool.Pool) repositories.Transac
 	}
 }
 
-func (tr *PostgresTransactionRepository) ListAll(ctx *context.Context) (*[]entities.Transaction, error) {
+func (tr *PostgresTransactionRepository) ListAll(ctx context.Context) ([]entities.Transaction, error) {
 	return nil, nil
 }
 
-func (tr *PostgresTransactionRepository) Save(ctx *context.Context, transaction *entities.Transaction) (*entities.Transaction, error) {
+func (tr *PostgresTransactionRepository) Save(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error) {
 	return nil, nil
 }

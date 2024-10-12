@@ -8,5 +8,5 @@ import (
 
 type VehicleOwnerRepository interface {
 	MapUserAndVehicle(ctx context.Context, userId string, vehicleId string) error
-	GetByID(ctx *context.Context, userID string, vehicleID string) (*entities.VehicleOwner, error)
+	GetByID(ctx context.Context, userID string, vehicleID string) (*entities.VehicleOwner, error)
 }

@@ -41,7 +41,7 @@ func (p *PostgresVehicleOwnerRepository) MapUserAndVehicle(ctx context.Context, 
 	return nil
 }
 
-func (p *PostgresVehicleOwnerRepository) GetByID(ctx *context.Context, userID string, vehicleID string) (*entities.VehicleOwner, error) {
+func (p *PostgresVehicleOwnerRepository) GetByID(ctx context.Context, userID string, vehicleID string) (*entities.VehicleOwner, error) {
 	uuidUserId := convert.StringToUUID(userID)
 	uuidVechicleId := convert.StringToUUID(vehicleID)
 
@@ -50,7 +50,7 @@ func (p *PostgresVehicleOwnerRepository) GetByID(ctx *context.Context, userID st
 		VehicleID: uuidVechicleId,
 	}
 	
-	selectVehicleOwnerByBothID, err := p.Queries.GetVehicleOwnerByBothId(*ctx, paramsVehicleOwner)
+	selectVehicleOwnerByBothID, err := p.Queries.GetVehicleOwnerByBothId(ctx, paramsVehicleOwner)
 	if err != nil {
 		return nil, err
 	}

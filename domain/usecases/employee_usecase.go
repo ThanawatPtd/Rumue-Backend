@@ -28,7 +28,7 @@ func ProvideEmployeeService(repo repositories.EmployeeRepository) EmployeeUseCas
 }
 
 func (es *EmployeeService) Save(ctx context.Context, employee *entities.Employee) (*entities.Employee, error){
-	response, err := es.repo.Save(&ctx, employee)
+	response, err := es.repo.Save(ctx, employee)
 
 	if err != nil{
 		return nil, err

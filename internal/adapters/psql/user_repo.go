@@ -43,7 +43,7 @@ func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) (*
 	return user, nil
 }
 
-func (u *PostgresUserRepository) ListAll(c context.Context) (*[]entities.User, error) {
+func (u *PostgresUserRepository) ListAll(c context.Context) ([]entities.User, error) {
 	selectedUsers, err := u.Queries.GetAllUsers(c)
 
 	if err != nil {
@@ -51,7 +51,7 @@ func (u *PostgresUserRepository) ListAll(c context.Context) (*[]entities.User, e
 	}
 
 	if selectedUsers == nil {
-		return &[]entities.User{}, nil
+		return []entities.User{}, nil
 	}
 
 	var users []entities.User
@@ -64,7 +64,7 @@ func (u *PostgresUserRepository) ListAll(c context.Context) (*[]entities.User, e
 
 	}
 
-	return &users, nil
+	return users, nil
 }
 
 // Delete implements repositories.UserRepository.
@@ -97,9 +97,9 @@ func (u *PostgresUserRepository) GetByEmail(c context.Context, email string) (*e
 }
 
 // GetByID implements repositories.UserRepository.
-func (u *PostgresUserRepository) GetByID(c *context.Context, id string) (*entities.User, error) {
+func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entities.User, error) {
 	ID := convert.StringToUUID(id)
-	getUser, err := u.Queries.GetUserByID(*c, ID)
+	getUser, err := u.Queries.GetUserByID(c, ID)
 
 	if err != nil {
 		return nil, err
@@ -114,13 +114,13 @@ func (u *PostgresUserRepository) GetByID(c *context.Context, id string) (*entiti
 }
 
 // Update implements repositories.UserRepository.
-func (u *PostgresUserRepository) Update(c *context.Context, user *entities.User) (*entities.User, error) {
+func (u *PostgresUserRepository) Update(c context.Context, user *entities.User) (*entities.User, error) {
 	paramsUser := &dbmodel.UpdateUserParams{}
 	if err := utils.MappingParser(user, paramsUser); err != nil {
 		return nil, err
 	}
 
-	updateUser, err := u.Queries.UpdateUser(*c, *paramsUser)
+	updateUser, err := u.Queries.UpdateUser(c, *paramsUser)
 	if err != nil {
 		return nil, err
 	}

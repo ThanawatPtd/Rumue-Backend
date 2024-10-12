@@ -12,7 +12,7 @@ type InvoiceUseCase interface {
 	CreateInvoice(ctx context.Context, invoice *entities.Invoice) (*entities.Invoice, error)
 	// GetInvoiceByID(ctx context.Context, id *pgtype.UUID) (*dbmodel.GetInvoiceByIDRow, error)
 	// DeleteByID(ctx context.Context, id *pgtype.UUID) error
-	GetInvoices(ctx context.Context) (*[]entities.Invoice, error)
+	GetInvoices(ctx context.Context) ([]entities.Invoice, error)
 	// UpdateUser(c context.Context, id *pgtype.UUID, user *dbmodel.UpdateUserParams) (*dbmodel.UpdateUserRow, error)
 }
 
@@ -36,8 +36,8 @@ func ProvideInvoiceService(invoiceRepo repositories.InvoiceRepository) InvoiceUs
 // 	return selected, nil
 // }
 
-func (i *InvoiceService) GetInvoices(ctx context.Context) (*[]entities.Invoice, error) {
-	list, err := i.invoiceRepo.ListAll(&ctx)
+func (i *InvoiceService) GetInvoices(ctx context.Context) ([]entities.Invoice, error) {
+	list, err := i.invoiceRepo.ListAll(ctx)
 
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (i *InvoiceService) GetInvoices(ctx context.Context) (*[]entities.Invoice, 
 
 func (i *InvoiceService) CreateInvoice(ctx context.Context, invoice *entities.Invoice) (*entities.Invoice, error) {
 
-	newInvoice, err := i.invoiceRepo.Save(&ctx, invoice)
+	newInvoice, err := i.invoiceRepo.Save(ctx, invoice)
 
 	if err != nil {
 		return nil, err

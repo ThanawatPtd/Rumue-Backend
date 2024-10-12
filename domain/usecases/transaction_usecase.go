@@ -9,7 +9,7 @@ import (
 
 type TransactionUseCase interface {
 	CreateTransaction(ctx context.Context, userID string, vehicleID string, transaction *entities.Transaction) (*entities.Transaction, error)
-	GetAllTransactions(ctx context.Context) (*[]entities.Transaction, error)
+	GetAllTransactions(ctx context.Context) ([]entities.Transaction, error)
 }
 
 type TransactionService struct {
@@ -25,14 +25,14 @@ func ProvideTransactionService(transactionRepo repositories.TransactionRepositor
 }
 
 func (t *TransactionService) CreateTransaction(ctx context.Context, userID string, vehicleID string, transaction *entities.Transaction) (*entities.Transaction, error) {
-	vehicle, err := t.vehicleOwnerRepo.GetByID(&ctx, userID, vehicleID)
+	vehicle, err := t.vehicleOwnerRepo.GetByID(ctx, userID, vehicleID)
 	if err != nil {
 		return nil, err
 	}
 
 	transaction.VehicleOwnerID = vehicle.ID
 
-	transaction, err = t.transactionRepo.Save(&ctx, transaction)
+	transaction, err = t.transactionRepo.Save(ctx, transaction)
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +40,8 @@ func (t *TransactionService) CreateTransaction(ctx context.Context, userID strin
 	return transaction, nil
 }
 
-func (t *TransactionService) GetAllTransactions(ctx context.Context) (*[]entities.Transaction, error) {
-	transactions, err := t.transactionRepo.ListAll(&ctx)
+func (t *TransactionService) GetAllTransactions(ctx context.Context) ([]entities.Transaction, error) {
+	transactions, err := t.transactionRepo.ListAll(ctx)
 	if err != nil {
 		return nil, err
 	}

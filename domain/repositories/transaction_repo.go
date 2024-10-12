@@ -7,6 +7,6 @@ import (
 )
 
 type TransactionRepository interface {
-	ListAll(ctx *context.Context) (*[]entities.Transaction, error)
-	Save(ctx *context.Context, transaction *entities.Transaction) (*entities.Transaction, error)	
+	ListAll(ctx context.Context) ([]entities.Transaction, error)
+	Save(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error)	
 }
