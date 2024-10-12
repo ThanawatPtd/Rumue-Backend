@@ -129,7 +129,7 @@ func (uh *UserRestHandler) UpdatePassword(c *fiber.Ctx) error {
 	}
 	userId := utils.GetUserIDFromJWT(c)
 
-	if err := uh.service.UpdatePassword(c.Context(), userId, req.NewPassword, req.ConfirmPassword); err != nil {
+	if err := uh.service.UpdatePassword(c.Context(), userId, req.OldPassword, req.NewPassword); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
