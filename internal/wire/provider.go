@@ -24,6 +24,7 @@ var ServiceSet = wire.NewSet(
 	usecases.ProvideEmployeeService,
 	usecases.ProvideInvoiceService,
 	usecases.ProvideTransactionService,
+	usecases.ProvideAuthService,
 )
 
 var RepositorySet = wire.NewSet(
@@ -41,4 +42,5 @@ var HandlerSet = wire.NewSet(
 	rest.ProvideEmployeeRestHandler,
 	rest.ProvideInvoiceRestHandler,
 	rest.ProvideTransactionRestHandler,
+	rest.ProvideAuthRestHandler,
 )
