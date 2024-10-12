@@ -182,28 +182,46 @@ func (uh *UserRestHandler) UpdateUser(c *fiber.Ctx) error {
 	req := &requests.UpdateUserRequest{}
 	if err := c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":     err,
+			"error":     err.Error(),
 		})
 	}
 	userId := utils.GetUserIDFromJWT(c)
 	payload := &entities.User{}
 	if err := utils.MappingParser(req, payload); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
+			"error": err.Error(),
 		})
 	}
 	updatedUser, err := uh.service.UpdateUser(c.Context(), userId, payload)	
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
+			"error": err.Error(),
 		})	
 	}
 	responsedUser := &responses.UserDefaultResponse{}
 	if err := utils.MappingParser(updatedUser, responsedUser); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
+			"error": err.Error(),
 		})
 	}
 
 	return c.JSON(responsedUser)
+}
+
+func (uh *UserRestHandler) UpdatePassword(c *fiber.Ctx) error {
+	req := &requests.UpdatePasswordRequest{}
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":     err.Error(),
+		})
+	}
+	userId := utils.GetUserIDFromJWT(c)
+
+	if err := uh.service.UpdatePassword(c.Context(), userId, req.NewPassword, req.ConfirmPassword); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})	
+	} 
+
+	return c.JSON(fiber.Map{})
 }

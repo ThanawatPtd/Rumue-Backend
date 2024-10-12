@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -21,6 +22,7 @@ type UserUseCase interface {
 	DeleteByID(ctx context.Context, id string) error
 	GetUsers(ctx context.Context) (*[]entities.User, error)
 	UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error)
+	UpdatePassword(c context.Context, id string, newPassword string, confirmPassword string) error
 }
 
 type UserService struct {
@@ -155,4 +157,29 @@ func (u *UserService) UpdateUser(ctx context.Context, id string, user *entities.
 		return nil, err
 	}
 	return u.userRepo.Update(&ctx, selectUser)
+}
+
+func (u *UserService) UpdatePassword(ctx context.Context, id string, newPassword string, confirmPassword string) error {
+	if newPassword != confirmPassword {
+		return errors.New("password is not matched")
+	}	
+	selectUser, err := u.userRepo.GetByID(&ctx, id)
+	if err != nil {
+		return err
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(selectUser.Password), []byte(newPassword)); err == nil {
+		return nil 
+	}
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	selectUser.Password = string(hashPassword)
+
+	_ , err = u.userRepo.Update(&ctx, selectUser)
+	if err != nil {
+		return err
+	}
+	return nil
+	
 }
