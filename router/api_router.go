@@ -15,14 +15,16 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 		})
 	})
 
+	auth := app.Group("auth")
+
+	auth.Post("/register", handler.Auth.Register)
+	auth.Post("/login", handler.Auth.Login)
+
 	user := app.Group("/user")
 
 	user.Get("", handler.User.GetUsers)
 	user.Get("/id=:id", handler.User.GetUserByID)
 
-	user.Post("/register", handler.User.Register)
-	user.Post("/login", handler.User.Login)
-	
 	user.Use(middlewares.JwtMiddleware(config.ProvideConfig().JWTSecret))
 	user.Put("/update/id=:id", handler.User.UpdateUser)
 	user.Put("/update/password/id=:id", handler.User.UpdatePassword)
