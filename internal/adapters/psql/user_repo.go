@@ -25,22 +25,12 @@ func ProvidePostgresUserRepository(db *pgxpool.Pool) repositories.UserRepository
 	}
 }
 
-func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) (*entities.User, error) {
+func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) error {
 	paramsUser := dbmodel.CreateUserParams{}
 	if err := utils.MappingParser(user, &paramsUser); err != nil {
-		return nil, err
+		return err
 	}
-	paramsUser.BirthDate = convert.TimeToDate(user.BirthDate) //map มาไม่ได้เลยต้องเล่นท่านี้
-	selectedUser, err := u.Queries.CreateUser(c, paramsUser)
-	if err != nil {
-		return nil, err
-	}
-
-	user = &entities.User{}
-	if err := utils.MappingParser(&selectedUser, user); err != nil {
-		return nil, err
-	}
-	return user, nil
+	return u.Queries.CreateUser(c, paramsUser)
 }
 
 func (u *PostgresUserRepository) ListAll(c context.Context) ([]entities.User, error) {
@@ -78,28 +68,30 @@ func (u *PostgresUserRepository) Delete(c context.Context, id string) error {
 	return nil
 }
 
-// GetByEmail implements repositories.UserRepository.
-func (u *PostgresUserRepository) GetByEmail(c context.Context, email string) (*entities.User, error) {
-	getUser, err := u.Queries.GetUserByEmail(c, email)
+func (u *PostgresUserRepository) GetIDPasswordByEmail(c context.Context, email string) (*entities.User, error) {
+	idPassword, err := u.Queries.GetUserIDPasswordByEmail(c, email)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, nil
-	}
-
+        return nil, nil
+    }
 	if err != nil {
 		return nil, err
 	}
 
-	user := entities.User{}
-	if err := utils.MappingParser(&getUser, &user); err != nil {
+	user := &entities.User{}
+	if err := utils.MappingParser(&idPassword, user); err != nil {
 		return nil, err
 	}
-	return &user, nil
+
+	return user, nil
 }
 
 // GetByID implements repositories.UserRepository.
 func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entities.User, error) {
 	ID := convert.StringToUUID(id)
 	getUser, err := u.Queries.GetUserByID(c, ID)
+	if errors.Is(err, sql.ErrNoRows) {
+        return nil, nil
+    }
 
 	if err != nil {
 		return nil, err

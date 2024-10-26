@@ -39,7 +39,7 @@ type User struct {
 	PhoneNumber string             `json:"phoneNumber"`
 	Address     string             `json:"address"`
 	Nationality string             `json:"nationality"`
-	BirthDate   pgtype.Date        `json:"birthDate"`
+	BirthDate   pgtype.Timestamptz `json:"birthDate"`
 	CitizenID   string             `json:"citizenId"`
 	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`

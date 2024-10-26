@@ -85,22 +85,20 @@ func (q *Queries) GetAllEmployees(ctx context.Context) ([]Employee, error) {
 const getEmployeeByID = `-- name: GetEmployeeByID :one
 SELECT
     id,
-    salary,
-    created_at,
-    updated_at 
+    salary
 FROM "employee"
 WHERE id = $1
 `
 
-func (q *Queries) GetEmployeeByID(ctx context.Context, id pgtype.UUID) (Employee, error) {
+type GetEmployeeByIDRow struct {
+	ID     pgtype.UUID `json:"id"`
+	Salary float64     `json:"salary"`
+}
+
+func (q *Queries) GetEmployeeByID(ctx context.Context, id pgtype.UUID) (GetEmployeeByIDRow, error) {
 	row := q.db.QueryRow(ctx, getEmployeeByID, id)
-	var i Employee
-	err := row.Scan(
-		&i.ID,
-		&i.Salary,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
+	var i GetEmployeeByIDRow
+	err := row.Scan(&i.ID, &i.Salary)
 	return i, err
 }
 

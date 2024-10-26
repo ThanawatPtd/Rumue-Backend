@@ -2,6 +2,8 @@ package psql
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
@@ -41,6 +43,9 @@ func (e *PostgresEmployeeRepository) Save(c context.Context, employee *entities.
 
 func (e *PostgresEmployeeRepository) ListAll(c context.Context) ([]entities.Employee, error) {
 	selectedEmployees, err := e.Queries.GetAllEmployees(c)
+	if errors.Is(err, sql.ErrNoRows) {
+        return nil, nil
+    }
 	if  err != nil {
 		return nil, err
 	}
@@ -59,6 +64,9 @@ func (e *PostgresEmployeeRepository) ListAll(c context.Context) ([]entities.Empl
 func (e *PostgresEmployeeRepository) GetByID(c context.Context, id string) (*entities.Employee, error) {
 	uuid := convert.StringToUUID(id)
 	selectedEmployee, err := e.Queries.GetEmployeeByID(c, uuid)
+	if errors.Is(err, sql.ErrNoRows) {
+        return nil, nil
+    }
 	if err != nil {
 		return nil, err
 	}
