@@ -22,14 +22,13 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 
 	user := app.Group("/user")
 
-	user.Get("", handler.User.GetUsers)
-	user.Get("/id=:id", handler.User.GetUserByID)
+	user.Get("", handler.User.GetUsers) //who use this na
 
 	user.Use(middlewares.JwtMiddleware(config.ProvideConfig().JWTSecret))
-	user.Put("/update/id=:id", handler.User.UpdateUser)
-	user.Put("/update/password/id=:id", handler.User.UpdatePassword)
-	user.Delete("", handler.User.DeleteByID)
-	user.Put("", handler.User.UpdateUser)
+	user.Get("/id", handler.User.GetUserByID)
+	user.Put("/update", handler.User.UpdateUser)
+	user.Put("/update/password", handler.User.UpdatePassword)
+	user.Delete("/delete", handler.User.DeleteByID)
 
 	employee := app.Group("/employee")
 
@@ -42,5 +41,5 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 
 	transaction := app.Group("/transaction")
 	transaction.Use(middlewares.JwtMiddleware(config.ProvideConfig().JWTSecret))
-	transaction.Post("/create/id=:id", handler.Transection.CreateTransaction)
+	transaction.Post("/create/:id", handler.Transection.CreateTransaction)
 }

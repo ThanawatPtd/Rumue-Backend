@@ -29,7 +29,7 @@ func (uh *UserRestHandler) GetUsers(c *fiber.Ctx) error {
 
 	var responsedUsers []responses.UserDefaultResponse
 
-	for _, user:= range list {
+	for _, user := range list {
 		responsedUser := responses.UserDefaultResponse{}
 		if err := utils.MappingParser(&user, &responsedUser); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -49,9 +49,9 @@ func (uh *UserRestHandler) GetUsers(c *fiber.Ctx) error {
 }
 
 func (uh *UserRestHandler) GetUserByID(c *fiber.Ctx) error {
-	id := c.Params("id")
+	userID := utils.GetUserIDFromJWT(c)
 
-	user, err := uh.service.GetUserByID(c.Context(), id)
+	user, err := uh.service.GetUserByID(c.Context(), userID)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{

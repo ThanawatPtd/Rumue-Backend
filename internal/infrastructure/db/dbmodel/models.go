@@ -15,29 +15,19 @@ type Employee struct {
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
 }
 
-type Invoice struct {
-	ID              pgtype.UUID        `json:"id"`
-	TransactionID   pgtype.UUID        `json:"transactionId"`
-	Price           float64            `json:"price"`
-	InvoiceImageUrl string             `json:"invoiceImageUrl"`
-	CreatedAt       pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt       pgtype.Timestamptz `json:"updatedAt"`
-}
-
 type Transaction struct {
-	ID                              pgtype.UUID        `json:"id"`
-	UserID                          pgtype.UUID        `json:"userId"`
-	VehicleID                       pgtype.UUID        `json:"vehicleId"`
-	InsuranceType                   string             `json:"insuranceType"`
-	TransactionStatus               string             `json:"transactionStatus"`
-	RequestDate                     pgtype.Timestamptz `json:"requestDate"`
-	ResponseDate                    pgtype.Timestamptz `json:"responseDate"`
-	ESlipImageUrl                   string             `json:"eSlipImageUrl"`
-	CarRegistrationImageUrl         string             `json:"carRegistrationImageUrl"`
-	CompulsoryInsurancePolicyNumber pgtype.Text        `json:"compulsoryInsurancePolicyNumber"`
-	VoluntaryInsurancePolicyNumber  pgtype.Text        `json:"voluntaryInsurancePolicyNumber"`
-	CreatedAt                       pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt                       pgtype.Timestamptz `json:"updatedAt"`
+	ID            pgtype.UUID        `json:"id"`
+	UserID        pgtype.UUID        `json:"userId"`
+	VehicleID     pgtype.UUID        `json:"vehicleId"`
+	Price         float64            `json:"price"`
+	InsuranceType string             `json:"insuranceType"`
+	Status        string             `json:"status"`
+	ESlipImageUrl string             `json:"eSlipImageUrl"`
+	CrImageUrl    string             `json:"crImageUrl"`
+	CipNumber     pgtype.Text        `json:"cipNumber"`
+	VipNumber     pgtype.Text        `json:"vipNumber"`
+	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt     pgtype.Timestamptz `json:"updatedAt"`
 }
 
 type User struct {
@@ -48,6 +38,9 @@ type User struct {
 	Password    string             `json:"password"`
 	PhoneNumber string             `json:"phoneNumber"`
 	Address     string             `json:"address"`
+	Nationality string             `json:"nationality"`
+	BirthDate   pgtype.Date        `json:"birthDate"`
+	CitizenID   string             `json:"citizenId"`
 	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
 }

@@ -30,7 +30,7 @@ func (u *PostgresUserRepository) Save(c context.Context, user *entities.User) (*
 	if err := utils.MappingParser(user, &paramsUser); err != nil {
 		return nil, err
 	}
-
+	paramsUser.BirthDate = convert.TimeToDate(user.BirthDate) //map มาไม่ได้เลยต้องเล่นท่านี้
 	selectedUser, err := u.Queries.CreateUser(c, paramsUser)
 	if err != nil {
 		return nil, err

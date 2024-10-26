@@ -3,7 +3,7 @@ package entities
 import "time"
 
 type Vehicle struct {
-	ID                       string
+	ID                              string
 	RegistrationDate                time.Time
 	RegistrationNumber              string
 	Province                        string

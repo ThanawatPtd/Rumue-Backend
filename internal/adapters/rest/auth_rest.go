@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/ThanawatPtd/SAProject/domain/entities"
@@ -48,7 +49,6 @@ func (ah *AuthHandler) Register(c *fiber.Ctx) error {
 				"message": err.Error(),
 			})
 	}
-
 	responsedUser := responses.UserRegisterResponse{}
 	if err := utils.MappingParser(selectedUser, &responsedUser); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -56,6 +56,7 @@ func (ah *AuthHandler) Register(c *fiber.Ctx) error {
 			"log":     err.Error(),
 		})
 	}
+	fmt.Println(responsedUser)
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"user": responsedUser,

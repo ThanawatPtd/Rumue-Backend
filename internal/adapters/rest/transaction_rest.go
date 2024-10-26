@@ -24,10 +24,9 @@ func (th *TransactionRestHandler) CreateTransaction(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid data",
-			"log": err,
+			"log":     err,
 		})
 	}
-
 	createPayload := entities.Transaction{}
 	if err := utils.MappingParser(&req, &createPayload); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -37,7 +36,6 @@ func (th *TransactionRestHandler) CreateTransaction(c *fiber.Ctx) error {
 
 	userId := utils.GetUserIDFromJWT(c)
 	vehicleId := c.Params("id")
-
 	transaction, err := th.service.CreateTransaction(c.Context(), userId, vehicleId, &createPayload)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -52,9 +50,33 @@ func (th *TransactionRestHandler) CreateTransaction(c *fiber.Ctx) error {
 		})
 	}
 
-	
 	return c.JSON(fiber.Map{
 		"transaction": responseTransaction,
 	})
 
+}
+
+func (th *TransactionRestHandler) CheckHistory(c *fiber.Ctx) error {
+	userId := utils.GetUserIDFromJWT(c)
+
+	transactions, err := th.service.GetAllTransactionsByID(c.Context(), userId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"log": err,
+		})
+	}
+
+	var responseTransaction []responses.DefaultTransactionResponse
+	for _, value := range transactions {
+		var transaction responses.DefaultTransactionResponse
+		if err = utils.MappingParser(&value, &transaction); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"log": err,
+			})
+		}
+		responseTransaction = append(responseTransaction, transaction)
+	}
+	return c.JSON(fiber.Map{
+		"transactions": responseTransaction,
+	})
 }

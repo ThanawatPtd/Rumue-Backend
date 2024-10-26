@@ -10,6 +10,9 @@ CREATE TABLE "user" (
     password VARCHAR(100) NOT NULL,
     phone_number VARCHAR(15) NOT NULL,
     address VARCHAR(100) NOT NULL,
+    nationality VARCHAR(100) NOT NULL,
+    birth_date DATE NOT NULL,
+    citizen_id VARCHAR(15) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL
 );

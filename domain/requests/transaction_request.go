@@ -1,11 +1,11 @@
 package requests
 
-import "time"
-
 type CreateTransactionRequest struct {
-	TransactionType   string             `json:"transactionType"`
-	TransactionStatus string             `json:"transactionStatus"`
-	RequestDate       time.Time			 `json:"requestDate"`
-	ResponseDate      time.Time		     `json:"responseDate"`
-	ESlipImageUrl     string             `json:"eSlipImageUrl"`
+	Price         float64 `json:"price"`
+	InsuranceType string  `json:"insuranceType"`
+	Status        string  `json:"status"`
+	ESlipImageUrl string  `json:"eSlipImageUrl"`
+	CrImageUrl    string  `json:"crImageUrl"`
+	CipNumber     string  `json:"cipNumber"`
+	VipNumber     string  `json:"vipNumber"`
 }
