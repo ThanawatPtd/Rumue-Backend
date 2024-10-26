@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
 	"github.com/ThanawatPtd/SAProject/domain/exceptions"
 	valid "github.com/go-playground/validator/v10"
 )
@@ -37,16 +36,16 @@ func ValidateStruct[T any](payload T) *ValidateError {
 }
 
 type PasswordValidator interface {
-	Match(string) error
+	Recognize(string) error
 }
 
 type RegexPasswordValidator struct {
 }
 
-func (v *RegexPasswordValidator) Match(password string) error {
+func (v *RegexPasswordValidator) Recognize(password string) error {
 	// Ensure the password length is between 6 and 24 characters
     if len(password) < 6 || len(password) > 24 {
-        return exceptions.ErrUnmatchPassword
+        return exceptions.ErrUnrecognizedPassword
     }
 
     // Check if it contains at least one uppercase letter
@@ -58,12 +57,33 @@ func (v *RegexPasswordValidator) Match(password string) error {
 
     // Ensure all conditions are met
     if !(hasUpper && hasLower && hasDigit) {
-        return exceptions.ErrUnmatchPassword
+        return exceptions.ErrUnrecognizedPassword
     }
 
     return nil
 }
 
 func ValidatePassword(validator PasswordValidator, password string) error {
-	return validator.Match(password)
+	return validator.Recognize(password)
+}
+
+type EmailValidator interface {
+	Recognize(string) error
+}
+
+type RegexEmailValidator struct {
+}
+
+func (ev *RegexEmailValidator) Recognize(email string) error {
+	emailRegex := `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
+	re := regexp.MustCompile(emailRegex)
+	if !re.MatchString(email) {
+		return exceptions.ErrUnrecognizedEmail
+	}
+	return nil
+
+}
+
+func ValidateEmail(validator EmailValidator, email string) error {
+	return validator.Recognize(email)
 }

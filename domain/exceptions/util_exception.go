@@ -3,5 +3,6 @@ package exceptions
 import "errors"
 
 var (
-	ErrUnmatchPassword = errors.New("unmatch password") 
+	ErrUnrecognizedPassword = errors.New("unrecognized password") 
+	ErrUnrecognizedEmail = errors.New("unrecognized email")
 )

@@ -130,7 +130,7 @@ type GetAllTransactionsByUserIDRow struct {
 	PhoneNumber           string             `json:"phoneNumber"`
 	Address               string             `json:"address"`
 	Nationality           string             `json:"nationality"`
-	BirthDate             pgtype.Date        `json:"birthDate"`
+	BirthDate             pgtype.Timestamptz `json:"birthDate"`
 	CitizenID             string             `json:"citizenId"`
 	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
 	RegistrationNumber    string             `json:"registrationNumber"`

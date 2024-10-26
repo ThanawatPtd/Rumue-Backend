@@ -4,6 +4,5 @@ import "errors"
 
 var (
 	ErrUserNotFound    = errors.New("user not found")
-	ErrDuplicatedEmail = errors.New("duplicated email")
-	ErrLoginFailed     = errors.New("login failed")
+	ErrDuplicatedEmail = errors.New("email is already used")	
 )

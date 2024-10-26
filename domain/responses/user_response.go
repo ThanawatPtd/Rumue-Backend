@@ -3,10 +3,6 @@ package responses
 import "time"
 
 type UserLoginResponse struct {
-	ID    string `json:"id"`
-	Fname string `json:"fname"`
-	Lname string `json:"lname"`
-	Email string `json:"email"`
 	Token string `json:"token"`
 }
 

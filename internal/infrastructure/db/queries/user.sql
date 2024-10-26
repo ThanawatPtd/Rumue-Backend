@@ -7,18 +7,26 @@ SELECT *
 FROM "user"
 WHERE id = $1;
 
--- name: GetUserByEmail :one
-SELECT *
+-- name: GetUserIDByEmail :one
+SELECT
+    id
 FROM "user"
 WHERE email = $1;
 
--- name: CreateUser :one
+-- name: GetUserIDPasswordByEmail :one
+SELECT
+    id,
+    password
+FROM "user"
+WHERE email = $1;
+
+-- name: CreateUser :exec
 INSERT INTO "user" (
-    email, fname, lname, password, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
+    email, password, fname, lname, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
 ) VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW()
-)
-RETURNING id, email, fname, lname, phone_number, address, nationality, birth_date, citizen_id;
+);
+
 
 -- name: UpdateUser :one
 UPDATE "user"

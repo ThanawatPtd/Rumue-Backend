@@ -9,9 +9,7 @@ FROM "employee";
 -- name: GetEmployeeByID :one
 SELECT
     id,
-    salary,
-    created_at,
-    updated_at 
+    salary
 FROM "employee"
 WHERE id = $1;
 

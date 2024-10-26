@@ -11,64 +11,39 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createUser = `-- name: CreateUser :one
+const createUser = `-- name: CreateUser :exec
 INSERT INTO "user" (
-    email, fname, lname, password, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
+    email, password, fname, lname, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
 ) VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW()
 )
-RETURNING id, email, fname, lname, phone_number, address, nationality, birth_date, citizen_id
 `
 
 type CreateUserParams struct {
-	Email       string      `json:"email"`
-	Fname       string      `json:"fname"`
-	Lname       string      `json:"lname"`
-	Password    string      `json:"password"`
-	PhoneNumber string      `json:"phoneNumber"`
-	Address     string      `json:"address"`
-	Nationality string      `json:"nationality"`
-	BirthDate   pgtype.Date `json:"birthDate"`
-	CitizenID   string      `json:"citizenId"`
+	Email       string             `json:"email"`
+	Password    string             `json:"password"`
+	Fname       string             `json:"fname"`
+	Lname       string             `json:"lname"`
+	PhoneNumber string             `json:"phoneNumber"`
+	Address     string             `json:"address"`
+	Nationality string             `json:"nationality"`
+	BirthDate   pgtype.Timestamptz `json:"birthDate"`
+	CitizenID   string             `json:"citizenId"`
 }
 
-type CreateUserRow struct {
-	ID          pgtype.UUID `json:"id"`
-	Email       string      `json:"email"`
-	Fname       string      `json:"fname"`
-	Lname       string      `json:"lname"`
-	PhoneNumber string      `json:"phoneNumber"`
-	Address     string      `json:"address"`
-	Nationality string      `json:"nationality"`
-	BirthDate   pgtype.Date `json:"birthDate"`
-	CitizenID   string      `json:"citizenId"`
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
-	row := q.db.QueryRow(ctx, createUser,
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
+	_, err := q.db.Exec(ctx, createUser,
 		arg.Email,
+		arg.Password,
 		arg.Fname,
 		arg.Lname,
-		arg.Password,
 		arg.PhoneNumber,
 		arg.Address,
 		arg.Nationality,
 		arg.BirthDate,
 		arg.CitizenID,
 	)
-	var i CreateUserRow
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Fname,
-		&i.Lname,
-		&i.PhoneNumber,
-		&i.Address,
-		&i.Nationality,
-		&i.BirthDate,
-		&i.CitizenID,
-	)
-	return i, err
+	return err
 }
 
 const deleteUser = `-- name: DeleteUser :exec
@@ -119,32 +94,6 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
-const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, fname, lname, password, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
-FROM "user"
-WHERE email = $1
-`
-
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByEmail, email)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Fname,
-		&i.Lname,
-		&i.Password,
-		&i.PhoneNumber,
-		&i.Address,
-		&i.Nationality,
-		&i.BirthDate,
-		&i.CitizenID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
 const getUserByID = `-- name: GetUserByID :one
 SELECT id, email, fname, lname, password, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
 FROM "user"
@@ -171,6 +120,40 @@ func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
 	return i, err
 }
 
+const getUserIDByEmail = `-- name: GetUserIDByEmail :one
+SELECT
+    id
+FROM "user"
+WHERE email = $1
+`
+
+func (q *Queries) GetUserIDByEmail(ctx context.Context, email string) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, getUserIDByEmail, email)
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getUserIDPasswordByEmail = `-- name: GetUserIDPasswordByEmail :one
+SELECT
+    id,
+    password
+FROM "user"
+WHERE email = $1
+`
+
+type GetUserIDPasswordByEmailRow struct {
+	ID       pgtype.UUID `json:"id"`
+	Password string      `json:"password"`
+}
+
+func (q *Queries) GetUserIDPasswordByEmail(ctx context.Context, email string) (GetUserIDPasswordByEmailRow, error) {
+	row := q.db.QueryRow(ctx, getUserIDPasswordByEmail, email)
+	var i GetUserIDPasswordByEmailRow
+	err := row.Scan(&i.ID, &i.Password)
+	return i, err
+}
+
 const updateUser = `-- name: UpdateUser :one
 UPDATE "user"
 SET
@@ -188,27 +171,27 @@ RETURNING id, email, fname, lname, phone_number, address, nationality, birth_dat
 `
 
 type UpdateUserParams struct {
-	ID          pgtype.UUID `json:"id"`
-	Email       string      `json:"email"`
-	Fname       string      `json:"fname"`
-	Lname       string      `json:"lname"`
-	PhoneNumber string      `json:"phoneNumber"`
-	Address     string      `json:"address"`
-	Nationality string      `json:"nationality"`
-	BirthDate   pgtype.Date `json:"birthDate"`
-	CitizenID   string      `json:"citizenId"`
+	ID          pgtype.UUID        `json:"id"`
+	Email       string             `json:"email"`
+	Fname       string             `json:"fname"`
+	Lname       string             `json:"lname"`
+	PhoneNumber string             `json:"phoneNumber"`
+	Address     string             `json:"address"`
+	Nationality string             `json:"nationality"`
+	BirthDate   pgtype.Timestamptz `json:"birthDate"`
+	CitizenID   string             `json:"citizenId"`
 }
 
 type UpdateUserRow struct {
-	ID          pgtype.UUID `json:"id"`
-	Email       string      `json:"email"`
-	Fname       string      `json:"fname"`
-	Lname       string      `json:"lname"`
-	PhoneNumber string      `json:"phoneNumber"`
-	Address     string      `json:"address"`
-	Nationality string      `json:"nationality"`
-	BirthDate   pgtype.Date `json:"birthDate"`
-	CitizenID   string      `json:"citizenId"`
+	ID          pgtype.UUID        `json:"id"`
+	Email       string             `json:"email"`
+	Fname       string             `json:"fname"`
+	Lname       string             `json:"lname"`
+	PhoneNumber string             `json:"phoneNumber"`
+	Address     string             `json:"address"`
+	Nationality string             `json:"nationality"`
+	BirthDate   pgtype.Timestamptz `json:"birthDate"`
+	CitizenID   string             `json:"citizenId"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
