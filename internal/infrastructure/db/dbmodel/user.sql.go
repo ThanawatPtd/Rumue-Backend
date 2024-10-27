@@ -155,6 +155,26 @@ func (q *Queries) GetUserIDPasswordByEmail(ctx context.Context, email string) (G
 	return i, err
 }
 
+const getUserIDPasswordByID = `-- name: GetUserIDPasswordByID :one
+SELECT
+    id,
+    password
+FROM "user"
+WHERE id = $1
+`
+
+type GetUserIDPasswordByIDRow struct {
+	ID       pgtype.UUID `json:"id"`
+	Password string      `json:"password"`
+}
+
+func (q *Queries) GetUserIDPasswordByID(ctx context.Context, id pgtype.UUID) (GetUserIDPasswordByIDRow, error) {
+	row := q.db.QueryRow(ctx, getUserIDPasswordByID, id)
+	var i GetUserIDPasswordByIDRow
+	err := row.Scan(&i.ID, &i.Password)
+	return i, err
+}
+
 const updateUser = `-- name: UpdateUser :one
 UPDATE "user"
 SET
@@ -215,4 +235,22 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 		&i.CitizenID,
 	)
 	return i, err
+}
+
+const updateUserPassword = `-- name: UpdateUserPassword :exec
+UPDATE "user"
+SET
+    password = $2,
+    updated_at = NOW()
+WHERE id = $1
+`
+
+type UpdateUserPasswordParams struct {
+	ID       pgtype.UUID `json:"id"`
+	Password string      `json:"password"`
+}
+
+func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
+	_, err := q.db.Exec(ctx, updateUserPassword, arg.ID, arg.Password)
+	return err
 }
