@@ -95,43 +95,44 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, email, fname, lname, password, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
+SELECT
+    email,
+    fname,
+    lname,
+    phone_number,
+    address,
+    nationality,
+    birth_date,
+    citizen_id
 FROM "user"
 WHERE id = $1
 `
 
-func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error) {
+type GetUserByIDRow struct {
+	Email       string             `json:"email"`
+	Fname       string             `json:"fname"`
+	Lname       string             `json:"lname"`
+	PhoneNumber string             `json:"phoneNumber"`
+	Address     string             `json:"address"`
+	Nationality string             `json:"nationality"`
+	BirthDate   pgtype.Timestamptz `json:"birthDate"`
+	CitizenID   string             `json:"citizenId"`
+}
+
+func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error) {
 	row := q.db.QueryRow(ctx, getUserByID, id)
-	var i User
+	var i GetUserByIDRow
 	err := row.Scan(
-		&i.ID,
 		&i.Email,
 		&i.Fname,
 		&i.Lname,
-		&i.Password,
 		&i.PhoneNumber,
 		&i.Address,
 		&i.Nationality,
 		&i.BirthDate,
 		&i.CitizenID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 	)
 	return i, err
-}
-
-const getUserIDByEmail = `-- name: GetUserIDByEmail :one
-SELECT
-    id
-FROM "user"
-WHERE email = $1
-`
-
-func (q *Queries) GetUserIDByEmail(ctx context.Context, email string) (pgtype.UUID, error) {
-	row := q.db.QueryRow(ctx, getUserIDByEmail, email)
-	var id pgtype.UUID
-	err := row.Scan(&id)
-	return id, err
 }
 
 const getUserIDPasswordByEmail = `-- name: GetUserIDPasswordByEmail :one
@@ -157,22 +158,20 @@ func (q *Queries) GetUserIDPasswordByEmail(ctx context.Context, email string) (G
 const updateUser = `-- name: UpdateUser :one
 UPDATE "user"
 SET
-    email = $2,
-    fname = $3,
-    lname = $4,
-    phone_number = $5,
-    address = $6,
-    nationality = $7,
-    birth_date = $8,
-    citizen_id = $9,
+    fname = $2,
+    lname = $3,
+    phone_number = $4,
+    address = $5,
+    nationality = $6,
+    birth_date = $7,
+    citizen_id = $8,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, email, fname, lname, phone_number, address, nationality, birth_date, citizen_id
+RETURNING email, fname, lname, phone_number, address, nationality, birth_date, citizen_id
 `
 
 type UpdateUserParams struct {
 	ID          pgtype.UUID        `json:"id"`
-	Email       string             `json:"email"`
 	Fname       string             `json:"fname"`
 	Lname       string             `json:"lname"`
 	PhoneNumber string             `json:"phoneNumber"`
@@ -183,7 +182,6 @@ type UpdateUserParams struct {
 }
 
 type UpdateUserRow struct {
-	ID          pgtype.UUID        `json:"id"`
 	Email       string             `json:"email"`
 	Fname       string             `json:"fname"`
 	Lname       string             `json:"lname"`
@@ -197,7 +195,6 @@ type UpdateUserRow struct {
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
 	row := q.db.QueryRow(ctx, updateUser,
 		arg.ID,
-		arg.Email,
 		arg.Fname,
 		arg.Lname,
 		arg.PhoneNumber,
@@ -208,7 +205,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 	)
 	var i UpdateUserRow
 	err := row.Scan(
-		&i.ID,
 		&i.Email,
 		&i.Fname,
 		&i.Lname,

@@ -34,9 +34,9 @@ func (th *TransactionRestHandler) CreateTransaction(c *fiber.Ctx) error {
 		})
 	}
 
-	userId := utils.GetUserIDFromJWT(c)
+	jwt := utils.GetJWTFromContext(c)
 	vehicleId := c.Params("id")
-	transaction, err := th.service.CreateTransaction(c.Context(), userId, vehicleId, &createPayload)
+	transaction, err := th.service.CreateTransaction(c.Context(), jwt.UserID, vehicleId, &createPayload)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"log": err,
@@ -57,9 +57,9 @@ func (th *TransactionRestHandler) CreateTransaction(c *fiber.Ctx) error {
 }
 
 func (th *TransactionRestHandler) CheckHistory(c *fiber.Ctx) error {
-	userId := utils.GetUserIDFromJWT(c)
+	jwt := utils.GetJWTFromContext(c)
 
-	transactions, err := th.service.GetAllTransactionsByID(c.Context(), userId)
+	transactions, err := th.service.GetAllTransactionsByID(c.Context(), jwt.UserID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"log": err,
