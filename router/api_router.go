@@ -44,8 +44,8 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 
 	// Define routes
 	transaction.Put("/", handler.Transection.UpdateTransaction)
-	transaction.Get("/:id", handler.Transection.GetUserVehicleTransactionByID)
 	transaction.Get("/history", handler.Transection.CheckHistory)    // use userID
 	transaction.Get("/list", handler.Transection.FindInsuranceToday) // transaction that pending
+	transaction.Get("/:id", handler.Transection.GetUserVehicleTransactionByID)
 	transaction.Post("/create/:id", handler.Transection.CreateTransaction)
 }

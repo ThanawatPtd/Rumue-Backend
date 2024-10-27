@@ -58,7 +58,6 @@ func (th *TransactionRestHandler) CreateTransaction(c *fiber.Ctx) error {
 
 func (th *TransactionRestHandler) CheckHistory(c *fiber.Ctx) error {
 	jwt := utils.GetJWTFromContext(c)
-
 	userVehicleTransactions, err := th.service.CheckHistory(c.Context(), jwt.UserID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -99,7 +98,6 @@ func (th *TransactionRestHandler) FindInsuranceToday(c *fiber.Ctx) error {
 }
 
 func (th *TransactionRestHandler) UpdateTransaction(c *fiber.Ctx) error {
-
 	req := requests.UpdateTransactionRequest{}
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
