@@ -15,7 +15,7 @@ type UserUseCase interface {
 	GetUserByID(ctx context.Context, id string) (*entities.User, error)
 	DeleteByID(ctx context.Context, id string) error
 	GetUsers(ctx context.Context) ([]entities.User, error)
-	UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error)
+	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
 	UpdatePassword(c context.Context, id string, oldPassword string, newPassword string) error
 }
 
@@ -75,11 +75,12 @@ func (u *UserService) GetUsers(ctx context.Context) ([]entities.User, error) {
 }
 
 // UpdateUser implements UserUseCase.
-func (u *UserService) UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error) {
-	selectUser, err := u.userRepo.GetByID(ctx, id)
+func (u *UserService) UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error) {
+	selectUser, err := u.userRepo.GetByID(ctx, user.ID)
 	if err != nil {
 		return nil, err
 	}
+	selectUser.ID = user.ID
 	if err := utils.MappingParser(user, selectUser); err != nil {
 		return nil, err
 	}
