@@ -25,7 +25,7 @@ func ProvidePostgresEmployeeRepository(db *pgxpool.Pool) repositories.EmployeeRe
 
 func (e *PostgresEmployeeRepository) Save(c context.Context, employee *entities.Employee) (*entities.Employee, error) {
 	paramsEmployee := &dbmodel.CreateEmployeeParams{}
-	if err := utils.MappingParser(employee, paramsEmployee); err != nil{
+	if err := utils.MappingParser(employee, paramsEmployee); err != nil {
 		return nil, err
 	}
 
@@ -35,9 +35,9 @@ func (e *PostgresEmployeeRepository) Save(c context.Context, employee *entities.
 	}
 
 	employee = &entities.Employee{}
-	if err := utils.MappingParser(&selectedEmployee, employee); err != nil{
+	if err := utils.MappingParser(&selectedEmployee, employee); err != nil {
 		return nil, err
-	}	
+	}
 	return employee, nil
 }
 
@@ -51,12 +51,12 @@ func (e *PostgresEmployeeRepository) ListAll(c context.Context) ([]entities.Empl
 	}
 
 	employees := []entities.Employee{}
-	for _, value := range selectedEmployees{
-		employee := &entities.Employee{}	
+	for _, value := range selectedEmployees {
+		employee := &entities.Employee{}
 		if err := utils.MappingParser(&value, employee); err != nil {
 			return nil, err
 		}
-		employees = append(employees, *employee) 
+		employees = append(employees, *employee)
 	}
 	return employees, nil
 }
@@ -95,7 +95,7 @@ func (e *PostgresEmployeeRepository) Update(c context.Context, employee *entitie
 	return employee, nil
 }
 
-func (e *PostgresEmployeeRepository) Delete(c context.Context, id string) (error) {
+func (e *PostgresEmployeeRepository) Delete(c context.Context, id string) error {
 	uuid := convert.StringToUUID(id)
 	if err := e.Queries.DeleteEmployee(c, uuid); err != nil {
 		return err
