@@ -122,14 +122,16 @@ func (uh *UserRestHandler) UpdatePassword(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+	if err := utils.ValidateStruct(*req); err != nil {
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
 
 	jwt := utils.GetJWTFromContext(c)
-
 	if err := uh.service.UpdatePassword(c.Context(), jwt.UserID, req.OldPassword, req.NewPassword); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	return c.JSON(fiber.Map{})
+	return c.SendStatus(fiber.StatusOK)
 }

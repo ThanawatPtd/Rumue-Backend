@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"context"
-
 	"github.com/ThanawatPtd/SAProject/config"
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/exceptions"
@@ -88,7 +87,7 @@ func (u *UserService) UpdateUser(ctx context.Context, user *entities.User) (*ent
 }
 
 func (u *UserService) UpdatePassword(ctx context.Context, id string, oldPassword string, newPassword string) error {
-	selectUser, err := u.userRepo.GetByID(ctx, id)
+	selectUser, err := u.userRepo.GetIDPasswordByID(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -107,7 +106,7 @@ func (u *UserService) UpdatePassword(ctx context.Context, id string, oldPassword
 	}
 	selectUser.Password = string(hashPassword)
 
-	_, err = u.userRepo.Update(ctx, selectUser)
+	err = u.userRepo.UpdatePassword(ctx, selectUser)
 	if err != nil {
 		return err
 	}
