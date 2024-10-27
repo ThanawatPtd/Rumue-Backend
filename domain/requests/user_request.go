@@ -30,6 +30,6 @@ type UserLoginRequest struct {
 }
 
 type UpdatePasswordRequest struct {
-	OldPassword string `json:"oldPassword"`
-	NewPassword string `json:"newPassword"`
+	OldPassword string `json:"oldPassword" validate:"required"`
+	NewPassword string `json:"newPassword" validate:"required"`
 }
