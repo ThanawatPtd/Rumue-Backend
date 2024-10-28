@@ -25,4 +25,9 @@ type Vehicle struct {
 	CompulsoryInsurancePolicyNumber string
 	VoluntaryInsurancePolicyNumber  string
 	InsuranceType                   string
+	VehicleNumber                   string
+	VehicleNumberLocation           string
+	EngineBrand                     string
+	EngineNumberLocation            string
+	WheelType                       string
 }

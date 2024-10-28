@@ -35,7 +35,6 @@ SELECT * FROM "transaction"
 WHERE id = $1;
 
 -- name: GetUserVehicleTransactionByID :one
-
 SELECT
     t.id, t.user_id, t.vehicle_id,
 u.email, u.fname, u.lname, u.phone_number,
@@ -45,3 +44,13 @@ FROM "transaction" as t
 JOIN "vehicle" as v ON t.vehicle_id = v.id 
 JOIN "user" as u ON t.user_id = u.id
 WHERE t.id = $1;
+
+-- name: SumThreeMonth :one
+SELECT
+    SUM(price) AS total_income,
+    DATE_TRUNC('month', updated_at) AS month
+FROM "transaction"
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months' 
+  AND status = 'approved'
+GROUP BY DATE_TRUNC('month', updated_at)
+ORDER BY month;

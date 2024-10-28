@@ -15,6 +15,7 @@ type TransactionUseCase interface {
 	FindTodayInsurances(ctx context.Context) ([]entities.UserVehicleTransaction, error) //Today
 	UpdateTransaction(ctx context.Context, transaction *entities.Transaction) error
 	FindTransactionByID(ctx context.Context, transactionID string) (*entities.UserVehicleTransaction, error)
+	SumThreeMonthIncome(ctx context.Context) (*entities.Income, error)
 }
 
 type TransactionService struct {
@@ -113,4 +114,9 @@ func (t *TransactionService) FindTransactionByID(ctx context.Context, transactio
 	}
 
 	return userVehicleTransaction, nil
+}
+
+// SumThreeMonthIncome implements TransactionUseCase.
+func (t *TransactionService) SumThreeMonthIncome(ctx context.Context) (*entities.Income, error) {
+	panic("unimplemented")
 }

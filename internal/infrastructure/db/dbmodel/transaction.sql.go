@@ -260,7 +260,6 @@ func (q *Queries) GetTransactionByID(ctx context.Context, id pgtype.UUID) (Trans
 }
 
 const getUserVehicleTransactionByID = `-- name: GetUserVehicleTransactionByID :one
-
 SELECT
     t.id, t.user_id, t.vehicle_id,
 u.email, u.fname, u.lname, u.phone_number,
@@ -282,7 +281,7 @@ type GetUserVehicleTransactionByIDRow struct {
 	PhoneNumber           string             `json:"phoneNumber"`
 	Address               string             `json:"address"`
 	Nationality           string             `json:"nationality"`
-	BirthDate             pgtype.Date        `json:"birthDate"`
+	BirthDate             pgtype.Timestamptz `json:"birthDate"`
 	CitizenID             string             `json:"citizenId"`
 	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
 	RegistrationNumber    string             `json:"registrationNumber"`
@@ -370,6 +369,29 @@ func (q *Queries) GetUserVehicleTransactionByID(ctx context.Context, id pgtype.U
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
+	return i, err
+}
+
+const sumThreeMonth = `-- name: SumThreeMonth :one
+SELECT
+    SUM(price) AS total_income,
+    DATE_TRUNC('month', updated_at) AS month
+FROM "transaction"
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months' 
+  AND status = 'approved'
+GROUP BY DATE_TRUNC('month', updated_at)
+ORDER BY month
+`
+
+type SumThreeMonthRow struct {
+	TotalIncome int64           `json:"totalIncome"`
+	Month       pgtype.Interval `json:"month"`
+}
+
+func (q *Queries) SumThreeMonth(ctx context.Context) (SumThreeMonthRow, error) {
+	row := q.db.QueryRow(ctx, sumThreeMonth)
+	var i SumThreeMonthRow
+	err := row.Scan(&i.TotalIncome, &i.Month)
 	return i, err
 }
 

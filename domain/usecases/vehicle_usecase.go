@@ -9,6 +9,7 @@ import (
 
 type VehicleUseCase interface {
 	CreateVehicle(ctx context.Context, userId string, vehicle *entities.Vehicle) (*entities.Vehicle, error)
+	FindTemplate(ctx context.Context, userID string) ([]entities.Vehicle, error)
 }
 
 type VehicleService struct {
@@ -25,7 +26,6 @@ func ProvideVehicleService(vehicleRepo repositories.VehicleRepository, vehicleOw
 
 // CreateVehicle implements VehicleUseCase.
 func (v *VehicleService) CreateVehicle(ctx context.Context, userId string, vehicle *entities.Vehicle) (*entities.Vehicle, error) {
-	//find first later
 
 	createVehicle, err := v.vehicleRepo.CreateVehicle(ctx, vehicle)
 	if err != nil {
@@ -39,4 +39,14 @@ func (v *VehicleService) CreateVehicle(ctx context.Context, userId string, vehic
 	}
 
 	return createVehicle, nil
+}
+
+// FindTemplate implements VehicleUseCase.
+func (v *VehicleService) FindTemplate(ctx context.Context, userID string) ([]entities.Vehicle, error) {
+	vehicles, err := v.vehicleRepo.FindTemplate(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return vehicles, nil
 }
