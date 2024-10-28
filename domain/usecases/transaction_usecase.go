@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/exceptions"
@@ -118,5 +119,11 @@ func (t *TransactionService) FindTransactionByID(ctx context.Context, transactio
 
 // SumThreeMonthIncome implements TransactionUseCase.
 func (t *TransactionService) SumThreeMonthIncome(ctx context.Context) (*entities.Income, error) {
-	panic("unimplemented")
+	income, err := t.transactionRepo.SumThreeMonthIncome(ctx)
+	fmt.Println(income)
+	if err != nil {
+		return nil, err
+	}
+
+	return income, err
 }

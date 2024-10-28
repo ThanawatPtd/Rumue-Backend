@@ -47,10 +47,7 @@ WHERE t.id = $1;
 
 -- name: SumThreeMonth :one
 SELECT
-    SUM(price) AS total_income,
-    DATE_TRUNC('month', updated_at) AS month
+    SUM(price) AS total_income
 FROM "transaction"
-WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months' 
-  AND status = 'approved'
-GROUP BY DATE_TRUNC('month', updated_at)
-ORDER BY month;
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
+  AND status = 'approved';

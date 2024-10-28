@@ -150,3 +150,25 @@ func (th *TransactionRestHandler) GetUserVehicleTransactionByID(c *fiber.Ctx) er
 		},
 	})
 }
+func (th *TransactionRestHandler) SumThreeMonthIncome(c *fiber.Ctx) error {
+
+	income, err := th.service.SumThreeMonthIncome(c.Context())
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Internal server error",
+			"log":     err.Error(),
+		})
+	}
+
+	var response responses.IncomeResponse
+
+	if err := utils.MappingParser(income, &response); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"log": err,
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message": "Success",
+		"Income":  income,
+	})
+}

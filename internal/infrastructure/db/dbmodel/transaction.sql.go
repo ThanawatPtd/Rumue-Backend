@@ -374,25 +374,17 @@ func (q *Queries) GetUserVehicleTransactionByID(ctx context.Context, id pgtype.U
 
 const sumThreeMonth = `-- name: SumThreeMonth :one
 SELECT
-    SUM(price) AS total_income,
-    DATE_TRUNC('month', updated_at) AS month
+    SUM(price) AS total_income
 FROM "transaction"
-WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months' 
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
   AND status = 'approved'
-GROUP BY DATE_TRUNC('month', updated_at)
-ORDER BY month
 `
 
-type SumThreeMonthRow struct {
-	TotalIncome int64           `json:"totalIncome"`
-	Month       pgtype.Interval `json:"month"`
-}
-
-func (q *Queries) SumThreeMonth(ctx context.Context) (SumThreeMonthRow, error) {
+func (q *Queries) SumThreeMonth(ctx context.Context) (float64, error) {
 	row := q.db.QueryRow(ctx, sumThreeMonth)
-	var i SumThreeMonthRow
-	err := row.Scan(&i.TotalIncome, &i.Month)
-	return i, err
+	var total_income float64
+	err := row.Scan(&total_income)
+	return total_income, err
 }
 
 const updateTransaction = `-- name: UpdateTransaction :exec

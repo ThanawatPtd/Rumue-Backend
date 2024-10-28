@@ -2,6 +2,7 @@ package psql
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
@@ -142,4 +143,16 @@ func (tr *PostgresTransactionRepository) GetUserVehicleTransactionByID(ctx conte
 		return nil, err
 	}
 	return &newUserVehicleTransaction, nil
+}
+
+// SumThreeMonthIncome implements repositories.TransactionRepository.
+func (tr *PostgresTransactionRepository) SumThreeMonthIncome(ctx context.Context) (*entities.Income, error) {
+	income, err := tr.Queries.SumThreeMonth(ctx)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	var newIncome entities.Income
+	newIncome.TotalIncome = income
+	return &newIncome, err
 }
