@@ -51,3 +51,12 @@ SELECT
 FROM "transaction"
 WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
   AND status = 'approved';
+
+-- name: TransactionThreeMonth :many
+SELECT
+    status,
+    COUNT(*) AS total_requests
+FROM "transaction"
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
+GROUP BY status
+ORDER BY status;
