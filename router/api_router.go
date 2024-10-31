@@ -47,7 +47,16 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 	transaction.Put("/", handler.Transaction.UpdateTransaction)
 	transaction.Get("/history", handler.Transaction.CheckHistory)    // use userID
 	transaction.Get("/list", handler.Transaction.FindInsuranceToday) // transaction that pending
-	transaction.Get("/summarythreemonth", handler.Transaction.SumThreeMonthIncome)
 	transaction.Get("/:id", handler.Transaction.GetUserVehicleTransactionByID)
 	transaction.Post("/create/:id", handler.Transaction.CreateTransaction)
+
+	mile := app.Group("/mile")
+	mile.Get("/:id", handler.Mile.GetMileRateByID)
+
+	priority := app.Group("/priority")
+	priority.Get("/:id", handler.Priority.GetPriorityRateByID)
+
+	insurance := app.Group("/insurance")
+	insurance.Post("", handler.Insurance.GetInsurance)
+	insurance.Get("", handler.Insurance.GetInsurances)
 }
