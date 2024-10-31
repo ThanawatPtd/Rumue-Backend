@@ -4,22 +4,28 @@ import (
 	"context"
 
 	"github.com/ThanawatPtd/SAProject/domain/entities"
+	"github.com/ThanawatPtd/SAProject/domain/exceptions"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 )
 
 type TransactionUseCase interface {
 	CreateTransaction(ctx context.Context, userID string, vehicleID string, transaction *entities.Transaction) (*entities.Transaction, error)
 	GetAllTransactions(ctx context.Context) ([]entities.Transaction, error)
-	GetAllTransactionsByID(ctx context.Context, userId string) ([]entities.Transaction, error)
+	CheckHistory(ctx context.Context, userId string) ([]entities.UserVehicleTransaction, error)
+	FindTodayInsurances(ctx context.Context) ([]entities.UserVehicleTransaction, error) //Today
+	UpdateTransaction(ctx context.Context, transaction *entities.Transaction) error
+	FindTransactionByID(ctx context.Context, transactionID string) (*entities.UserVehicleTransaction, error)
 }
 
 type TransactionService struct {
+	userRepo         repositories.UserRepository
 	transactionRepo  repositories.TransactionRepository
 	vehicleOwnerRepo repositories.VehicleOwnerRepository
 }
 
-func ProvideTransactionService(transactionRepo repositories.TransactionRepository, vehicleOwnerRepo repositories.VehicleOwnerRepository) TransactionUseCase {
+func ProvideTransactionService(userRepo repositories.UserRepository, transactionRepo repositories.TransactionRepository, vehicleOwnerRepo repositories.VehicleOwnerRepository) TransactionUseCase {
 	return &TransactionService{
+		userRepo:         userRepo,
 		transactionRepo:  transactionRepo,
 		vehicleOwnerRepo: vehicleOwnerRepo,
 	}
@@ -49,20 +55,62 @@ func (t *TransactionService) GetAllTransactions(ctx context.Context) ([]entities
 	return transactions, nil
 }
 
-func (t *TransactionService) GetAllTransactionsByID(ctx context.Context, id string) ([]entities.Transaction, error) {
-	// selectUser, err := u.userRepo.GetByID(ctx, id)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// if selectUser == nil {
-	// 	return nil, exceptions.ErrUserNotFound // checkUser and not found User
-	// }
-
-	transactions, err := t.transactionRepo.ListByID(ctx, id)
+func (t *TransactionService) CheckHistory(ctx context.Context, id string) ([]entities.UserVehicleTransaction, error) {
+	selectUser, err := t.userRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return transactions, nil
+	if selectUser == nil {
+		return nil, exceptions.ErrUserNotFound // checkUser and not found User
+	}
+
+	userVehicletransactions, err := t.transactionRepo.ListByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return userVehicletransactions, nil
+}
+
+// FindTodayInsurances implements EmployeeUseCase.
+func (t *TransactionService) FindTodayInsurances(ctx context.Context) ([]entities.UserVehicleTransaction, error) {
+	userVehicleTransactions, err := t.transactionRepo.ListTrasactionToday(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return userVehicleTransactions, nil
+}
+
+// UpdateTransaction implements EmployeeUseCase.
+func (t *TransactionService) UpdateTransaction(ctx context.Context, transaction *entities.Transaction) error {
+	getTransaction, err := t.transactionRepo.GetTransactionByID(ctx, transaction.ID)
+	if err != nil {
+		return err
+	}
+
+	if getTransaction == nil {
+		return exceptions.ErrTransactionNotFound
+	}
+
+	if transaction.CipNumber == "" {
+		transaction.CipNumber = getTransaction.CipNumber
+	}
+	if transaction.VipNumber == "" {
+		transaction.VipNumber = getTransaction.VipNumber
+	}
+
+	return t.transactionRepo.Update(ctx, transaction)
+}
+
+// FindTransactionByID implements TransactionUseCase.
+func (t *TransactionService) FindTransactionByID(ctx context.Context, transactionID string) (*entities.UserVehicleTransaction, error) {
+	userVehicleTransaction, err := t.transactionRepo.GetUserVehicleTransactionByID(ctx, transactionID)
+	if err != nil {
+		return nil, err
+	}
+
+	return userVehicleTransaction, nil
 }

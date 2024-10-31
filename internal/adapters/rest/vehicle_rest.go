@@ -30,7 +30,7 @@ func (v *VehicleRestHandler) CreateVehicle(c *fiber.Ctx) error {
 	}
 
 	createPayload := entities.Vehicle(req)
-	jwt  := utils.GetJWTFromContext(c)
+	jwt := utils.GetJWTFromContext(c)
 	newVehicle, err := v.vehicleService.CreateVehicle(c.Context(), jwt.UserID, &createPayload)
 
 	if err != nil {

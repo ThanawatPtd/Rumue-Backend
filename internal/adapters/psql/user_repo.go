@@ -70,8 +70,8 @@ func (u *PostgresUserRepository) Delete(c context.Context, id string) error {
 func (u *PostgresUserRepository) GetIDPasswordByEmail(c context.Context, email string) (*entities.User, error) {
 	idPassword, err := u.Queries.GetUserIDPasswordByEmail(c, email)
 	if errors.Is(err, sql.ErrNoRows) {
-        return nil, nil
-    }
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +88,8 @@ func (u *PostgresUserRepository) GetIDPasswordByID(c context.Context, id string)
 	ID := convert.StringToUUID(id)
 	idPassword, err := u.Queries.GetUserIDPasswordByID(c, ID)
 	if errors.Is(err, sql.ErrNoRows) {
-        return nil, nil
-    }
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -107,8 +107,8 @@ func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entitie
 	ID := convert.StringToUUID(id)
 	getUser, err := u.Queries.GetUserByID(c, ID)
 	if errors.Is(err, sql.ErrNoRows) {
-        return nil, nil
-    }
+		return nil, nil
+	}
 
 	if err != nil {
 		return nil, err

@@ -21,7 +21,7 @@ func ProvideAuthRestHandler(authService usecases.AuthUseCase) *AuthHandler {
 }
 
 func (ah *AuthHandler) Register(c *fiber.Ctx) error {
-	req  := requests.CreateUserRequest{}
+	req := requests.CreateUserRequest{}
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
@@ -62,7 +62,7 @@ func (uh *AuthHandler) Login(c *fiber.Ctx) error {
 	createPayload := entities.User{}
 	if err := utils.MappingParser(&req, &createPayload); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":     err.Error(),
+			"error": err.Error(),
 		})
 	}
 
