@@ -57,32 +57,47 @@ func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
 }
 
 const getAllUsers = `-- name: GetAllUsers :many
-SELECT id, email, fname, lname, password, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
+SELECT 
+    email,
+    fname,
+    lname,
+    phone_number,
+    address,
+    nationality,
+    birth_date,
+    citizen_id
 FROM "user"
 `
 
-func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
+type GetAllUsersRow struct {
+	Email       string             `json:"email"`
+	Fname       string             `json:"fname"`
+	Lname       string             `json:"lname"`
+	PhoneNumber string             `json:"phoneNumber"`
+	Address     string             `json:"address"`
+	Nationality string             `json:"nationality"`
+	BirthDate   pgtype.Timestamptz `json:"birthDate"`
+	CitizenID   string             `json:"citizenId"`
+}
+
+func (q *Queries) GetAllUsers(ctx context.Context) ([]GetAllUsersRow, error) {
 	rows, err := q.db.Query(ctx, getAllUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	var items []GetAllUsersRow
 	for rows.Next() {
-		var i User
+		var i GetAllUsersRow
 		if err := rows.Scan(
-			&i.ID,
 			&i.Email,
 			&i.Fname,
 			&i.Lname,
-			&i.Password,
 			&i.PhoneNumber,
 			&i.Address,
 			&i.Nationality,
 			&i.BirthDate,
 			&i.CitizenID,
-			&i.CreatedAt,
-			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -172,6 +187,51 @@ func (q *Queries) GetUserIDPasswordByID(ctx context.Context, id pgtype.UUID) (Ge
 	row := q.db.QueryRow(ctx, getUserIDPasswordByID, id)
 	var i GetUserIDPasswordByIDRow
 	err := row.Scan(&i.ID, &i.Password)
+	return i, err
+}
+
+const getUserProfile = `-- name: GetUserProfile :one
+SELECT 
+    u.email,
+    u.fname,
+    u.lname,
+    u.phone_number,
+    u.address,
+    u.nationality,
+    u.birth_date,
+    u.citizen_id,
+    e.salary
+FROM "user" u
+LEFT JOIN employee e ON u.id = e.id
+WHERE u.id = $1
+`
+
+type GetUserProfileRow struct {
+	Email       string             `json:"email"`
+	Fname       string             `json:"fname"`
+	Lname       string             `json:"lname"`
+	PhoneNumber string             `json:"phoneNumber"`
+	Address     string             `json:"address"`
+	Nationality string             `json:"nationality"`
+	BirthDate   pgtype.Timestamptz `json:"birthDate"`
+	CitizenID   string             `json:"citizenId"`
+	Salary      pgtype.Float8      `json:"salary"`
+}
+
+func (q *Queries) GetUserProfile(ctx context.Context, id pgtype.UUID) (GetUserProfileRow, error) {
+	row := q.db.QueryRow(ctx, getUserProfile, id)
+	var i GetUserProfileRow
+	err := row.Scan(
+		&i.Email,
+		&i.Fname,
+		&i.Lname,
+		&i.PhoneNumber,
+		&i.Address,
+		&i.Nationality,
+		&i.BirthDate,
+		&i.CitizenID,
+		&i.Salary,
+	)
 	return i, err
 }
 

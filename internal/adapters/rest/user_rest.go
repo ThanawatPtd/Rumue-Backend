@@ -67,6 +67,25 @@ func (uh *UserRestHandler) GetUserByID(c *fiber.Ctx) error {
 	return c.JSON(responsedUser)
 }
 
+func (uh *UserRestHandler) GetUserProfileByID(c *fiber.Ctx) error {
+	jwt := utils.GetJWTFromContext(c)
+	profile, err := uh.service.GetUserProfileByID(c.Context(), jwt.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error":     err.Error(),
+		})
+	}
+	user := &profile.User
+	responsedUser := responses.UserProfileResponse{}
+	if err := utils.MappingParser(user, &responsedUser); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":     err.Error(),
+		})	
+	}
+	responsedUser.Salary = profile.Salary
+	return c.JSON(responsedUser)
+}
+
 func (uh *UserRestHandler) DeleteByID(c *fiber.Ctx) error {
 	jwt := utils.GetJWTFromContext(c)
 	if err := uh.service.DeleteByID(c.Context(), jwt.UserID); err != nil {

@@ -1,6 +1,8 @@
 package responses
 
-import "time"
+import (
+	"time"
+)
 
 type UserLoginResponse struct {
 	Token string `json:"token"`
@@ -27,4 +29,16 @@ type UserDefaultResponse struct {
 	Nationality string    `json:"nationality"`
 	CitizenID   string    `json:"citizenID"`
 	BirthDate   time.Time `json:"birthDate"`	
+}
+
+type UserProfileResponse struct {
+	Fname       string    `json:"fname"`
+	Lname       string    `json:"lname"`
+	Email       string    `json:"email"`
+	PhoneNumber string    `json:"phoneNumber"`
+	Address     string    `json:"address"`
+	Nationality string    `json:"nationality"`
+	CitizenID   string    `json:"citizenID"`
+	BirthDate   time.Time `json:"birthDate"`	
+	Salary      float64		`json:"salary"` 
 }
