@@ -48,4 +48,14 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 	transaction.Get("/list", handler.Transection.FindInsuranceToday) // transaction that pending
 	transaction.Get("/:id", handler.Transection.GetUserVehicleTransactionByID)
 	transaction.Post("/create/:id", handler.Transection.CreateTransaction)
+
+	mile := app.Group("/mile")
+	mile.Get("/:id",handler.Mile.GetMileRateByID)
+
+	priority := app.Group("/priority")
+	priority.Get("/:id",handler.Priority.GetPriorityRateByID)
+
+	insurance := app.Group("/insurance")
+	insurance.Post("",handler.Insurance.GetInsurance)
+	insurance.Get("",handler.Insurance.GetInsurances)
 }

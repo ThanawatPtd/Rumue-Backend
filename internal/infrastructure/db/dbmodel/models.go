@@ -15,6 +15,23 @@ type Employee struct {
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
 }
 
+type Insurance struct {
+	Brand string  `json:"brand"`
+	Model string  `json:"model"`
+	Year  string  `json:"year"`
+	Price float64 `json:"price"`
+}
+
+type Mile struct {
+	ID   string  `json:"id"`
+	Rate float64 `json:"rate"`
+}
+
+type Priority struct {
+	ID   string  `json:"id"`
+	Rate float64 `json:"rate"`
+}
+
 type Transaction struct {
 	ID            pgtype.UUID        `json:"id"`
 	UserID        pgtype.UUID        `json:"userId"`
