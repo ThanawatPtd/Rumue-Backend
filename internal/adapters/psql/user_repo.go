@@ -102,6 +102,30 @@ func (u *PostgresUserRepository) GetIDPasswordByID(c context.Context, id string)
 	return user, nil
 }
 
+func (u *PostgresUserRepository) GetUserProfileByID(c context.Context, id string) (*entities.UserProfile, error) {
+	ID := convert.StringToUUID(id)
+	getUserProfile, err := u.Queries.GetUserProfile(c, ID)	
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	user := &entities.User{}
+	if err := utils.MappingParser(&getUserProfile, user); err != nil {
+		return nil, err
+	}	
+
+	profile := &entities.UserProfile{}
+	if err := utils.MappingParser(&getUserProfile, profile); err != nil {
+		return nil, err
+	}
+	profile.User = *user
+	profile.Salary = getUserProfile.Salary.Float64
+	return profile, nil
+}
+
 // GetByID implements repositories.UserRepository.
 func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entities.User, error) {
 	ID := convert.StringToUUID(id)

@@ -14,6 +14,7 @@ type UserUseCase interface {
 	GetUserByID(ctx context.Context, id string) (*entities.User, error)
 	DeleteByID(ctx context.Context, id string) error
 	GetUsers(ctx context.Context) ([]entities.User, error)
+	GetUserProfileByID(ctx context.Context, id string) (*entities.UserProfile, error)
 	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
 	UpdatePassword(c context.Context, id string, oldPassword string, newPassword string) error
 }
@@ -61,6 +62,20 @@ func (u *UserService) GetUserByID(ctx context.Context, id string) (*entities.Use
 	}
 
 	return getUser, nil
+}
+
+func (u *UserService) GetUserProfileByID(ctx context.Context, id string) (*entities.UserProfile, error) {
+	getProfile, err := u.userRepo.GetUserProfileByID(ctx, id)
+	if getProfile == nil {
+		return nil, exceptions.ErrUserNotFound
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return getProfile, nil
+
 }
 
 // GetUsers implements UserUseCase.

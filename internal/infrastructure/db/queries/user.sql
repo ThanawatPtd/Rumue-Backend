@@ -1,6 +1,29 @@
 -- name: GetAllUsers :many
-SELECT *
+SELECT 
+    email,
+    fname,
+    lname,
+    phone_number,
+    address,
+    nationality,
+    birth_date,
+    citizen_id
 FROM "user";
+
+-- name: GetUserProfile :one
+SELECT 
+    u.email,
+    u.fname,
+    u.lname,
+    u.phone_number,
+    u.address,
+    u.nationality,
+    u.birth_date,
+    u.citizen_id,
+    e.salary
+FROM "user" u
+LEFT JOIN employee e ON u.id = e.id
+WHERE u.id = $1;
 
 -- name: GetUserByID :one
 SELECT
