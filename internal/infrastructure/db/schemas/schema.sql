@@ -83,3 +83,24 @@ CREATE TABLE "transaction" (
     updated_at TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (user_id, vehicle_id) REFERENCES "vehicle_owner"(user_id, vehicle_id) ON DELETE CASCADE
 );
+
+
+-- Insurance Table
+CREATE TABLE "insurance" (
+    brand VARCHAR(100) PRIMARY KEY,
+    model VARCHAR(100) PRIMARY KEY,
+    year VARCHAR(100) PRIMARY KEY,
+    price FLOAT NOT NULL
+);
+
+-- Priority Table
+CREATE TABLE "priority" (
+    id VARCHAR(100) PRIMARY KEY,
+    rate FLOAT NOT NULL 
+);
+
+-- Mile Table
+CREATE TABLE "mile" (
+    id VARCHAR(100) PRIMARY KEY,
+    rate FLOAT NOT NULL 
+)

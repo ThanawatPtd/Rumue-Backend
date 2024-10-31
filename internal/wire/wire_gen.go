@@ -39,6 +39,15 @@ func InitializeHandler() *rest.Handler {
 	transactionRestHandler := rest.ProvideTransactionRestHandler(transactionUseCase)
 	authUseCase := usecases.ProvideAuthService(userRepository, employeeRepository, configConfig)
 	authHandler := rest.ProvideAuthRestHandler(authUseCase)
-	handler := rest.ProvideHandler(userRestHandler, employeeHandler, vehicleRestHandler, transactionRestHandler, authHandler)
+	insuranceRepository := psql.ProvideInsuranceRepository(pool)
+	insuranceUseCase := usecases.ProvideInsuranceService(insuranceRepository)
+	insuranceHandler := rest.ProvideInsuranceRestHandler(insuranceUseCase)
+	mileRepository := psql.ProvidePostgresMileRepository(pool)
+	mileUseCase := usecases.ProvideMileService(mileRepository)
+	mileHandler := rest.ProvideMileRestHandler(mileUseCase)
+	priorityRepository := psql.ProvidePostgresPriorityRepository(pool)
+	priorityUseCase := usecases.ProvidePriorityService(priorityRepository)
+	priorityHandler := rest.ProvidePriorityRestHandler(priorityUseCase)
+	handler := rest.ProvideHandler(userRestHandler, employeeHandler, vehicleRestHandler, transactionRestHandler, authHandler, insuranceHandler, mileHandler, priorityHandler)
 	return handler
 }

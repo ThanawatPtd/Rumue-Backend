@@ -42,4 +42,14 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 	transaction := app.Group("/transaction")
 	transaction.Use(middlewares.JwtMiddleware(config.ProvideConfig().JWTSecret))
 	transaction.Post("/create/:id", handler.Transection.CreateTransaction)
+
+	mile := app.Group("/mile")
+	mile.Get("/:id",handler.Mile.GetMileRateByID)
+
+	priority := app.Group("/priority")
+	priority.Get("/:id",handler.Priority.GetPriorityRateByID)
+
+	insurance := app.Group("/insurance")
+	insurance.Post("",handler.Insurance.GetInsurance)
+	insurance.Get("",handler.Insurance.GetInsurances)
 }
