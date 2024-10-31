@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
@@ -71,8 +70,26 @@ func (u *PostgresUserRepository) Delete(c context.Context, id string) error {
 func (u *PostgresUserRepository) GetIDPasswordByEmail(c context.Context, email string) (*entities.User, error) {
 	idPassword, err := u.Queries.GetUserIDPasswordByEmail(c, email)
 	if errors.Is(err, sql.ErrNoRows) {
-        return nil, nil
-    }
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	user := &entities.User{}
+	if err := utils.MappingParser(&idPassword, user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *PostgresUserRepository) GetIDPasswordByID(c context.Context, id string) (*entities.User, error) {
+	ID := convert.StringToUUID(id)
+	idPassword, err := u.Queries.GetUserIDPasswordByID(c, ID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -90,8 +107,8 @@ func (u *PostgresUserRepository) GetByID(c context.Context, id string) (*entitie
 	ID := convert.StringToUUID(id)
 	getUser, err := u.Queries.GetUserByID(c, ID)
 	if errors.Is(err, sql.ErrNoRows) {
-        return nil, nil
-    }
+		return nil, nil
+	}
 
 	if err != nil {
 		return nil, err
@@ -123,4 +140,15 @@ func (u *PostgresUserRepository) Update(c context.Context, user *entities.User) 
 	}
 
 	return user, nil
+}
+
+func (u *PostgresUserRepository) UpdatePassword(c context.Context, user *entities.User) error {
+	paramsUser := &dbmodel.UpdateUserPasswordParams{}
+	if err := utils.MappingParser(user, paramsUser); err != nil {
+		return err
+	}
+	if err := u.Queries.UpdateUserPassword(c, *paramsUser); err != nil {
+		return err
+	}
+	return nil
 }

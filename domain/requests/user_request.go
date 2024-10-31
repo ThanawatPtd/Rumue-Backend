@@ -15,13 +15,13 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Fname       string    `json:"fname"`
-	Lname       string    `json:"lname"`
-	PhoneNumber string    `json:"phoneNumber"`
-	Address     string    `json:"address"`
-	Nationality string    `json:"nationality"`
-	BirthDate   time.Time `json:"birthDate"`
-	CitizenID   string    `json:"citizenID"`
+	Fname       string    `json:"fname" validate:"required"`
+	Lname       string    `json:"lname" validate:"required"`
+	PhoneNumber string    `json:"phoneNumber" validate:"required"`
+	Address     string    `json:"address" validate:"required"`
+	Nationality string    `json:"nationality" validate:"required"`
+	BirthDate   time.Time `json:"birthDate" validate:"required"`
+	CitizenID   string    `json:"citizenID" validate:"required"`
 }
 
 type UserLoginRequest struct {
@@ -30,6 +30,6 @@ type UserLoginRequest struct {
 }
 
 type UpdatePasswordRequest struct {
-	OldPassword string `json:"oldPassword"`
-	NewPassword string `json:"newPassword"`
+	OldPassword string `json:"oldPassword" validate:"required"`
+	NewPassword string `json:"newPassword" validate:"required"`
 }

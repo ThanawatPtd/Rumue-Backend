@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"context"
-
 	"github.com/ThanawatPtd/SAProject/config"
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/exceptions"
@@ -15,7 +14,7 @@ type UserUseCase interface {
 	GetUserByID(ctx context.Context, id string) (*entities.User, error)
 	DeleteByID(ctx context.Context, id string) error
 	GetUsers(ctx context.Context) ([]entities.User, error)
-	UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error)
+	UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error)
 	UpdatePassword(c context.Context, id string, oldPassword string, newPassword string) error
 }
 
@@ -75,11 +74,12 @@ func (u *UserService) GetUsers(ctx context.Context) ([]entities.User, error) {
 }
 
 // UpdateUser implements UserUseCase.
-func (u *UserService) UpdateUser(ctx context.Context, id string, user *entities.User) (*entities.User, error) {
-	selectUser, err := u.userRepo.GetByID(ctx, id)
+func (u *UserService) UpdateUser(ctx context.Context, user *entities.User) (*entities.User, error) {
+	selectUser, err := u.userRepo.GetByID(ctx, user.ID)
 	if err != nil {
 		return nil, err
 	}
+	selectUser.ID = user.ID
 	if err := utils.MappingParser(user, selectUser); err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (u *UserService) UpdateUser(ctx context.Context, id string, user *entities.
 }
 
 func (u *UserService) UpdatePassword(ctx context.Context, id string, oldPassword string, newPassword string) error {
-	selectUser, err := u.userRepo.GetByID(ctx, id)
+	selectUser, err := u.userRepo.GetIDPasswordByID(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (u *UserService) UpdatePassword(ctx context.Context, id string, oldPassword
 	}
 	selectUser.Password = string(hashPassword)
 
-	_, err = u.userRepo.Update(ctx, selectUser)
+	err = u.userRepo.UpdatePassword(ctx, selectUser)
 	if err != nil {
 		return err
 	}

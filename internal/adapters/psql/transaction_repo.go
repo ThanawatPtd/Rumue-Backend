@@ -2,7 +2,6 @@ package psql
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
@@ -43,27 +42,104 @@ func (tr *PostgresTransactionRepository) Save(ctx context.Context, transaction *
 	}
 	newTransaction := &entities.Transaction{}
 	if err := utils.MappingParser(&savedTransaction, newTransaction); err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return newTransaction, nil
 }
 
 // ListByID implements repositories.TransactionRepository.
-func (tr *PostgresTransactionRepository) ListByID(ctx context.Context, id string) ([]entities.Transaction, error) {
+func (tr *PostgresTransactionRepository) ListByID(ctx context.Context, id string) ([]entities.UserVehicleTransaction, error) {
 	uuid := convert.StringToUUID(id)
-	selectTransaction, err := tr.Queries.GetAllTransactionsByUserID(ctx, uuid)
+	selectTransactions, err := tr.Queries.GetAllTransactionsByUserID(ctx, uuid)
 	if err != nil {
-		return []entities.Transaction{}, err
+		return nil, err
 	}
-	var transactions []entities.Transaction
-	for _, value := range selectTransaction {
-		var transaction entities.Transaction
-		if err := utils.MappingParser(&value, &transactions); err != nil {
+	var userVehicleTransactions []entities.UserVehicleTransaction
+	for _, value := range selectTransactions {
+		var userVehicleTransaction entities.UserVehicleTransaction
+		if err := utils.MappingParser(&value, &userVehicleTransaction.User); err != nil {
 			return nil, err
 		}
-		transactions = append(transactions, transaction)
+		if err := utils.MappingParser(&value, &userVehicleTransaction.Vehicle); err != nil {
+			return nil, err
+		}
+		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
+			return nil, err
+		}
+		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
+	}
+	return userVehicleTransactions, nil
+}
+
+// Update implements repositories.TransactionRepository.
+func (tr *PostgresTransactionRepository) Update(ctx context.Context, transaction *entities.Transaction) error {
+	var dbUpdateTransaction dbmodel.UpdateTransactionParams
+	if err := utils.MappingParser(transaction, &dbUpdateTransaction); err != nil {
+		return err
+	}
+	return tr.Queries.UpdateTransaction(ctx, dbUpdateTransaction)
+}
+
+// ListTrasactionToday implements repositories.EmployeeRepository.
+func (tr *PostgresTransactionRepository) ListTrasactionToday(c context.Context) ([]entities.UserVehicleTransaction, error) {
+	queryUserVehicleTransactions, err := tr.Queries.FindInsuranceToday(c)
+	if err != nil {
+		return nil, err
 	}
 
-	return transactions, nil
+	if queryUserVehicleTransactions == nil {
+		return []entities.UserVehicleTransaction{}, nil
+	}
+
+	var userVehicleTransactions []entities.UserVehicleTransaction
+	for _, value := range queryUserVehicleTransactions {
+		var userVehicleTransaction entities.UserVehicleTransaction
+		if err := utils.MappingParser(&value, &userVehicleTransaction.User); err != nil {
+			return nil, err
+		}
+		if err := utils.MappingParser(&value, &userVehicleTransaction.Vehicle); err != nil {
+			return nil, err
+		}
+		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
+			return nil, err
+		}
+		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
+	}
+	return userVehicleTransactions, nil
+}
+
+// GetTransactionByID implements repositories.TransactionRepository.
+func (tr *PostgresTransactionRepository) GetTransactionByID(ctx context.Context, transactionID string) (*entities.Transaction, error) {
+	uuid := convert.StringToUUID(transactionID)
+	transaction, err := tr.Queries.GetTransactionByID(ctx, uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	newTransaction := &entities.Transaction{}
+	if err := utils.MappingParser(&transaction, newTransaction); err != nil {
+		return nil, err
+	}
+	return newTransaction, nil
+}
+
+// GetUserVehicleTransactionByID implements repositories.TransactionRepository.
+func (tr *PostgresTransactionRepository) GetUserVehicleTransactionByID(ctx context.Context, trasactionID string) (*entities.UserVehicleTransaction, error) {
+	uuid := convert.StringToUUID(trasactionID)
+	userVehicleTransaction, err := tr.Queries.GetUserVehicleTransactionByID(ctx, uuid)
+
+	if err != nil {
+		return nil, err
+	}
+	newUserVehicleTransaction := entities.UserVehicleTransaction{}
+	if err := utils.MappingParser(&userVehicleTransaction, &newUserVehicleTransaction.User); err != nil {
+		return nil, err
+	}
+	if err := utils.MappingParser(&userVehicleTransaction, &newUserVehicleTransaction.Vehicle); err != nil {
+		return nil, err
+	}
+	if err := utils.MappingParser(&userVehicleTransaction, &newUserVehicleTransaction.Transaction); err != nil {
+		return nil, err
+	}
+	return &newUserVehicleTransaction, nil
 }

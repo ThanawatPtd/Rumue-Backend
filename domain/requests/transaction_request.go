@@ -9,3 +9,10 @@ type CreateTransactionRequest struct {
 	CipNumber     string  `json:"cipNumber"`
 	VipNumber     string  `json:"vipNumber"`
 }
+
+type UpdateTransactionRequest struct {
+	ID        string `json:"id"`
+	Status    string `json:"status"`
+	CipNumber string `json:"cipNumber"`
+	VipNumber string `json:"vipNumber"`
+}

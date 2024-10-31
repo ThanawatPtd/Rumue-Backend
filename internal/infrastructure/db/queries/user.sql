@@ -3,15 +3,17 @@ SELECT *
 FROM "user";
 
 -- name: GetUserByID :one
-SELECT *
+SELECT
+    email,
+    fname,
+    lname,
+    phone_number,
+    address,
+    nationality,
+    birth_date,
+    citizen_id
 FROM "user"
 WHERE id = $1;
-
--- name: GetUserIDByEmail :one
-SELECT
-    id
-FROM "user"
-WHERE email = $1;
 
 -- name: GetUserIDPasswordByEmail :one
 SELECT
@@ -20,6 +22,13 @@ SELECT
 FROM "user"
 WHERE email = $1;
 
+-- name: GetUserIDPasswordByID :one
+SELECT
+    id,
+    password
+FROM "user"
+WHERE id = $1;
+
 -- name: CreateUser :exec
 INSERT INTO "user" (
     email, password, fname, lname, phone_number, address, nationality, birth_date, citizen_id, created_at, updated_at
@@ -27,21 +36,26 @@ INSERT INTO "user" (
     $1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW()
 );
 
-
 -- name: UpdateUser :one
 UPDATE "user"
 SET
-    email = $2,
-    fname = $3,
-    lname = $4,
-    phone_number = $5,
-    address = $6,
-    nationality = $7,
-    birth_date = $8,
-    citizen_id = $9,
+    fname = $2,
+    lname = $3,
+    phone_number = $4,
+    address = $5,
+    nationality = $6,
+    birth_date = $7,
+    citizen_id = $8,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, email, fname, lname, phone_number, address, nationality, birth_date, citizen_id;
+RETURNING email, fname, lname, phone_number, address, nationality, birth_date, citizen_id;
+
+-- name: UpdateUserPassword :exec
+UPDATE "user"
+SET
+    password = $2,
+    updated_at = NOW()
+WHERE id = $1;
 
 -- name: DeleteUser :exec
 DELETE FROM "user"

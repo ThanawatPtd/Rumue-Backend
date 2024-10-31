@@ -35,7 +35,7 @@ func InitializeHandler() *rest.Handler {
 	vehicleUseCase := usecases.ProvideVehicleService(vehicleRepository, vehicleOwnerRepository)
 	vehicleRestHandler := rest.ProvideVehicleHandler(vehicleUseCase)
 	transactionRepository := psql.ProvidePostgresTransactionRepository(pool)
-	transactionUseCase := usecases.ProvideTransactionService(transactionRepository, vehicleOwnerRepository)
+	transactionUseCase := usecases.ProvideTransactionService(userRepository, transactionRepository, vehicleOwnerRepository)
 	transactionRestHandler := rest.ProvideTransactionRestHandler(transactionUseCase)
 	authUseCase := usecases.ProvideAuthService(userRepository, employeeRepository, configConfig)
 	authHandler := rest.ProvideAuthRestHandler(authUseCase)
