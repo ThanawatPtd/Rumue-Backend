@@ -380,11 +380,46 @@ WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
   AND status = 'approved'
 `
 
-func (q *Queries) SumThreeMonth(ctx context.Context) (float64, error) {
+func (q *Queries) SumThreeMonth(ctx context.Context) (int64, error) {
 	row := q.db.QueryRow(ctx, sumThreeMonth)
-	var total_income float64
+	var total_income int64
 	err := row.Scan(&total_income)
 	return total_income, err
+}
+
+const transactionThreeMonth = `-- name: TransactionThreeMonth :many
+SELECT
+    status,
+    COUNT(*) AS total_requests
+FROM "transaction"
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
+GROUP BY status
+ORDER BY status
+`
+
+type TransactionThreeMonthRow struct {
+	Status        string `json:"status"`
+	TotalRequests int64  `json:"totalRequests"`
+}
+
+func (q *Queries) TransactionThreeMonth(ctx context.Context) ([]TransactionThreeMonthRow, error) {
+	rows, err := q.db.Query(ctx, transactionThreeMonth)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []TransactionThreeMonthRow
+	for rows.Next() {
+		var i TransactionThreeMonthRow
+		if err := rows.Scan(&i.Status, &i.TotalRequests); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateTransaction = `-- name: UpdateTransaction :exec
