@@ -12,7 +12,7 @@ import (
 func DailyMonitor(app *fiber.App, handler *rest.Handler){
 	c := app.AcquireCtx(&fasthttp.RequestCtx{})
 	for{
-        time.Sleep(24*time.Hour)
+        time.Sleep(24*time.Hour*7)
 		if err := handler.Email.SendMailToAlertExpiredTransaction(c); err !=nil{
 			log.Fatal("Email service error")
 		}
