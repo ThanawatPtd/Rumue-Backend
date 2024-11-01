@@ -4,12 +4,12 @@ type Handler struct {
 	User        *UserRestHandler
 	Employee    *EmployeeHandler
 	Vehicle     *VehicleRestHandler
-	Transection *TransactionRestHandler
+	Transaction *TransactionRestHandler
 	Auth        *AuthHandler
-	Insurance 	*InsuranceHandler
+	Insurance   *InsuranceHandler
 	Mile        *MileHandler
 	Priority    *PriorityHandler
-	Email		*EmailHandler
+	Email       *EmailHandler
 }
 
 func ProvideHandler(user *UserRestHandler, employee *EmployeeHandler, vehicle *VehicleRestHandler,
@@ -18,11 +18,11 @@ func ProvideHandler(user *UserRestHandler, employee *EmployeeHandler, vehicle *V
 		User:        user,
 		Employee:    employee,
 		Vehicle:     vehicle,
-		Transection: transaction,
+		Transaction: transaction,
 		Auth:        auth,
-		Insurance: insurance,
-		Mile: mile,
-		Priority: priority,
-		Email: email,
+		Insurance:   insurance,
+		Mile:        mile,
+		Priority:    priority,
+		Email:       email,
 	}
 }

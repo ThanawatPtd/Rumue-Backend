@@ -1,6 +1,8 @@
 package rest
 
 import (
+	"fmt"
+
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/exceptions"
 	"github.com/ThanawatPtd/SAProject/domain/requests"
@@ -42,8 +44,10 @@ func (ah *AuthHandler) Register(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-
-	return c.SendStatus(fiber.StatusCreated)
+	fmt.Println("hahah")
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Create Success",
+	})
 }
 
 func (uh *AuthHandler) Login(c *fiber.Ctx) error {

@@ -35,7 +35,6 @@ SELECT * FROM "transaction"
 WHERE id = $1;
 
 -- name: GetUserVehicleTransactionByID :one
-
 SELECT
     t.id, t.user_id, t.vehicle_id,
 u.email, u.fname, u.lname, u.phone_number,
@@ -46,6 +45,7 @@ JOIN "vehicle" as v ON t.vehicle_id = v.id
 JOIN "user" as u ON t.user_id = u.id
 WHERE t.id = $1;
 
+<<<<<<< HEAD
 
 -- name: GetExpiredInsuranceTransactions :many
 
@@ -64,3 +64,20 @@ JOIN "vehicle" AS v ON t.vehicle_id = v.id
 JOIN "user" AS u ON t.user_id = u.id
 WHERE t.updated_at + INTERVAL '1 year' 
       BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '1 week';
+=======
+-- name: SumThreeMonth :one
+SELECT
+    SUM(price) AS total_income
+FROM "transaction"
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
+  AND status = 'approved';
+
+-- name: TransactionThreeMonth :many
+SELECT
+    status,
+    COUNT(*) AS total_requests
+FROM "transaction"
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
+GROUP BY status
+ORDER BY status;
+>>>>>>> feature/usecase6,9

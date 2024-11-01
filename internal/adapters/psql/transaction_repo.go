@@ -16,6 +16,17 @@ type PostgresTransactionRepository struct {
 	DB      *pgxpool.Pool
 }
 
+// SumThreeMonthIncome implements repositories.TransactionRepository.
+func (tr *PostgresTransactionRepository) SumThreeMonthIncome(ctx context.Context) (*entities.Income, error) {
+	income, err := tr.Queries.SumThreeMonth(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var newIncome entities.Income
+	newIncome.TotalIncome = float64(income)
+	return &newIncome, err
+}
+
 func ProvidePostgresTransactionRepository(db *pgxpool.Pool) repositories.TransactionRepository {
 	return &PostgresTransactionRepository{
 		Queries: dbmodel.New(db),
