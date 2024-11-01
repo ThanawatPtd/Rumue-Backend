@@ -90,7 +90,7 @@ func (u *AuthService) Login(ctx context.Context, user *entities.User) (string, e
 	}
 
 	// Generate JWT token
-	expireAt := time.Now().Add(time.Hour * 1)
+	expireAt := time.Now().Add(time.Hour * 100)
 
 	claims := jwt.MapClaims{
 		"id": getUser.ID,
