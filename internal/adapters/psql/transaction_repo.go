@@ -143,3 +143,31 @@ func (tr *PostgresTransactionRepository) GetUserVehicleTransactionByID(ctx conte
 	}
 	return &newUserVehicleTransaction, nil
 }
+
+
+func (tr *PostgresTransactionRepository) GetExpiredTransactionThisWeek(ctx context.Context) ([]entities.UserVehicleTransaction, error) {
+	queryUserVehicleTransactions, err := tr.Queries.GetExpiredInsuranceTransactions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if queryUserVehicleTransactions == nil {
+		return []entities.UserVehicleTransaction{}, nil
+	}
+
+	var userVehicleTransactions []entities.UserVehicleTransaction
+	for _, value := range queryUserVehicleTransactions {
+		var userVehicleTransaction entities.UserVehicleTransaction
+		if err := utils.MappingParser(&value, &userVehicleTransaction.User); err != nil {
+			return nil, err
+		}
+		if err := utils.MappingParser(&value, &userVehicleTransaction.Vehicle); err != nil {
+			return nil, err
+		}
+		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
+			return nil, err
+		}
+		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
+	}
+	return userVehicleTransactions, nil
+}

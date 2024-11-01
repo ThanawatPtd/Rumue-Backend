@@ -48,6 +48,8 @@ func InitializeHandler() *rest.Handler {
 	priorityRepository := psql.ProvidePostgresPriorityRepository(pool)
 	priorityUseCase := usecases.ProvidePriorityService(priorityRepository)
 	priorityHandler := rest.ProvidePriorityRestHandler(priorityUseCase)
-	handler := rest.ProvideHandler(userRestHandler, employeeHandler, vehicleRestHandler, transactionRestHandler, authHandler, insuranceHandler, mileHandler, priorityHandler)
+	emailUseCase := usecases.ProvideEmailService(transactionRepository, configConfig)
+	emailHandler := rest.ProvideEmailRestHandler(emailUseCase)
+	handler := rest.ProvideHandler(userRestHandler, employeeHandler, vehicleRestHandler, transactionRestHandler, authHandler, insuranceHandler, mileHandler, priorityHandler, emailHandler)
 	return handler
 }
