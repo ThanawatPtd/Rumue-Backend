@@ -8,7 +8,6 @@ CREATE TABLE "insurance" (
     headcount INT NOT NULL DEFAULT 0,
     PRIMARY KEY(brand, model, year)
 );
-
 INSERT INTO "insurance" (brand, model, year, price) VALUES
     ('Toyota', 'Camry', '2022', 1200),
     ('Toyota', 'Camry', '2021', 1150),

@@ -13,7 +13,7 @@ CREATE TABLE "transaction" (
     cr_image_url VARCHAR(100) NOT NULL,
     cip_number VARCHAR(30),
     vip_number VARCHAR(30),
-    receipt_date TIMESTAMPTZ NOT NULL,
+    receipt_date TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (user_id, vehicle_id) REFERENCES "vehicle_owner"(user_id, vehicle_id) ON DELETE CASCADE,

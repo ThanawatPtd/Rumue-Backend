@@ -6,6 +6,7 @@ require (
 	github.com/emicklei/pgtalk v1.4.2
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/jackc/pgx/v5 v5.7.1
+	github.com/pressly/goose/v3 v3.22.1
 	golang.org/x/crypto v0.27.0
 )
 
@@ -24,7 +25,6 @@ require (
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
-	github.com/pressly/goose/v3 v3.22.1 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
@@ -49,7 +49,7 @@ require (
 	github.com/gofiber/contrib/jwt v1.0.10
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/google/uuid v1.6.0 // indirect
+	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/lib/pq v1.10.9
@@ -60,7 +60,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/spf13/viper v1.19.0
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.51.0 // indirect
+	github.com/valyala/fasthttp v1.51.0
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 )
