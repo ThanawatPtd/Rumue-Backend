@@ -27,6 +27,10 @@ func (ih *InsuranceHandler) GetInsurance(c *fiber.Ctx) error{
 		})
 	}
 
+	if err := utils.ValidateStruct(req); err != nil {
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
+
 	payload := &entities.Insurance{
 		Brand: req.Brand,
 		Model: req.Model,

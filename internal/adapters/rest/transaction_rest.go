@@ -27,6 +27,11 @@ func (th *TransactionRestHandler) CreateTransaction(c *fiber.Ctx) error {
 			"log":     err,
 		})
 	}
+
+	if err := utils.ValidateStruct(req); err != nil {
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
+
 	createPayload := entities.Transaction{}
 	if err := utils.MappingParser(&req, &createPayload); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -105,6 +110,11 @@ func (th *TransactionRestHandler) UpdateTransaction(c *fiber.Ctx) error {
 			"log":     err,
 		})
 	}
+
+	if err := utils.ValidateStruct(req); err != nil {
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
+
 	createPayload := entities.Transaction{}
 	if err := utils.MappingParser(&req, &createPayload); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
