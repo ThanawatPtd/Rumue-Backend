@@ -111,7 +111,8 @@ func (th *TransactionRestHandler) UpdateTransaction(c *fiber.Ctx) error {
 			"log": err,
 		})
 	}
-	err := th.service.UpdateTransaction(c.Context(), &createPayload)
+	jwt := utils.GetJWTFromContext(c)
+	err := th.service.UpdateTransaction(c.Context(), &createPayload, jwt.UserID)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -148,27 +149,5 @@ func (th *TransactionRestHandler) GetUserVehicleTransactionByID(c *fiber.Ctx) er
 		"payload": fiber.Map{
 			"transaction": response,
 		},
-	})
-}
-func (th *TransactionRestHandler) SumThreeMonthIncome(c *fiber.Ctx) error {
-
-	income, err := th.service.SumThreeMonthIncome(c.Context())
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Internal server error",
-			"log":     err.Error(),
-		})
-	}
-
-	var response responses.IncomeResponse
-
-	if err := utils.MappingParser(income, &response); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"log": err,
-		})
-	}
-	return c.JSON(fiber.Map{
-		"message": "Success",
-		"Income":  income,
 	})
 }

@@ -36,6 +36,7 @@ type Transaction struct {
 	ID            pgtype.UUID        `json:"id"`
 	UserID        pgtype.UUID        `json:"userId"`
 	VehicleID     pgtype.UUID        `json:"vehicleId"`
+	EmployeeID    pgtype.UUID        `json:"employeeId"`
 	Price         float64            `json:"price"`
 	InsuranceType string             `json:"insuranceType"`
 	Status        string             `json:"status"`

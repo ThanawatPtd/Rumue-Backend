@@ -1,5 +1,16 @@
 -- name: GetAllTransactions :many
-SELECT * 
+SELECT
+    id,
+    user_id,
+    vehicle_id,
+    employee_id,
+    price,
+    insurance_type,
+    status,
+    e_slip_image_url,
+    cr_image_url,
+    created_at,
+    updated_at 
 FROM "transaction";
 
 -- name: CreateTransaction :one
@@ -25,13 +36,26 @@ WHERE t.user_id = $1;
 -- name: UpdateTransaction :exec
 UPDATE "transaction"
 SET
-    status = $2,
-    cip_number = $3,
-    vip_number = $4
+    employee_id = $2,
+    status = $3,
+    cip_number = $4,
+    vip_number = $5
 WHERE id = $1;
 
 -- name: GetTransactionByID :one
-SELECT * FROM "transaction"
+SELECT 
+    id,
+    user_id,
+    vehicle_id,
+    employee_id,
+    price,
+    insurance_type,
+    status,
+    e_slip_image_url,
+    cr_image_url,
+    created_at,
+    updated_at 
+FROM "transaction"
 WHERE id = $1;
 
 -- name: GetUserVehicleTransactionByID :one
@@ -45,7 +69,6 @@ JOIN "vehicle" as v ON t.vehicle_id = v.id
 JOIN "user" as u ON t.user_id = u.id
 WHERE t.id = $1;
 
-<<<<<<< HEAD
 
 -- name: GetExpiredInsuranceTransactions :many
 
@@ -64,20 +87,3 @@ JOIN "vehicle" AS v ON t.vehicle_id = v.id
 JOIN "user" AS u ON t.user_id = u.id
 WHERE t.updated_at + INTERVAL '1 year' 
       BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '1 week';
-=======
--- name: SumThreeMonth :one
-SELECT
-    SUM(price) AS total_income
-FROM "transaction"
-WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
-  AND status = 'approved';
-
--- name: TransactionThreeMonth :many
-SELECT
-    status,
-    COUNT(*) AS total_requests
-FROM "transaction"
-WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
-GROUP BY status
-ORDER BY status;
->>>>>>> feature/usecase6,9

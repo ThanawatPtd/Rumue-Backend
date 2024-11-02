@@ -5,6 +5,7 @@ CREATE TABLE "transaction" (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID,
     vehicle_id UUID,
+    employee_id UUID,
     price FLOAT NOT NULL,
     insurance_type VARCHAR(30) NOT NULL,
     status VARCHAR(100) NOT NULL,
@@ -14,7 +15,8 @@ CREATE TABLE "transaction" (
     vip_number VARCHAR(30),
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
-    FOREIGN KEY (user_id, vehicle_id) REFERENCES "vehicle_owner"(user_id, vehicle_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id, vehicle_id) REFERENCES "vehicle_owner"(user_id, vehicle_id) ON DELETE CASCADE,
+    FOREIGN KEY (employee_id) REFERENCES "employee"(id) ON DELETE CASCADE
 );
 -- +goose StatementEnd
 
