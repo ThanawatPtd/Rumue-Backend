@@ -29,7 +29,7 @@ CREATE TABLE "vehicle"(
     weight_laden FLOAT NOT NULL,
     miles FLOAT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ NOT NULL
+    updated_at TIMESTAMPTZ NOT NULL 
 );
 
 -- +goose StatementEnd

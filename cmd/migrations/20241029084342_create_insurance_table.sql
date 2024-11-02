@@ -5,7 +5,7 @@ CREATE TABLE "insurance" (
     model VARCHAR(100),
     year VARCHAR(100),
     price FLOAT NOT NULL,
-
+    headcount INT NOT NULL DEFAULT 0,
     PRIMARY KEY(brand, model, year)
 );
 
