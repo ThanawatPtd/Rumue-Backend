@@ -16,6 +16,17 @@ type PostgresTransactionRepository struct {
 	DB      *pgxpool.Pool
 }
 
+// SumThreeMonthIncome implements repositories.TransactionRepository.
+func (tr *PostgresTransactionRepository) SumThreeMonthIncome(ctx context.Context) (*entities.Income, error) {
+	income, err := tr.Queries.SumThreeMonth(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var newIncome entities.Income
+	newIncome.TotalIncome = float64(income)
+	return &newIncome, err
+}
+
 func ProvidePostgresTransactionRepository(db *pgxpool.Pool) repositories.TransactionRepository {
 	return &PostgresTransactionRepository{
 		Queries: dbmodel.New(db),
@@ -142,4 +153,32 @@ func (tr *PostgresTransactionRepository) GetUserVehicleTransactionByID(ctx conte
 		return nil, err
 	}
 	return &newUserVehicleTransaction, nil
+}
+
+
+func (tr *PostgresTransactionRepository) GetExpiredTransactionThisWeek(ctx context.Context) ([]entities.UserVehicleTransaction, error) {
+	queryUserVehicleTransactions, err := tr.Queries.GetExpiredInsuranceTransactions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if queryUserVehicleTransactions == nil {
+		return []entities.UserVehicleTransaction{}, nil
+	}
+
+	var userVehicleTransactions []entities.UserVehicleTransaction
+	for _, value := range queryUserVehicleTransactions {
+		var userVehicleTransaction entities.UserVehicleTransaction
+		if err := utils.MappingParser(&value, &userVehicleTransaction.User); err != nil {
+			return nil, err
+		}
+		if err := utils.MappingParser(&value, &userVehicleTransaction.Vehicle); err != nil {
+			return nil, err
+		}
+		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
+			return nil, err
+		}
+		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
+	}
+	return userVehicleTransactions, nil
 }

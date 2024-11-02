@@ -6,6 +6,7 @@ import (
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
+	"github.com/ThanawatPtd/SAProject/utils"
 	"github.com/emicklei/pgtalk/convert"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -25,24 +26,8 @@ func ProvidePostgresVehicleRepository(db *pgxpool.Pool) repositories.VehicleRepo
 // CreateVehicle implements repositories.VehicleRepository.
 func (p *PostgresVehicleRepository) CreateVehicle(ctx context.Context, vehicle *entities.Vehicle) (*entities.Vehicle, error) {
 	var createVehicleParam dbmodel.CreateVehicleParams
-	createVehicleParam = dbmodel.CreateVehicleParams{
-		RegistrationDate:                convert.TimeToTimestamptz(vehicle.RegistrationDate),
-		RegistrationNumber:              vehicle.RegistrationNumber,
-		Province:                        vehicle.Province,
-		VehicleType:                     vehicle.VehicleType,
-		VehicleCategory:                 vehicle.VehicleCategory,
-		Characteristics:                 vehicle.Characteristics,
-		Brand:                           vehicle.Brand,
-		Model:                           vehicle.Model,
-		ModelYear:                       vehicle.ModelYear,
-		VehicleColor:                    vehicle.VehicleColor,
-		EngineNumber:                    vehicle.EngineNumber,
-		ChasisNumber:                    vehicle.ChasisNumber,
-		FuelType:                        vehicle.FuelType,
-		HorsePower:                      vehicle.HorsePower,
-		SeatingCapacity:                 vehicle.SeatingCapacity,
-		WeightUnlanden:                  vehicle.WeightLaden,
-		WeightLaden:                     vehicle.WeightLaden,
+	if err := utils.MappingParser(vehicle, &createVehicleParam); err != nil {
+		return nil, err
 	}
 
 	createVehicle, err := p.Queries.CreateVehicle(ctx, createVehicleParam)
@@ -50,26 +35,26 @@ func (p *PostgresVehicleRepository) CreateVehicle(ctx context.Context, vehicle *
 		return nil, err
 	}
 	var vehicleRes entities.Vehicle
-	vehicleRes = entities.Vehicle{
-		ID:                       convert.UUIDToString(createVehicle.ID),
-		RegistrationDate:                createVehicle.RegistrationDate.Time,
-		RegistrationNumber:              createVehicle.RegistrationNumber,
-		Province:                        createVehicle.Province,
-		VehicleType:                     createVehicle.VehicleType,
-		VehicleCategory:                 createVehicle.VehicleCategory,
-		Characteristics:                 createVehicle.Characteristics,
-		Brand:                           createVehicle.Brand,
-		Model:                           createVehicle.Model,
-		ModelYear:                       createVehicle.ModelYear,
-		VehicleColor:                    createVehicle.VehicleColor,
-		EngineNumber:                    createVehicle.EngineNumber,
-		ChasisNumber:                    createVehicle.ChasisNumber,
-		FuelType:                        createVehicle.FuelType,
-		HorsePower:                      createVehicle.HorsePower,
-		SeatingCapacity:                 createVehicle.SeatingCapacity,
-		WeightUnlanden:                  createVehicle.WeightUnlanden,
-		WeightLaden:                     createVehicle.WeightUnlanden,
-	}
-
+	vehicleID := convert.UUIDToString(createVehicle)
+	vehicleRes.ID = vehicleID
 	return &vehicleRes, nil
+}
+
+// FindTemplate implements repositories.VehicleRepository.
+func (p *PostgresVehicleRepository) FindTemplate(ctx context.Context, userID string) ([]entities.Vehicle, error) {
+	uuid := convert.StringToUUID(userID)
+
+	getVehicles, err := p.Queries.FindAllTemplate(ctx, uuid)
+	if err != nil {
+		return nil, err
+	}
+	var vehicles []entities.Vehicle
+	for _, value := range getVehicles {
+		var vehicle entities.Vehicle
+		if err := utils.MappingParser(&value, &vehicle); err != nil {
+			return nil, err
+		}
+		vehicles = append(vehicles, vehicle)
+	}
+	return vehicles, nil
 }

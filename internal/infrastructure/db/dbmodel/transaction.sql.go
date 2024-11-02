@@ -234,6 +234,139 @@ func (q *Queries) GetAllTransactionsByUserID(ctx context.Context, userID pgtype.
 	return items, nil
 }
 
+const getExpiredInsuranceTransactions = `-- name: GetExpiredInsuranceTransactions :many
+
+SELECT
+    t.id, t.user_id, t.vehicle_id,
+    u.email, u.fname, u.lname, u.phone_number,
+    u.address, u.nationality, u.birth_date, u.citizen_id,
+    v.registration_date, v.registration_number, v.province, v.vehicle_type, v.vehicle_category, v.characteristics, 
+    v.brand, v.model, v.model_year, v.vehicle_color, v.vehicle_number, v.vehicle_number_location, 
+    v.engine_brand, v.engine_number, v.engine_number_location, v.fuel_type, v.chasis_number, 
+    v.wheel_type, v.total_piston, v.cc, v.horse_power, v.weight_unlanden, v.weight_laden, 
+    v.seating_capacity, v.miles, t.insurance_type, t.status, t.e_slip_image_url, 
+    t.cr_image_url, t.cip_number, t.vip_number, t.price, t.created_at, t.updated_at
+FROM "transaction" AS t
+JOIN "vehicle" AS v ON t.vehicle_id = v.id 
+JOIN "user" AS u ON t.user_id = u.id
+WHERE t.updated_at + INTERVAL '1 year' 
+      BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '1 week'
+`
+
+type GetExpiredInsuranceTransactionsRow struct {
+	ID                    pgtype.UUID        `json:"id"`
+	UserID                pgtype.UUID        `json:"userId"`
+	VehicleID             pgtype.UUID        `json:"vehicleId"`
+	Email                 string             `json:"email"`
+	Fname                 string             `json:"fname"`
+	Lname                 string             `json:"lname"`
+	PhoneNumber           string             `json:"phoneNumber"`
+	Address               string             `json:"address"`
+	Nationality           string             `json:"nationality"`
+	BirthDate             pgtype.Timestamptz `json:"birthDate"`
+	CitizenID             string             `json:"citizenId"`
+	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
+	RegistrationNumber    string             `json:"registrationNumber"`
+	Province              string             `json:"province"`
+	VehicleType           string             `json:"vehicleType"`
+	VehicleCategory       string             `json:"vehicleCategory"`
+	Characteristics       string             `json:"characteristics"`
+	Brand                 string             `json:"brand"`
+	Model                 string             `json:"model"`
+	ModelYear             string             `json:"modelYear"`
+	VehicleColor          string             `json:"vehicleColor"`
+	VehicleNumber         string             `json:"vehicleNumber"`
+	VehicleNumberLocation string             `json:"vehicleNumberLocation"`
+	EngineBrand           string             `json:"engineBrand"`
+	EngineNumber          string             `json:"engineNumber"`
+	EngineNumberLocation  string             `json:"engineNumberLocation"`
+	FuelType              string             `json:"fuelType"`
+	ChasisNumber          string             `json:"chasisNumber"`
+	WheelType             string             `json:"wheelType"`
+	TotalPiston           int32              `json:"totalPiston"`
+	Cc                    int32              `json:"cc"`
+	HorsePower            int32              `json:"horsePower"`
+	WeightUnlanden        float64            `json:"weightUnlanden"`
+	WeightLaden           float64            `json:"weightLaden"`
+	SeatingCapacity       int32              `json:"seatingCapacity"`
+	Miles                 float64            `json:"miles"`
+	InsuranceType         string             `json:"insuranceType"`
+	Status                string             `json:"status"`
+	ESlipImageUrl         string             `json:"eSlipImageUrl"`
+	CrImageUrl            string             `json:"crImageUrl"`
+	CipNumber             pgtype.Text        `json:"cipNumber"`
+	VipNumber             pgtype.Text        `json:"vipNumber"`
+	Price                 float64            `json:"price"`
+	CreatedAt             pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt             pgtype.Timestamptz `json:"updatedAt"`
+}
+
+func (q *Queries) GetExpiredInsuranceTransactions(ctx context.Context) ([]GetExpiredInsuranceTransactionsRow, error) {
+	rows, err := q.db.Query(ctx, getExpiredInsuranceTransactions)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetExpiredInsuranceTransactionsRow
+	for rows.Next() {
+		var i GetExpiredInsuranceTransactionsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.VehicleID,
+			&i.Email,
+			&i.Fname,
+			&i.Lname,
+			&i.PhoneNumber,
+			&i.Address,
+			&i.Nationality,
+			&i.BirthDate,
+			&i.CitizenID,
+			&i.RegistrationDate,
+			&i.RegistrationNumber,
+			&i.Province,
+			&i.VehicleType,
+			&i.VehicleCategory,
+			&i.Characteristics,
+			&i.Brand,
+			&i.Model,
+			&i.ModelYear,
+			&i.VehicleColor,
+			&i.VehicleNumber,
+			&i.VehicleNumberLocation,
+			&i.EngineBrand,
+			&i.EngineNumber,
+			&i.EngineNumberLocation,
+			&i.FuelType,
+			&i.ChasisNumber,
+			&i.WheelType,
+			&i.TotalPiston,
+			&i.Cc,
+			&i.HorsePower,
+			&i.WeightUnlanden,
+			&i.WeightLaden,
+			&i.SeatingCapacity,
+			&i.Miles,
+			&i.InsuranceType,
+			&i.Status,
+			&i.ESlipImageUrl,
+			&i.CrImageUrl,
+			&i.CipNumber,
+			&i.VipNumber,
+			&i.Price,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTransactionByID = `-- name: GetTransactionByID :one
 SELECT id, user_id, vehicle_id, price, insurance_type, status, e_slip_image_url, cr_image_url, cip_number, vip_number, created_at, updated_at FROM "transaction"
 WHERE id = $1
@@ -260,7 +393,6 @@ func (q *Queries) GetTransactionByID(ctx context.Context, id pgtype.UUID) (Trans
 }
 
 const getUserVehicleTransactionByID = `-- name: GetUserVehicleTransactionByID :one
-
 SELECT
     t.id, t.user_id, t.vehicle_id,
 u.email, u.fname, u.lname, u.phone_number,
@@ -371,6 +503,56 @@ func (q *Queries) GetUserVehicleTransactionByID(ctx context.Context, id pgtype.U
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const sumThreeMonth = `-- name: SumThreeMonth :one
+SELECT
+    SUM(price) AS total_income
+FROM "transaction"
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
+  AND status = 'approved'
+`
+
+func (q *Queries) SumThreeMonth(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, sumThreeMonth)
+	var total_income int64
+	err := row.Scan(&total_income)
+	return total_income, err
+}
+
+const transactionThreeMonth = `-- name: TransactionThreeMonth :many
+SELECT
+    status,
+    COUNT(*) AS total_requests
+FROM "transaction"
+WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
+GROUP BY status
+ORDER BY status
+`
+
+type TransactionThreeMonthRow struct {
+	Status        string `json:"status"`
+	TotalRequests int64  `json:"totalRequests"`
+}
+
+func (q *Queries) TransactionThreeMonth(ctx context.Context) ([]TransactionThreeMonthRow, error) {
+	rows, err := q.db.Query(ctx, transactionThreeMonth)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []TransactionThreeMonthRow
+	for rows.Next() {
+		var i TransactionThreeMonthRow
+		if err := rows.Scan(&i.Status, &i.TotalRequests); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateTransaction = `-- name: UpdateTransaction :exec

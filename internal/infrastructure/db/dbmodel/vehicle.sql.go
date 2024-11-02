@@ -17,7 +17,7 @@ INSERT INTO "vehicle" (
 ) VALUES (
    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, NOW(), NOW()
 )
-RETURNING id, registration_date, registration_number, province, vehicle_type, vehicle_category, characteristics, brand, model, model_year, vehicle_color, vehicle_number, vehicle_number_location, engine_brand, engine_number, engine_number_location, fuel_type, chasis_number, wheel_type, total_piston, cc, horse_power, weight_unlanden, weight_laden, seating_capacity, miles
+RETURNING id
 `
 
 type CreateVehicleParams struct {
@@ -48,36 +48,7 @@ type CreateVehicleParams struct {
 	Miles                 float64            `json:"miles"`
 }
 
-type CreateVehicleRow struct {
-	ID                    pgtype.UUID        `json:"id"`
-	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
-	RegistrationNumber    string             `json:"registrationNumber"`
-	Province              string             `json:"province"`
-	VehicleType           string             `json:"vehicleType"`
-	VehicleCategory       string             `json:"vehicleCategory"`
-	Characteristics       string             `json:"characteristics"`
-	Brand                 string             `json:"brand"`
-	Model                 string             `json:"model"`
-	ModelYear             string             `json:"modelYear"`
-	VehicleColor          string             `json:"vehicleColor"`
-	VehicleNumber         string             `json:"vehicleNumber"`
-	VehicleNumberLocation string             `json:"vehicleNumberLocation"`
-	EngineBrand           string             `json:"engineBrand"`
-	EngineNumber          string             `json:"engineNumber"`
-	EngineNumberLocation  string             `json:"engineNumberLocation"`
-	FuelType              string             `json:"fuelType"`
-	ChasisNumber          string             `json:"chasisNumber"`
-	WheelType             string             `json:"wheelType"`
-	TotalPiston           int32              `json:"totalPiston"`
-	Cc                    int32              `json:"cc"`
-	HorsePower            int32              `json:"horsePower"`
-	WeightUnlanden        float64            `json:"weightUnlanden"`
-	WeightLaden           float64            `json:"weightLaden"`
-	SeatingCapacity       int32              `json:"seatingCapacity"`
-	Miles                 float64            `json:"miles"`
-}
-
-func (q *Queries) CreateVehicle(ctx context.Context, arg CreateVehicleParams) (CreateVehicleRow, error) {
+func (q *Queries) CreateVehicle(ctx context.Context, arg CreateVehicleParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, createVehicle,
 		arg.RegistrationDate,
 		arg.RegistrationNumber,
@@ -105,36 +76,110 @@ func (q *Queries) CreateVehicle(ctx context.Context, arg CreateVehicleParams) (C
 		arg.SeatingCapacity,
 		arg.Miles,
 	)
-	var i CreateVehicleRow
-	err := row.Scan(
-		&i.ID,
-		&i.RegistrationDate,
-		&i.RegistrationNumber,
-		&i.Province,
-		&i.VehicleType,
-		&i.VehicleCategory,
-		&i.Characteristics,
-		&i.Brand,
-		&i.Model,
-		&i.ModelYear,
-		&i.VehicleColor,
-		&i.VehicleNumber,
-		&i.VehicleNumberLocation,
-		&i.EngineBrand,
-		&i.EngineNumber,
-		&i.EngineNumberLocation,
-		&i.FuelType,
-		&i.ChasisNumber,
-		&i.WheelType,
-		&i.TotalPiston,
-		&i.Cc,
-		&i.HorsePower,
-		&i.WeightUnlanden,
-		&i.WeightLaden,
-		&i.SeatingCapacity,
-		&i.Miles,
-	)
-	return i, err
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const findAllTemplate = `-- name: FindAllTemplate :many
+WITH latest_vehicles AS (
+    SELECT
+        v.vehicle_number,
+        MAX(v.updated_at) AS latest_update
+    FROM vehicle_owner vo
+    JOIN vehicle v ON vo.vehicle_id = v.id
+    WHERE vo.user_id = $1
+    GROUP BY v.vehicle_number
+)
+SELECT
+    v.id, v.registration_date, v.registration_number, v.province, v.vehicle_type, v.vehicle_category,
+    v.characteristics, v.brand, v.model, v.model_year, 
+    v.vehicle_color, v.vehicle_number,
+    v.vehicle_number_location, v.engine_brand, v.engine_number, v.engine_number_location,
+    v.fuel_type, v.chasis_number, v.wheel_type, v.total_piston, v.cc, v.horse_power,
+    v.weight_unlanden, v.weight_laden, v.seating_capacity, v.miles, v.updated_at
+FROM vehicle_owner vo
+JOIN vehicle v ON vo.vehicle_id = v.id
+JOIN latest_vehicles lv ON v.vehicle_number = lv.vehicle_number AND v.updated_at = lv.latest_update
+WHERE vo.user_id = $1
+`
+
+type FindAllTemplateRow struct {
+	ID                    pgtype.UUID        `json:"id"`
+	RegistrationDate      pgtype.Timestamptz `json:"registrationDate"`
+	RegistrationNumber    string             `json:"registrationNumber"`
+	Province              string             `json:"province"`
+	VehicleType           string             `json:"vehicleType"`
+	VehicleCategory       string             `json:"vehicleCategory"`
+	Characteristics       string             `json:"characteristics"`
+	Brand                 string             `json:"brand"`
+	Model                 string             `json:"model"`
+	ModelYear             string             `json:"modelYear"`
+	VehicleColor          string             `json:"vehicleColor"`
+	VehicleNumber         string             `json:"vehicleNumber"`
+	VehicleNumberLocation string             `json:"vehicleNumberLocation"`
+	EngineBrand           string             `json:"engineBrand"`
+	EngineNumber          string             `json:"engineNumber"`
+	EngineNumberLocation  string             `json:"engineNumberLocation"`
+	FuelType              string             `json:"fuelType"`
+	ChasisNumber          string             `json:"chasisNumber"`
+	WheelType             string             `json:"wheelType"`
+	TotalPiston           int32              `json:"totalPiston"`
+	Cc                    int32              `json:"cc"`
+	HorsePower            int32              `json:"horsePower"`
+	WeightUnlanden        float64            `json:"weightUnlanden"`
+	WeightLaden           float64            `json:"weightLaden"`
+	SeatingCapacity       int32              `json:"seatingCapacity"`
+	Miles                 float64            `json:"miles"`
+	UpdatedAt             pgtype.Timestamptz `json:"updatedAt"`
+}
+
+func (q *Queries) FindAllTemplate(ctx context.Context, userID pgtype.UUID) ([]FindAllTemplateRow, error) {
+	rows, err := q.db.Query(ctx, findAllTemplate, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindAllTemplateRow
+	for rows.Next() {
+		var i FindAllTemplateRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.RegistrationDate,
+			&i.RegistrationNumber,
+			&i.Province,
+			&i.VehicleType,
+			&i.VehicleCategory,
+			&i.Characteristics,
+			&i.Brand,
+			&i.Model,
+			&i.ModelYear,
+			&i.VehicleColor,
+			&i.VehicleNumber,
+			&i.VehicleNumberLocation,
+			&i.EngineBrand,
+			&i.EngineNumber,
+			&i.EngineNumberLocation,
+			&i.FuelType,
+			&i.ChasisNumber,
+			&i.WheelType,
+			&i.TotalPiston,
+			&i.Cc,
+			&i.HorsePower,
+			&i.WeightUnlanden,
+			&i.WeightLaden,
+			&i.SeatingCapacity,
+			&i.Miles,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getAllVehicle = `-- name: GetAllVehicle :many

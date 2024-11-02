@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ThanawatPtd/SAProject/background"
 	"github.com/ThanawatPtd/SAProject/internal/wire"
 	"github.com/ThanawatPtd/SAProject/router"
 	"github.com/gofiber/fiber/v2"
@@ -18,11 +19,13 @@ func main() {
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:3000", // Replace with your frontend URL
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 	}))
 
 	router.RegisterApiRouter(app, handler)
+
+	go background.DailyMonitor(app, handler)
 
 	app.Listen(":3001")
 

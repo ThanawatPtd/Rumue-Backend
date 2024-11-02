@@ -13,5 +13,7 @@ type TransactionRepository interface {
 	Update(ctx context.Context, transaction *entities.Transaction) error
 	ListTrasactionToday(c context.Context) ([]entities.UserVehicleTransaction, error)
 	GetTransactionByID(ctx context.Context, transactionID string) (*entities.Transaction, error)
-	GetUserVehicleTransactionByID(ctx context.Context, trasactionID string) (*entities.UserVehicleTransaction, error)
+	GetExpiredTransactionThisWeek(ctx context.Context) ([]entities.UserVehicleTransaction, error)
+	GetUserVehicleTransactionByID(ctx context.Context, transactionID string) (*entities.UserVehicleTransaction, error)
+	SumThreeMonthIncome(ctx context.Context) (*entities.Income, error)
 }

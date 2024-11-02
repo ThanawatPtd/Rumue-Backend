@@ -41,9 +41,25 @@ func (v *VehicleRestHandler) CreateVehicle(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message": "Create Vehicle ",
+		"message": "Create Vehicle Success",
 		"payload": fiber.Map{
-			"vehicle": newVehicle,
+			"vehicleID": newVehicle.ID,
 		},
+	})
+}
+
+func (v *VehicleRestHandler) FindTemplate(c *fiber.Ctx) error {
+
+	jwt := utils.GetJWTFromContext(c)
+	vehicles, err := v.vehicleService.FindTemplate(c.Context(), jwt.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Internal server error",
+			"log":     err.Error(),
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message":  "Find Success",
+		"vehicles": vehicles,
 	})
 }

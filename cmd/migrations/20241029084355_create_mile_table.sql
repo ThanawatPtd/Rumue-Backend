@@ -6,10 +6,17 @@ CREATE TABLE "mile" (
 );
 
 INSERT INTO "mile" (id, rate) VALUES
+<<<<<<< HEAD
     ('boundary', 0.1),
     ('low', 0.2),      -- rate per 10,000 km/year
     ('mid', 0.3),      -- rate per 10,000 - 20,000 km/year
     ('high', 0.4),     -- rate per 20,000 km/year
+=======
+    ('boundary', 0.1)
+    ('low', 0.2),      -- rate per 10,000 km/year
+    ('mid', 0.3),      -- rate per 10,000 - 20,000 km/year
+    ('high', 0.4);     -- rate per 20,000 km/year
+>>>>>>> feature/usecase6,9
     ('extra',0.5)
 -- +goose StatementEnd
 

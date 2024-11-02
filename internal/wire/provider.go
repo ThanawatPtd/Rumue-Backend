@@ -27,6 +27,7 @@ var ServiceSet = wire.NewSet(
 	usecases.ProvideInsuranceService,
 	usecases.ProvideMileService,
 	usecases.ProvidePriorityService,
+	usecases.ProvideEmailService,
 )
 
 var RepositorySet = wire.NewSet(
@@ -49,4 +50,5 @@ var HandlerSet = wire.NewSet(
 	rest.ProvideInsuranceRestHandler,
 	rest.ProvideMileRestHandler,
 	rest.ProvidePriorityRestHandler,
+	rest.ProvideEmailRestHandler,
 )
