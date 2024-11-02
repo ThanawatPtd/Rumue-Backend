@@ -134,7 +134,7 @@ func (q *Queries) GetAllTransactions(ctx context.Context) ([]GetAllTransactionsR
 
 const getAllTransactionsByUserID = `-- name: GetAllTransactionsByUserID :many
 SELECT
-    t.id, t.user_id, t.vehicle_id,
+    t.id, t.user_id, t.vehicle_id, t.receipt_date,
 u.email, u.fname, u.lname, u.phone_number,
 u.address, u.nationality, u.birth_date, u.citizen_id,
 v.registration_date, v.registration_number, v.province, v.vehicle_type, v.vehicle_category, v.characteristics, v.brand, v.model, v.model_year, v.vehicle_color, v.vehicle_number, v.vehicle_number_location, v.engine_brand, v.engine_number, v.engine_number_location, v.fuel_type, v.chasis_number, v.wheel_type, v.total_piston, v.cc, v.horse_power, v.weight_unlanden, v.weight_laden, v.seating_capacity, v.miles, t.insurance_type, t.status, t.e_slip_image_url, t.cr_image_url, t.cip_number, t.vip_number, t.price, t.created_at, t.updated_at
@@ -148,6 +148,7 @@ type GetAllTransactionsByUserIDRow struct {
 	ID                    pgtype.UUID        `json:"id"`
 	UserID                pgtype.UUID        `json:"userId"`
 	VehicleID             pgtype.UUID        `json:"vehicleId"`
+	ReceiptDate           pgtype.Timestamptz `json:"receiptDate"`
 	Email                 string             `json:"email"`
 	Fname                 string             `json:"fname"`
 	Lname                 string             `json:"lname"`
@@ -205,6 +206,7 @@ func (q *Queries) GetAllTransactionsByUserID(ctx context.Context, userID pgtype.
 			&i.ID,
 			&i.UserID,
 			&i.VehicleID,
+			&i.ReceiptDate,
 			&i.Email,
 			&i.Fname,
 			&i.Lname,
@@ -261,7 +263,7 @@ func (q *Queries) GetAllTransactionsByUserID(ctx context.Context, userID pgtype.
 const getExpiredInsuranceTransactions = `-- name: GetExpiredInsuranceTransactions :many
 
 SELECT
-    t.id, t.user_id, t.vehicle_id,
+    t.id, t.user_id, t.vehicle_id, t.receipt_date,
     u.email, u.fname, u.lname, u.phone_number,
     u.address, u.nationality, u.birth_date, u.citizen_id,
     v.registration_date, v.registration_number, v.province, v.vehicle_type, v.vehicle_category, v.characteristics, 
@@ -281,6 +283,7 @@ type GetExpiredInsuranceTransactionsRow struct {
 	ID                    pgtype.UUID        `json:"id"`
 	UserID                pgtype.UUID        `json:"userId"`
 	VehicleID             pgtype.UUID        `json:"vehicleId"`
+	ReceiptDate           pgtype.Timestamptz `json:"receiptDate"`
 	Email                 string             `json:"email"`
 	Fname                 string             `json:"fname"`
 	Lname                 string             `json:"lname"`
@@ -338,6 +341,7 @@ func (q *Queries) GetExpiredInsuranceTransactions(ctx context.Context) ([]GetExp
 			&i.ID,
 			&i.UserID,
 			&i.VehicleID,
+			&i.ReceiptDate,
 			&i.Email,
 			&i.Fname,
 			&i.Lname,
@@ -402,6 +406,7 @@ SELECT
     status,
     e_slip_image_url,
     cr_image_url,
+    receipt_date,
     created_at,
     updated_at 
 FROM "transaction"
@@ -418,6 +423,7 @@ type GetTransactionByIDRow struct {
 	Status        string             `json:"status"`
 	ESlipImageUrl string             `json:"eSlipImageUrl"`
 	CrImageUrl    string             `json:"crImageUrl"`
+	ReceiptDate   pgtype.Timestamptz `json:"receiptDate"`
 	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt     pgtype.Timestamptz `json:"updatedAt"`
 }
@@ -435,6 +441,7 @@ func (q *Queries) GetTransactionByID(ctx context.Context, id pgtype.UUID) (GetTr
 		&i.Status,
 		&i.ESlipImageUrl,
 		&i.CrImageUrl,
+		&i.ReceiptDate,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -443,7 +450,7 @@ func (q *Queries) GetTransactionByID(ctx context.Context, id pgtype.UUID) (GetTr
 
 const getUserVehicleTransactionByID = `-- name: GetUserVehicleTransactionByID :one
 SELECT
-    t.id, t.user_id, t.vehicle_id,
+    t.id, t.user_id, t.vehicle_id, t.receipt_date,
 u.email, u.fname, u.lname, u.phone_number,
 u.address, u.nationality, u.birth_date, u.citizen_id,
 v.registration_date, v.registration_number, v.province, v.vehicle_type, v.vehicle_category, v.characteristics, v.brand, v.model, v.model_year, v.vehicle_color, v.vehicle_number, v.vehicle_number_location, v.engine_brand, v.engine_number, v.engine_number_location, v.fuel_type, v.chasis_number, v.wheel_type, v.total_piston, v.cc, v.horse_power, v.weight_unlanden, v.weight_laden, v.seating_capacity, v.miles, t.insurance_type, t.status, t.e_slip_image_url, t.cr_image_url, t.cip_number, t.vip_number, t.price, t.created_at, t.updated_at
@@ -457,6 +464,7 @@ type GetUserVehicleTransactionByIDRow struct {
 	ID                    pgtype.UUID        `json:"id"`
 	UserID                pgtype.UUID        `json:"userId"`
 	VehicleID             pgtype.UUID        `json:"vehicleId"`
+	ReceiptDate           pgtype.Timestamptz `json:"receiptDate"`
 	Email                 string             `json:"email"`
 	Fname                 string             `json:"fname"`
 	Lname                 string             `json:"lname"`
@@ -508,6 +516,7 @@ func (q *Queries) GetUserVehicleTransactionByID(ctx context.Context, id pgtype.U
 		&i.ID,
 		&i.UserID,
 		&i.VehicleID,
+		&i.ReceiptDate,
 		&i.Email,
 		&i.Fname,
 		&i.Lname,
@@ -560,16 +569,18 @@ SET
     employee_id = $2,
     status = $3,
     cip_number = $4,
-    vip_number = $5
+    vip_number = $5,
+    receipt_date = $6
 WHERE id = $1
 `
 
 type UpdateTransactionParams struct {
-	ID         pgtype.UUID `json:"id"`
-	EmployeeID pgtype.UUID `json:"employeeId"`
-	Status     string      `json:"status"`
-	CipNumber  pgtype.Text `json:"cipNumber"`
-	VipNumber  pgtype.Text `json:"vipNumber"`
+	ID          pgtype.UUID        `json:"id"`
+	EmployeeID  pgtype.UUID        `json:"employeeId"`
+	Status      string             `json:"status"`
+	CipNumber   pgtype.Text        `json:"cipNumber"`
+	VipNumber   pgtype.Text        `json:"vipNumber"`
+	ReceiptDate pgtype.Timestamptz `json:"receiptDate"`
 }
 
 func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionParams) error {
@@ -579,6 +590,7 @@ func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionPa
 		arg.Status,
 		arg.CipNumber,
 		arg.VipNumber,
+		arg.ReceiptDate,
 	)
 	return err
 }

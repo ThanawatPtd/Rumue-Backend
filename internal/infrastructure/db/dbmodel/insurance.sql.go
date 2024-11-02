@@ -9,6 +9,23 @@ import (
 	"context"
 )
 
+const addInsuranceHeadcount = `-- name: AddInsuranceHeadcount :exec
+UPDATE "insurance" 
+SET headcount = headcount + 1
+WHERE brand = $1 AND model = $2 AND year = $3
+`
+
+type AddInsuranceHeadcountParams struct {
+	Brand string `json:"brand"`
+	Model string `json:"model"`
+	Year  string `json:"year"`
+}
+
+func (q *Queries) AddInsuranceHeadcount(ctx context.Context, arg AddInsuranceHeadcountParams) error {
+	_, err := q.db.Exec(ctx, addInsuranceHeadcount, arg.Brand, arg.Model, arg.Year)
+	return err
+}
+
 const createInsurance = `-- name: CreateInsurance :one
 INSERT INTO "insurance" (
     year, model, brand, price
