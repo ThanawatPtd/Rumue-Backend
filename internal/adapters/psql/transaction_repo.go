@@ -16,17 +16,6 @@ type PostgresTransactionRepository struct {
 	DB      *pgxpool.Pool
 }
 
-// SumThreeMonthIncome implements repositories.TransactionRepository.
-func (tr *PostgresTransactionRepository) SumThreeMonthIncome(ctx context.Context) (*entities.Income, error) {
-	income, err := tr.Queries.SumThreeMonth(ctx)
-	if err != nil {
-		return nil, err
-	}
-	var newIncome entities.Income
-	newIncome.TotalIncome = float64(income)
-	return &newIncome, err
-}
-
 func ProvidePostgresTransactionRepository(db *pgxpool.Pool) repositories.TransactionRepository {
 	return &PostgresTransactionRepository{
 		Queries: dbmodel.New(db),
@@ -83,11 +72,13 @@ func (tr *PostgresTransactionRepository) ListByID(ctx context.Context, id string
 }
 
 // Update implements repositories.TransactionRepository.
-func (tr *PostgresTransactionRepository) Update(ctx context.Context, transaction *entities.Transaction) error {
+func (tr *PostgresTransactionRepository) Update(ctx context.Context, transaction *entities.Transaction, id string) error {
 	var dbUpdateTransaction dbmodel.UpdateTransactionParams
 	if err := utils.MappingParser(transaction, &dbUpdateTransaction); err != nil {
 		return err
 	}
+	uuid := convert.StringToUUID(id)
+	dbUpdateTransaction.EmployeeID = uuid
 	return tr.Queries.UpdateTransaction(ctx, dbUpdateTransaction)
 }
 

@@ -13,9 +13,8 @@ type TransactionUseCase interface {
 	GetAllTransactions(ctx context.Context) ([]entities.Transaction, error)
 	CheckHistory(ctx context.Context, userId string) ([]entities.UserVehicleTransaction, error)
 	FindTodayInsurances(ctx context.Context) ([]entities.UserVehicleTransaction, error) //Today
-	UpdateTransaction(ctx context.Context, transaction *entities.Transaction) error
+	UpdateTransaction(ctx context.Context, transaction *entities.Transaction, id string) error
 	FindTransactionByID(ctx context.Context, transactionID string) (*entities.UserVehicleTransaction, error)
-	SumThreeMonthIncome(ctx context.Context) (*entities.Income, error)
 }
 
 type TransactionService struct {
@@ -86,7 +85,7 @@ func (t *TransactionService) FindTodayInsurances(ctx context.Context) ([]entitie
 }
 
 // UpdateTransaction implements EmployeeUseCase.
-func (t *TransactionService) UpdateTransaction(ctx context.Context, transaction *entities.Transaction) error {
+func (t *TransactionService) UpdateTransaction(ctx context.Context, transaction *entities.Transaction, id string) error {
 	getTransaction, err := t.transactionRepo.GetTransactionByID(ctx, transaction.ID)
 	if err != nil {
 		return err
@@ -103,7 +102,7 @@ func (t *TransactionService) UpdateTransaction(ctx context.Context, transaction 
 		transaction.VipNumber = getTransaction.VipNumber
 	}
 
-	return t.transactionRepo.Update(ctx, transaction)
+	return t.transactionRepo.Update(ctx, transaction, id)
 }
 
 // FindTransactionByID implements TransactionUseCase.
@@ -114,14 +113,4 @@ func (t *TransactionService) FindTransactionByID(ctx context.Context, transactio
 	}
 
 	return userVehicleTransaction, nil
-}
-
-// SumThreeMonthIncome implements TransactionUseCase.
-func (t *TransactionService) SumThreeMonthIncome(ctx context.Context) (*entities.Income, error) {
-	income, err := t.transactionRepo.SumThreeMonthIncome(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return income, err
 }

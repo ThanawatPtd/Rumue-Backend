@@ -71,30 +71,54 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 }
 
 const getAllTransactions = `-- name: GetAllTransactions :many
-SELECT id, user_id, vehicle_id, price, insurance_type, status, e_slip_image_url, cr_image_url, cip_number, vip_number, created_at, updated_at 
+SELECT
+    id,
+    user_id,
+    vehicle_id,
+    employee_id,
+    price,
+    insurance_type,
+    status,
+    e_slip_image_url,
+    cr_image_url,
+    created_at,
+    updated_at 
 FROM "transaction"
 `
 
-func (q *Queries) GetAllTransactions(ctx context.Context) ([]Transaction, error) {
+type GetAllTransactionsRow struct {
+	ID            pgtype.UUID        `json:"id"`
+	UserID        pgtype.UUID        `json:"userId"`
+	VehicleID     pgtype.UUID        `json:"vehicleId"`
+	EmployeeID    pgtype.UUID        `json:"employeeId"`
+	Price         float64            `json:"price"`
+	InsuranceType string             `json:"insuranceType"`
+	Status        string             `json:"status"`
+	ESlipImageUrl string             `json:"eSlipImageUrl"`
+	CrImageUrl    string             `json:"crImageUrl"`
+	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt     pgtype.Timestamptz `json:"updatedAt"`
+}
+
+func (q *Queries) GetAllTransactions(ctx context.Context) ([]GetAllTransactionsRow, error) {
 	rows, err := q.db.Query(ctx, getAllTransactions)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Transaction
+	var items []GetAllTransactionsRow
 	for rows.Next() {
-		var i Transaction
+		var i GetAllTransactionsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
 			&i.VehicleID,
+			&i.EmployeeID,
 			&i.Price,
 			&i.InsuranceType,
 			&i.Status,
 			&i.ESlipImageUrl,
 			&i.CrImageUrl,
-			&i.CipNumber,
-			&i.VipNumber,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -368,24 +392,49 @@ func (q *Queries) GetExpiredInsuranceTransactions(ctx context.Context) ([]GetExp
 }
 
 const getTransactionByID = `-- name: GetTransactionByID :one
-SELECT id, user_id, vehicle_id, price, insurance_type, status, e_slip_image_url, cr_image_url, cip_number, vip_number, created_at, updated_at FROM "transaction"
+SELECT 
+    id,
+    user_id,
+    vehicle_id,
+    employee_id,
+    price,
+    insurance_type,
+    status,
+    e_slip_image_url,
+    cr_image_url,
+    created_at,
+    updated_at 
+FROM "transaction"
 WHERE id = $1
 `
 
-func (q *Queries) GetTransactionByID(ctx context.Context, id pgtype.UUID) (Transaction, error) {
+type GetTransactionByIDRow struct {
+	ID            pgtype.UUID        `json:"id"`
+	UserID        pgtype.UUID        `json:"userId"`
+	VehicleID     pgtype.UUID        `json:"vehicleId"`
+	EmployeeID    pgtype.UUID        `json:"employeeId"`
+	Price         float64            `json:"price"`
+	InsuranceType string             `json:"insuranceType"`
+	Status        string             `json:"status"`
+	ESlipImageUrl string             `json:"eSlipImageUrl"`
+	CrImageUrl    string             `json:"crImageUrl"`
+	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt     pgtype.Timestamptz `json:"updatedAt"`
+}
+
+func (q *Queries) GetTransactionByID(ctx context.Context, id pgtype.UUID) (GetTransactionByIDRow, error) {
 	row := q.db.QueryRow(ctx, getTransactionByID, id)
-	var i Transaction
+	var i GetTransactionByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
 		&i.VehicleID,
+		&i.EmployeeID,
 		&i.Price,
 		&i.InsuranceType,
 		&i.Status,
 		&i.ESlipImageUrl,
 		&i.CrImageUrl,
-		&i.CipNumber,
-		&i.VipNumber,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -505,75 +554,28 @@ func (q *Queries) GetUserVehicleTransactionByID(ctx context.Context, id pgtype.U
 	return i, err
 }
 
-const sumThreeMonth = `-- name: SumThreeMonth :one
-SELECT
-    SUM(price) AS total_income
-FROM "transaction"
-WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
-  AND status = 'approved'
-`
-
-func (q *Queries) SumThreeMonth(ctx context.Context) (int64, error) {
-	row := q.db.QueryRow(ctx, sumThreeMonth)
-	var total_income int64
-	err := row.Scan(&total_income)
-	return total_income, err
-}
-
-const transactionThreeMonth = `-- name: TransactionThreeMonth :many
-SELECT
-    status,
-    COUNT(*) AS total_requests
-FROM "transaction"
-WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
-GROUP BY status
-ORDER BY status
-`
-
-type TransactionThreeMonthRow struct {
-	Status        string `json:"status"`
-	TotalRequests int64  `json:"totalRequests"`
-}
-
-func (q *Queries) TransactionThreeMonth(ctx context.Context) ([]TransactionThreeMonthRow, error) {
-	rows, err := q.db.Query(ctx, transactionThreeMonth)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []TransactionThreeMonthRow
-	for rows.Next() {
-		var i TransactionThreeMonthRow
-		if err := rows.Scan(&i.Status, &i.TotalRequests); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const updateTransaction = `-- name: UpdateTransaction :exec
 UPDATE "transaction"
 SET
-    status = $2,
-    cip_number = $3,
-    vip_number = $4
+    employee_id = $2,
+    status = $3,
+    cip_number = $4,
+    vip_number = $5
 WHERE id = $1
 `
 
 type UpdateTransactionParams struct {
-	ID        pgtype.UUID `json:"id"`
-	Status    string      `json:"status"`
-	CipNumber pgtype.Text `json:"cipNumber"`
-	VipNumber pgtype.Text `json:"vipNumber"`
+	ID         pgtype.UUID `json:"id"`
+	EmployeeID pgtype.UUID `json:"employeeId"`
+	Status     string      `json:"status"`
+	CipNumber  pgtype.Text `json:"cipNumber"`
+	VipNumber  pgtype.Text `json:"vipNumber"`
 }
 
 func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionParams) error {
 	_, err := q.db.Exec(ctx, updateTransaction,
 		arg.ID,
+		arg.EmployeeID,
 		arg.Status,
 		arg.CipNumber,
 		arg.VipNumber,
