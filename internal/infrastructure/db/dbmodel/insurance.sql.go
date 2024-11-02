@@ -9,23 +9,6 @@ import (
 	"context"
 )
 
-const addInsuranceHeadcount = `-- name: AddInsuranceHeadcount :exec
-UPDATE "insurance" 
-SET headcount = headcount + 1
-WHERE brand = $1 AND model = $2 AND year = $3
-`
-
-type AddInsuranceHeadcountParams struct {
-	Brand string `json:"brand"`
-	Model string `json:"model"`
-	Year  string `json:"year"`
-}
-
-func (q *Queries) AddInsuranceHeadcount(ctx context.Context, arg AddInsuranceHeadcountParams) error {
-	_, err := q.db.Exec(ctx, addInsuranceHeadcount, arg.Brand, arg.Model, arg.Year)
-	return err
-}
-
 const createInsurance = `-- name: CreateInsurance :one
 INSERT INTO "insurance" (
     year, model, brand, price
@@ -97,6 +80,26 @@ type GetInsuranceParams struct {
 
 func (q *Queries) GetInsurance(ctx context.Context, arg GetInsuranceParams) (float64, error) {
 	row := q.db.QueryRow(ctx, getInsurance, arg.Brand, arg.Model, arg.Year)
+	var price float64
+	err := row.Scan(&price)
+	return price, err
+}
+
+const getInsurancePrice = `-- name: GetInsurancePrice :one
+UPDATE "insurance" 
+SET headcount = headcount + 1
+WHERE brand = $1 AND model = $2 AND year = $3
+RETURNING price
+`
+
+type GetInsurancePriceParams struct {
+	Brand string `json:"brand"`
+	Model string `json:"model"`
+	Year  string `json:"year"`
+}
+
+func (q *Queries) GetInsurancePrice(ctx context.Context, arg GetInsurancePriceParams) (float64, error) {
+	row := q.db.QueryRow(ctx, getInsurancePrice, arg.Brand, arg.Model, arg.Year)
 	var price float64
 	err := row.Scan(&price)
 	return price, err

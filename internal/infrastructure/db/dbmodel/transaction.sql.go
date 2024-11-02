@@ -563,24 +563,38 @@ func (q *Queries) GetUserVehicleTransactionByID(ctx context.Context, id pgtype.U
 	return i, err
 }
 
+const updateReceiptDateTransacton = `-- name: UpdateReceiptDateTransacton :one
+UPDATE "transaction"
+SET
+    receipt_date = NOW(),
+    updated_at = NOW()
+WHERE id = $1
+RETURNING receipt_date
+`
+
+func (q *Queries) UpdateReceiptDateTransacton(ctx context.Context, id pgtype.UUID) (pgtype.Timestamptz, error) {
+	row := q.db.QueryRow(ctx, updateReceiptDateTransacton, id)
+	var receipt_date pgtype.Timestamptz
+	err := row.Scan(&receipt_date)
+	return receipt_date, err
+}
+
 const updateTransaction = `-- name: UpdateTransaction :exec
 UPDATE "transaction"
 SET
     employee_id = $2,
     status = $3,
     cip_number = $4,
-    vip_number = $5,
-    receipt_date = $6
+    vip_number = $5
 WHERE id = $1
 `
 
 type UpdateTransactionParams struct {
-	ID          pgtype.UUID        `json:"id"`
-	EmployeeID  pgtype.UUID        `json:"employeeId"`
-	Status      string             `json:"status"`
-	CipNumber   pgtype.Text        `json:"cipNumber"`
-	VipNumber   pgtype.Text        `json:"vipNumber"`
-	ReceiptDate pgtype.Timestamptz `json:"receiptDate"`
+	ID         pgtype.UUID `json:"id"`
+	EmployeeID pgtype.UUID `json:"employeeId"`
+	Status     string      `json:"status"`
+	CipNumber  pgtype.Text `json:"cipNumber"`
+	VipNumber  pgtype.Text `json:"vipNumber"`
 }
 
 func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionParams) error {
@@ -590,7 +604,6 @@ func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionPa
 		arg.Status,
 		arg.CipNumber,
 		arg.VipNumber,
-		arg.ReceiptDate,
 	)
 	return err
 }

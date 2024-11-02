@@ -39,9 +39,17 @@ SET
     employee_id = $2,
     status = $3,
     cip_number = $4,
-    vip_number = $5,
-    receipt_date = $6
+    vip_number = $5
 WHERE id = $1;
+
+-- name: UpdateReceiptDateTransacton :one
+UPDATE "transaction"
+SET
+    receipt_date = NOW(),
+    updated_at = NOW()
+WHERE id = $1
+RETURNING receipt_date;
+
 
 -- name: GetTransactionByID :one
 SELECT 

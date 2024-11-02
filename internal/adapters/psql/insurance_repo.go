@@ -21,13 +21,13 @@ func ProvideInsuranceRepository(db *pgxpool.Pool) repositories.InsuranceReposito
 }
 
 func (i *InsuranceRepositoryImpl) GetInsurance(c context.Context, req *entities.Insurance) (*entities.Insurance, error) {
-	params := dbmodel.GetInsuranceParams{
+	params := dbmodel.GetInsurancePriceParams{
 		Brand: req.Brand,
 		Model: req.Model,
 		Year: req.Year,
 	}
 
-	price, err := i.Queries.GetInsurance(c, params)
+	price, err := i.Queries.GetInsurancePrice(c, params)
 	if err != nil{
 		return nil, err
 	}

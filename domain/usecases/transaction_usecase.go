@@ -102,7 +102,19 @@ func (t *TransactionService) UpdateTransaction(ctx context.Context, transaction 
 		transaction.VipNumber = getTransaction.VipNumber
 	}
 
-	return t.transactionRepo.Update(ctx, transaction, id)
+	err = t.transactionRepo.Update(ctx, transaction, id)
+	if err != nil {
+		return err
+	}
+
+	// _ is receiptDate change it for individul task.
+	if transaction.Status == "approved" {
+		_, err = t.transactionRepo.UpdateReceiptDate(ctx, transaction.ID)
+		if err != nil {
+			return err 
+		}
+	}
+	return err
 }
 
 // FindTransactionByID implements TransactionUseCase.

@@ -2,7 +2,7 @@ package psql
 
 import (
 	"context"
-
+	"time"
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
@@ -80,6 +80,16 @@ func (tr *PostgresTransactionRepository) Update(ctx context.Context, transaction
 	uuid := convert.StringToUUID(id)
 	dbUpdateTransaction.EmployeeID = uuid
 	return tr.Queries.UpdateTransaction(ctx, dbUpdateTransaction)
+}
+
+func (tr *PostgresTransactionRepository) UpdateReceiptDate(ctx context.Context, id string) (*time.Time, error) {
+	idUUID := convert.StringToUUID(id)
+	receiptDate, err := tr.Queries.UpdateReceiptDateTransacton(ctx, idUUID)
+	if err != nil {
+		return nil, err
+	}
+	
+	return &receiptDate.Time, nil
 }
 
 // ListTrasactionToday implements repositories.EmployeeRepository.
