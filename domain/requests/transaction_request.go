@@ -1,18 +1,18 @@
 package requests
 
 type CreateTransactionRequest struct {
-	Price         float64 `json:"price"`
-	InsuranceType string  `json:"insuranceType"`
-	Status        string  `json:"status"`
-	ESlipImageUrl string  `json:"eSlipImageUrl"`
-	CrImageUrl    string  `json:"crImageUrl"`
+	Price         float64 `json:"price" validate:"required"`
+	InsuranceType string  `json:"insuranceType" validate:"required"`
+	Status        string  `json:"status" validate:"required"`
+	ESlipImageUrl string  `json:"eSlipImageUrl" validate:"required"`
+	CrImageUrl    string  `json:"crImageUrl" validate:"required"`
 	CipNumber     string  `json:"cipNumber"`
 	VipNumber     string  `json:"vipNumber"`
 }
 
 type UpdateTransactionRequest struct {
-	ID        string `json:"id"`
-	Status    string `json:"status"`
+	ID        string `json:"id" validate:"required"`
+	Status    string `json:"status" validate:"required"`
 	CipNumber string `json:"cipNumber"`
 	VipNumber string `json:"vipNumber"`
 }

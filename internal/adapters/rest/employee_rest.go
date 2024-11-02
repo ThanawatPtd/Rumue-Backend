@@ -28,6 +28,10 @@ func (eh *EmployeeHandler) CreateEmployee(c *fiber.Ctx) error {
 		})
 	}
 
+	if err := utils.ValidateStruct(rq); err != nil {
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
+
 	payload := entities.Employee{}
 	if err := utils.MappingParser(rq, &payload); err != nil {
 		return err
