@@ -39,7 +39,8 @@ SET
     employee_id = $2,
     status = $3,
     cip_number = $4,
-    vip_number = $5
+    vip_number = $5,
+    updated_at = NOW()
 WHERE id = $1;
 
 -- name: UpdateReceiptDateTransacton :one
