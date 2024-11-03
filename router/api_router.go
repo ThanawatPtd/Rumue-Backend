@@ -58,4 +58,7 @@ func RegisterApiRouter(app *fiber.App, handler *rest.Handler) {
 	insurance := app.Group("/insurance")
 	insurance.Post("", handler.Insurance.GetInsurance)
 	insurance.Get("", handler.Insurance.GetInsurances)
+
+	email := app.Group("/email")
+	email.Post("/receipt", handler.Email.SendMailToAlertReceipt)
 }
