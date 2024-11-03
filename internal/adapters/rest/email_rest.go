@@ -34,7 +34,7 @@ func (eh *EmailHandler) SendMailToAlertReceipt(c *fiber.Ctx) error{
 		return c.Status(fiber.StatusBadRequest).SendString("Missing transaction ID")
 	}
 
-	file, err := c.FormFile("file")
+	file, err := c.FormFile("receiptFile")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Could not get uploaded file")
 	}
