@@ -3,6 +3,7 @@ package psql
 import (
 	"context"
 	"time"
+
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db/dbmodel"
@@ -66,8 +67,11 @@ func (tr *PostgresTransactionRepository) ListByID(ctx context.Context, id string
 		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
 			return nil, err
 		}
+		userVehicleTransaction.User.ID = convert.UUIDToString(value.UserID)
+		userVehicleTransaction.Vehicle.ID = convert.UUIDToString(value.VehicleID)
 		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
 	}
+
 	return userVehicleTransactions, nil
 }
 
@@ -115,6 +119,8 @@ func (tr *PostgresTransactionRepository) ListTrasactionToday(c context.Context) 
 		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
 			return nil, err
 		}
+		userVehicleTransaction.User.ID = convert.UUIDToString(value.UserID)
+		userVehicleTransaction.Vehicle.ID = convert.UUIDToString(value.VehicleID)
 		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
 	}
 	return userVehicleTransactions, nil
@@ -153,6 +159,8 @@ func (tr *PostgresTransactionRepository) GetUserVehicleTransactionByID(ctx conte
 	if err := utils.MappingParser(&userVehicleTransaction, &newUserVehicleTransaction.Transaction); err != nil {
 		return nil, err
 	}
+	newUserVehicleTransaction.User.ID = convert.UUIDToString(userVehicleTransaction.UserID)
+	newUserVehicleTransaction.Vehicle.ID = convert.UUIDToString(userVehicleTransaction.VehicleID)
 	return &newUserVehicleTransaction, nil
 }
 
@@ -179,6 +187,8 @@ func (tr *PostgresTransactionRepository) GetExpiredTransactionThisWeek(ctx conte
 		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
 			return nil, err
 		}
+		userVehicleTransaction.User.ID = convert.UUIDToString(value.UserID)
+		userVehicleTransaction.Vehicle.ID = convert.UUIDToString(value.VehicleID)
 		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
 	}
 	return userVehicleTransactions, nil
