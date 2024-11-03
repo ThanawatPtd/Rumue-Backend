@@ -2,6 +2,7 @@ package psql
 
 import (
 	"context"
+	"time"
 
 	"github.com/ThanawatPtd/SAProject/domain/entities"
 	"github.com/ThanawatPtd/SAProject/domain/repositories"
@@ -14,17 +15,6 @@ import (
 type PostgresTransactionRepository struct {
 	Queries *dbmodel.Queries
 	DB      *pgxpool.Pool
-}
-
-// SumThreeMonthIncome implements repositories.TransactionRepository.
-func (tr *PostgresTransactionRepository) SumThreeMonthIncome(ctx context.Context) (*entities.Income, error) {
-	income, err := tr.Queries.SumThreeMonth(ctx)
-	if err != nil {
-		return nil, err
-	}
-	var newIncome entities.Income
-	newIncome.TotalIncome = float64(income)
-	return &newIncome, err
 }
 
 func ProvidePostgresTransactionRepository(db *pgxpool.Pool) repositories.TransactionRepository {
@@ -77,18 +67,33 @@ func (tr *PostgresTransactionRepository) ListByID(ctx context.Context, id string
 		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
 			return nil, err
 		}
+		userVehicleTransaction.User.ID = convert.UUIDToString(value.UserID)
+		userVehicleTransaction.Vehicle.ID = convert.UUIDToString(value.VehicleID)
 		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
 	}
+
 	return userVehicleTransactions, nil
 }
 
 // Update implements repositories.TransactionRepository.
-func (tr *PostgresTransactionRepository) Update(ctx context.Context, transaction *entities.Transaction) error {
+func (tr *PostgresTransactionRepository) Update(ctx context.Context, transaction *entities.Transaction, id string) error {
 	var dbUpdateTransaction dbmodel.UpdateTransactionParams
 	if err := utils.MappingParser(transaction, &dbUpdateTransaction); err != nil {
 		return err
 	}
+	uuid := convert.StringToUUID(id)
+	dbUpdateTransaction.EmployeeID = uuid
 	return tr.Queries.UpdateTransaction(ctx, dbUpdateTransaction)
+}
+
+func (tr *PostgresTransactionRepository) UpdateReceiptDate(ctx context.Context, id string) (*time.Time, error) {
+	idUUID := convert.StringToUUID(id)
+	receiptDate, err := tr.Queries.UpdateReceiptDateTransacton(ctx, idUUID)
+	if err != nil {
+		return nil, err
+	}
+	
+	return &receiptDate.Time, nil
 }
 
 // ListTrasactionToday implements repositories.EmployeeRepository.
@@ -114,6 +119,8 @@ func (tr *PostgresTransactionRepository) ListTrasactionToday(c context.Context) 
 		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
 			return nil, err
 		}
+		userVehicleTransaction.User.ID = convert.UUIDToString(value.UserID)
+		userVehicleTransaction.Vehicle.ID = convert.UUIDToString(value.VehicleID)
 		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
 	}
 	return userVehicleTransactions, nil
@@ -152,6 +159,8 @@ func (tr *PostgresTransactionRepository) GetUserVehicleTransactionByID(ctx conte
 	if err := utils.MappingParser(&userVehicleTransaction, &newUserVehicleTransaction.Transaction); err != nil {
 		return nil, err
 	}
+	newUserVehicleTransaction.User.ID = convert.UUIDToString(userVehicleTransaction.UserID)
+	newUserVehicleTransaction.Vehicle.ID = convert.UUIDToString(userVehicleTransaction.VehicleID)
 	return &newUserVehicleTransaction, nil
 }
 
@@ -178,6 +187,8 @@ func (tr *PostgresTransactionRepository) GetExpiredTransactionThisWeek(ctx conte
 		if err := utils.MappingParser(&value, &userVehicleTransaction.Transaction); err != nil {
 			return nil, err
 		}
+		userVehicleTransaction.User.ID = convert.UUIDToString(value.UserID)
+		userVehicleTransaction.Vehicle.ID = convert.UUIDToString(value.VehicleID)
 		userVehicleTransactions = append(userVehicleTransactions, userVehicleTransaction)
 	}
 	return userVehicleTransactions, nil

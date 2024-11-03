@@ -85,6 +85,26 @@ func (q *Queries) GetInsurance(ctx context.Context, arg GetInsuranceParams) (flo
 	return price, err
 }
 
+const getInsurancePrice = `-- name: GetInsurancePrice :one
+UPDATE "insurance" 
+SET headcount = headcount + 1
+WHERE brand = $1 AND model = $2 AND year = $3
+RETURNING price
+`
+
+type GetInsurancePriceParams struct {
+	Brand string `json:"brand"`
+	Model string `json:"model"`
+	Year  string `json:"year"`
+}
+
+func (q *Queries) GetInsurancePrice(ctx context.Context, arg GetInsurancePriceParams) (float64, error) {
+	row := q.db.QueryRow(ctx, getInsurancePrice, arg.Brand, arg.Model, arg.Year)
+	var price float64
+	err := row.Scan(&price)
+	return price, err
+}
+
 const getInsurances = `-- name: GetInsurances :many
 SELECT
     model,

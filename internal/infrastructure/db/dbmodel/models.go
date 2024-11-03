@@ -16,10 +16,11 @@ type Employee struct {
 }
 
 type Insurance struct {
-	Brand string  `json:"brand"`
-	Model string  `json:"model"`
-	Year  string  `json:"year"`
-	Price float64 `json:"price"`
+	Brand     string  `json:"brand"`
+	Model     string  `json:"model"`
+	Year      string  `json:"year"`
+	Price     float64 `json:"price"`
+	Headcount int32   `json:"headcount"`
 }
 
 type Mile struct {
@@ -36,6 +37,7 @@ type Transaction struct {
 	ID            pgtype.UUID        `json:"id"`
 	UserID        pgtype.UUID        `json:"userId"`
 	VehicleID     pgtype.UUID        `json:"vehicleId"`
+	EmployeeID    pgtype.UUID        `json:"employeeId"`
 	Price         float64            `json:"price"`
 	InsuranceType string             `json:"insuranceType"`
 	Status        string             `json:"status"`
@@ -43,6 +45,7 @@ type Transaction struct {
 	CrImageUrl    string             `json:"crImageUrl"`
 	CipNumber     pgtype.Text        `json:"cipNumber"`
 	VipNumber     pgtype.Text        `json:"vipNumber"`
+	ReceiptDate   pgtype.Timestamptz `json:"receiptDate"`
 	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt     pgtype.Timestamptz `json:"updatedAt"`
 }

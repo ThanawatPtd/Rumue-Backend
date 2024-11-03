@@ -24,6 +24,15 @@ CREATE TABLE "employee" (
     FOREIGN KEY (id) REFERENCES "user"(id) ON DELETE CASCADE
 );
 
+-- Insurance Table
+CREATE TABLE "insurance" (
+    brand VARCHAR(100) PRIMARY KEY,
+    model VARCHAR(100) PRIMARY KEY,
+    year VARCHAR(100) PRIMARY KEY,
+    price FLOAT NOT NULL DEFAULT 0,
+    headcount INT NOT NULL
+);
+
 -- Vehicle Table
 CREATE TABLE "vehicle"(
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -53,7 +62,8 @@ CREATE TABLE "vehicle"(
     weight_laden FLOAT NOT NULL,
     miles FLOAT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
-    updated_at TIMESTAMPTZ NOT NULL
+    updated_at TIMESTAMPTZ NOT NULL,
+    FOREIGN KEY (brand, model, model_year) REFERENCES "insurance" (brand, model, year) ON DELETE CASCADE
 );
 
 -- Vehicle Owner Table
@@ -72,6 +82,7 @@ CREATE TABLE "transaction" (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID,
     vehicle_id UUID,
+    employee_id UUID,
     price FLOAT NOT NULL,
     insurance_type VARCHAR(30) NOT NULL,
     status VARCHAR(100) NOT NULL,
@@ -79,18 +90,11 @@ CREATE TABLE "transaction" (
     cr_image_url VARCHAR(100) NOT NULL,
     cip_number VARCHAR(30),
     vip_number VARCHAR(30),
+    receipt_date TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
-    FOREIGN KEY (user_id, vehicle_id) REFERENCES "vehicle_owner"(user_id, vehicle_id) ON DELETE CASCADE
-);
-
-
--- Insurance Table
-CREATE TABLE "insurance" (
-    brand VARCHAR(100) PRIMARY KEY,
-    model VARCHAR(100) PRIMARY KEY,
-    year VARCHAR(100) PRIMARY KEY,
-    price FLOAT NOT NULL
+    FOREIGN KEY (user_id, vehicle_id) REFERENCES "vehicle_owner"(user_id, vehicle_id) ON DELETE CASCADE,
+    FOREIGN KEY (employee_id) REFERENCES "employee"(id) ON DELETE CASCADE
 );
 
 -- Priority Table

@@ -14,6 +14,12 @@ SELECT
 FROM "insurance"
 ORDER BY brand, model, year;
 
+-- name: GetInsurancePrice :one
+UPDATE "insurance" 
+SET headcount = headcount + 1
+WHERE brand = $1 AND model = $2 AND year = $3
+RETURNING price;
+
 -- name: GetInsurance :one
 SELECT
     price

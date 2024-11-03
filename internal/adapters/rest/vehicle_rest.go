@@ -29,9 +29,20 @@ func (v *VehicleRestHandler) CreateVehicle(c *fiber.Ctx) error {
 		})
 	}
 
-	createPayload := entities.Vehicle(req)
+	if err := utils.ValidateStruct(req); err != nil {
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
+
+	createPayload := &entities.Vehicle{}
+
+	if err := utils.MappingParser(&req, createPayload); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	jwt := utils.GetJWTFromContext(c)
-	newVehicle, err := v.vehicleService.CreateVehicle(c.Context(), jwt.UserID, &createPayload)
+	newVehicle, err := v.vehicleService.CreateVehicle(c.Context(), jwt.UserID, createPayload)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{

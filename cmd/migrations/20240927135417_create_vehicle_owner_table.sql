@@ -11,7 +11,6 @@ CREATE TABLE "vehicle_owner"(
     FOREIGN KEY (vehicle_id) REFERENCES "vehicle"(id) ON DELETE CASCADE
 );
 -- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE IF EXISTS "vehicle_owner";

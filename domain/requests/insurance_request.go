@@ -1,7 +1,7 @@
 package requests
 
 type GetInsuranceRequest struct{
-	Brand string `json:"brand"`
-	Model string `json:"model"`
-	Year string `json:"year"`
+	Brand string `json:"brand" validate:"required"`
+	Model string `json:"model" validate:"required"`
+	Year string `json:"year" validate:"required"`
 }

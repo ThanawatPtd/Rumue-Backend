@@ -11,6 +11,7 @@ type Transaction struct {
 	CrImageUrl    string
 	CipNumber     string
 	VipNumber     string
+	ReceiptDate	  time.Time
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
