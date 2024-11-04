@@ -14,7 +14,8 @@ type Config struct {
 	PostgresDB       string `mapstructure:"POSTGRES_DB"`
 	PostgresPort     string `mapstructure:"POSTGRES_PORT"`
 	JWTSecret        string `mapstructure:"JWT_SECRET"`
-	SendGridSecret	 string `mapstructure:"SENDGRID_SECRET"`
+	SendGridSecret   string `mapstructure:"SENDGRID_SECRET"`
+	MongoURI         string `mapstructure:"MONGO_URI"`
 }
 
 func ProvideConfig() *Config {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/ThanawatPtd/SAProject/background"
+	"github.com/ThanawatPtd/SAProject/internal/infrastructure/mongoDB"
 	"github.com/ThanawatPtd/SAProject/internal/wire"
 	"github.com/ThanawatPtd/SAProject/router"
 	"github.com/gofiber/fiber/v2"
@@ -29,4 +30,5 @@ func main() {
 
 	app.Listen(":3001")
 
+	mongodb.CloseMongoDB()
 }

@@ -19,16 +19,17 @@ type AuthUseCase interface {
 }
 
 type AuthService struct {
-	userRepo repositories.UserRepository
+	userRepo     repositories.UserRepository
 	employeeRepo repositories.EmployeeRepository
-	config   *config.Config
+	config       *config.Config
 }
 
-func ProvideAuthService(userRepo repositories.UserRepository, employeeRepo repositories.EmployeeRepository, config *config.Config) AuthUseCase {
+func ProvideAuthService(userRepo repositories.UserRepository, employeeRepo repositories.EmployeeRepository,
+	config *config.Config) AuthUseCase {
 	return &AuthService{
-		userRepo: userRepo,
+		userRepo:     userRepo,
 		employeeRepo: employeeRepo,
-		config:   config,
+		config:       config,
 	}
 }
 
@@ -71,7 +72,7 @@ func (u *AuthService) Login(ctx context.Context, user *entities.User) (string, e
 		return "", err
 	}
 	// Check if user exist
-	if getUser == nil { 
+	if getUser == nil {
 		return "", exceptions.ErrUserNotFound
 	}
 
@@ -93,9 +94,9 @@ func (u *AuthService) Login(ctx context.Context, user *entities.User) (string, e
 	expireAt := time.Now().Add(time.Hour * 100)
 
 	claims := jwt.MapClaims{
-		"id": getUser.ID,
+		"id":   getUser.ID,
 		"role": role,
-		"exp": expireAt.Unix(),
+		"exp":  expireAt.Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

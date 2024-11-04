@@ -11,8 +11,10 @@ services:
       - ${PORT}:${PORT}
     depends_on:
       - postgres
+      - mongoDB
     networks:
       - sa-se-backend-network
+
   postgres:
     image: postgres:16-alpine
     restart: on-failure
@@ -27,9 +29,23 @@ services:
       - "${POSTGRES_PORT}:5432"
     networks:
       - sa-se-backend-network
+
+  mongoDB:
+    image: mongodb/mongodb-community-server:latest
+    restart: on-failure
+    volumes:
+      - sa-se-web-backend-vol-mongo:/var/lib/mongodb/data
+    ports:
+      - "27017:27017"
+    networks:
+      - sa-se-backend-network
+
 volumes:
   sa-se-web-backend-vol-db:
     driver: local
+  sa-se-web-backend-vol-mongo:
+    driver: local
+
 networks:
   sa-se-backend-network:
     driver: bridge

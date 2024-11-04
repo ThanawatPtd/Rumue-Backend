@@ -4,14 +4,17 @@ import (
 	"github.com/ThanawatPtd/SAProject/config"
 	_ "github.com/ThanawatPtd/SAProject/config"
 	"github.com/ThanawatPtd/SAProject/domain/usecases"
+	"github.com/ThanawatPtd/SAProject/internal/adapters/mongo"
 	"github.com/ThanawatPtd/SAProject/internal/adapters/psql"
 	"github.com/ThanawatPtd/SAProject/internal/adapters/rest"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db"
+	"github.com/ThanawatPtd/SAProject/internal/infrastructure/mongoDB"
 	"github.com/google/wire"
 )
 
 var InfraSet = wire.NewSet(
 	db.ProvidePgxPool,
+	mongodb.GetClient,
 )
 
 var ConfigSet = wire.NewSet(
@@ -31,7 +34,7 @@ var ServiceSet = wire.NewSet(
 )
 
 var RepositorySet = wire.NewSet(
-	psql.ProvidePostgresUserRepository,
+	// psql.ProvidePostgresUserRepository,
 	psql.ProvidePostgresEmployeeRepository,
 	psql.ProvidePostgresVehicleRepository,
 	psql.ProvidePostgresVehicleOwnerRepository,
@@ -39,6 +42,7 @@ var RepositorySet = wire.NewSet(
 	psql.ProvidePostgresPriorityRepository,
 	psql.ProvidePostgresMileRepository,
 	psql.ProvideInsuranceRepository,
+	mongo.ProvideMongoUserRepository,
 )
 
 var HandlerSet = wire.NewSet(
