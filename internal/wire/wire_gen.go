@@ -9,27 +9,25 @@ package wire
 import (
 	"github.com/ThanawatPtd/SAProject/config"
 	"github.com/ThanawatPtd/SAProject/domain/usecases"
-	"github.com/ThanawatPtd/SAProject/internal/adapters/mongo"
 	"github.com/ThanawatPtd/SAProject/internal/adapters/psql"
 	"github.com/ThanawatPtd/SAProject/internal/adapters/rest"
 	"github.com/ThanawatPtd/SAProject/internal/infrastructure/db"
-	"github.com/ThanawatPtd/SAProject/internal/infrastructure/mongoDB"
 )
 
 import (
 	_ "github.com/ThanawatPtd/SAProject/config"
+	_ "github.com/ThanawatPtd/SAProject/internal/adapters/mongo"
 )
 
 // Injectors from wire.go:
 
 func InitializeHandler() *rest.Handler {
-	client := mongodb.GetClient()
-	userRepository := mongo.ProvideMongoUserRepository(client)
+	context := ProvideContext()
 	configConfig := config.ProvideConfig()
+	pool := db.ProvidePgxPool(context, configConfig)
+	userRepository := psql.ProvidePostgresUserRepository(pool)
 	userUseCase := usecases.ProvideUserService(userRepository, configConfig)
 	userRestHandler := rest.ProvideUserRestHandler(userUseCase)
-	context := ProvideContext()
-	pool := db.ProvidePgxPool(context, configConfig)
 	employeeRepository := psql.ProvidePostgresEmployeeRepository(pool)
 	employeeUseCase := usecases.ProvideEmployeeService(employeeRepository)
 	employeeHandler := rest.ProvideEmployeeRestHandler(employeeUseCase)
