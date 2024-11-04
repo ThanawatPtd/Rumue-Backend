@@ -40,7 +40,7 @@ This application, Rumue, is designed to provide users with an easy way to check 
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ThanawatPtd/SA-SEProject.git
+   git clone https://github.com/ThanawatPtd/Rumue-Backend.git
    ```
 2. Configure environment variables:
    - Refer to example.env and add your configurations.
